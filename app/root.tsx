@@ -9,6 +9,8 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { ToastProvider } from "~/components/Toast";
+import Header from "~/components/Header";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -33,7 +35,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <ToastProvider>
+          <Header />
+          <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
+            {children}
+          </div>
+        </ToastProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
