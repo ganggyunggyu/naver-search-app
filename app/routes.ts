@@ -4,7 +4,6 @@ export default [
   index('routes/naver-popular.tsx'),
   route('/search', 'routes/search.tsx'),
   route('/naver-extractor', 'routes/naver-extractor.tsx'),
-  route('/naver-popular', 'routes/naver-popular.tsx'),
 
   // API 엔드포인트
   route('/api/search', 'routes/api.search.ts'),
