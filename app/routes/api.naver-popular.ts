@@ -63,6 +63,9 @@ export async function loader({ request }: Route.LoaderArgs) {
       return href;
     };
 
+    // 인기글 섹션 최신 선택자 (2024년 네이버 구조)
+    const POPULAR_SECTION_SELECTOR = '.sc_new.sp_nreview._fe_view_root._prs_ugB_bsR, .sc_new, .sp_nreview, ._fe_view_root, ._prs_ugB_bsR';
+    
     // 인기 키워드 헤더 선택자 (분석 페이지에서 확인한 클래스명 사용)
     const KEYWORD_HEADER_SELECTOR =
       '.fds-comps-text.fds-comps-header-headline.pP6CrxLzumAlsR4_qelA, ' +
@@ -79,31 +82,54 @@ export async function loader({ request }: Route.LoaderArgs) {
         container: cheerio.Cheerio<any>;
       }> = [];
 
-      // 인기 키워드 헤더들 찾기
-      $(KEYWORD_HEADER_SELECTOR).each((_, headerEl) => {
-        const $header = $(headerEl);
-        const headerText = $header.text().trim();
-
-        // 빈 헤더는 스킵
-        if (!headerText || headerText.length < 2) return;
-
-        // 헤더 다음에 있는 인기글 컨테이너들 찾기
-        let $container = $header.parent();
-
-        // 상위 컨테이너에서 인기글 아이템들 찾기 (5단계까지 올라가면서 검색)
-        for (let level = 0; level < 5; level++) {
-          const $items = $container.find(POPULAR_ITEM_SELECTOR);
-          if ($items.length > 0) {
-            sections.push({
-              keyword: headerText,
-              container: $container,
-            });
-            break;
+      // 1) 먼저 새로운 인기글 섹션 선택자로 찾기
+      $(POPULAR_SECTION_SELECTOR).each((_, sectionEl) => {
+        const $section = $(sectionEl);
+        
+        // 섹션 내에서 헤더 찾기
+        const $header = $section.find(KEYWORD_HEADER_SELECTOR).first();
+        if ($header.length > 0) {
+          const headerText = $header.text().trim();
+          if (headerText && headerText.length > 1) {
+            // 해당 섹션에 인기글 아이템이 있는지 확인
+            const $items = $section.find(POPULAR_ITEM_SELECTOR);
+            if ($items.length > 0) {
+              sections.push({
+                keyword: headerText,
+                container: $section,
+              });
+            }
           }
-          $container = $container.parent();
-          if (!$container.length) break;
         }
       });
+
+      // 2) 기존 방식으로도 찾기 (fallback)
+      if (sections.length === 0) {
+        $(KEYWORD_HEADER_SELECTOR).each((_, headerEl) => {
+          const $header = $(headerEl);
+          const headerText = $header.text().trim();
+
+          // 빈 헤더는 스킵
+          if (!headerText || headerText.length < 2) return;
+
+          // 헤더 다음에 있는 인기글 컨테이너들 찾기
+          let $container = $header.parent();
+
+          // 상위 컨테이너에서 인기글 아이템들 찾기 (5단계까지 올라가면서 검색)
+          for (let level = 0; level < 5; level++) {
+            const $items = $container.find(POPULAR_ITEM_SELECTOR);
+            if ($items.length > 0) {
+              sections.push({
+                keyword: headerText,
+                container: $container,
+              });
+              break;
+            }
+            $container = $container.parent();
+            if (!$container.length) break;
+          }
+        });
+      }
 
       return sections;
     };

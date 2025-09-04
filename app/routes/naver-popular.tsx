@@ -88,6 +88,61 @@ export default function NaverPopularPage() {
 
   const copyFullContent = async (link: string) => {
     try {
+      // 새 창으로 링크 열어서 직접 텍스트 추출 시도
+      let directContent = '';
+
+      try {
+        // iframe으로 페이지 로드하여 직접 텍스트 추출
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = link;
+        document.body.appendChild(iframe);
+
+        // iframe 로드 완료 후 텍스트 추출
+        await new Promise((resolve) => {
+          iframe.onload = () => {
+            try {
+              const iframeDoc =
+                iframe.contentDocument || iframe.contentWindow?.document;
+              if (iframeDoc) {
+                // 드래그 방지 스타일 제거
+                const allElements = iframeDoc.querySelectorAll('*');
+                allElements.forEach((el: any) => {
+                  el.style.userSelect = 'auto';
+                  el.style.webkitUserSelect = 'auto';
+                  el.style.mozUserSelect = 'auto';
+                  el.style.msUserSelect = 'auto';
+                  el.removeAttribute('onselectstart');
+                  el.removeAttribute('ondragstart');
+                  el.removeAttribute('oncontextmenu');
+                });
+
+                // se-main-container에서 텍스트 추출
+                const mainContainer =
+                  iframeDoc.querySelector('.se-main-container');
+                if (mainContainer) {
+                  directContent = mainContainer.textContent || '';
+                }
+              }
+            } catch (e) {
+              console.log('Direct extraction failed, using API fallback');
+            }
+            document.body.removeChild(iframe);
+            resolve(undefined);
+          };
+
+          // 5초 후 타임아웃
+          setTimeout(() => {
+            try {
+              document.body.removeChild(iframe);
+            } catch (e) {}
+            resolve(undefined);
+          }, 5000);
+        });
+      } catch (e) {
+        console.log('Direct method failed, using API');
+      }
+
       const res = await fetch(`/api/content?url=${encodeURIComponent(link)}`);
       const json = await res.json();
       if (json.error) {
@@ -101,8 +156,14 @@ export default function NaverPopularPage() {
             .trim()
         : '';
 
-      const cleanContent = json.content
-        ? String(json.content)
+      // 직접 추출한 내용이 있고 더 길면 사용
+      let finalContent = json.content || '';
+      if (directContent && directContent.trim().length > finalContent.length) {
+        finalContent = directContent;
+      }
+
+      const cleanContent = finalContent
+        ? String(finalContent)
             .replace(/\r\n?/g, '\n')
             .replace(/<[^>]*>/g, '')
             .replace(/&nbsp;/g, ' ')
@@ -373,7 +434,10 @@ export default function NaverPopularPage() {
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 min-w-0">
                                   <a
-                                    href={item.link}
+                                    href={item.link.replace(
+                                      'https://blog.',
+                                      'https://m.blog.'
+                                    )}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-lg font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline break-all transition-colors"
