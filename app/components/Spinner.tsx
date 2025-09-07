@@ -1,4 +1,8 @@
-export default function Spinner({ size = 20 }: { size?: number }) {
+import React from 'react';
+
+interface Props { size?: number }
+
+const Spinner: React.FC<Props> = ({ size = 20 }) => {
   const dim = `${size}px`;
   return (
     <span
@@ -7,5 +11,6 @@ export default function Spinner({ size = 20 }: { size?: number }) {
       aria-label="Loading"
     />
   );
-}
+};
 
+export default Spinner;

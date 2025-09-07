@@ -1,7 +1,7 @@
 import type { Route } from './+types/search';
 import { useEffect, useMemo, useState } from 'react';
-import { useToast } from '~/components/Toast';
-import Spinner from '~/components/Spinner';
+import { useToast } from '@/components/Toast';
+import Spinner from '@/components/Spinner';
 
 interface NaverSearchResult {
   title: string;
@@ -17,7 +17,7 @@ interface ExtractionResult {
   status: number;
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
+export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
   const query = url.searchParams.get('q');
 
@@ -28,11 +28,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   try {
     const clientId = process.env.NAVER_CLIENT_ID;
     const clientSecret = process.env.NAVER_CLIENT_SECRET;
-
-    console.log('Environment variables:', {
-      clientId: clientId ? 'exists' : 'missing',
-      clientSecret: clientSecret ? 'exists' : 'missing',
-    });
 
     if (!clientId || !clientSecret) {
       throw new Error('네이버 API 키가 설정되지 않았습니다.');
@@ -58,9 +53,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     console.error('Search error:', error);
     return { results: [], query, error: '검색 중 오류가 발생했습니다.' };
   }
-}
+};
 
-export default function Search({ loaderData }: Route.ComponentProps) {
+const Search: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   const { results, query, error } = loaderData;
   const [newQuery, setNewQuery] = useState(query || '');
   const { show } = useToast();
@@ -843,4 +838,6 @@ export default function Search({ loaderData }: Route.ComponentProps) {
       </div>
     </div>
   );
-}
+};
+
+export default Search;

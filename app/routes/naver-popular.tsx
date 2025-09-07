@@ -1,6 +1,6 @@
+import { useToast } from '@/components/Toast';
 import type { Route } from './+types/naver-popular';
 import { useState } from 'react';
-import { useToast } from '~/components/Toast';
 
 interface PopularItem {
   title: string;
@@ -37,6 +37,18 @@ export default function NaverPopularPage() {
   const [data, setData] = useState<PopularResponse | null>(null);
   const [error, setError] = useState<string>('');
   const { show } = useToast();
+
+  // 본문 뷰어 상태
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerLoading, setViewerLoading] = useState(false);
+  const [viewerItem, setViewerItem] = useState<
+    | (PopularItem & {
+        content?: string;
+        blogName?: string;
+        actualUrl?: string;
+      })
+    | null
+  >(null);
 
   const generateNaverUrl = (q: string) =>
     `https://search.naver.com/search.naver?where=nexearch&sm=top_sly.hst&fbm=0&acr=1&ie=utf8&query=${encodeURIComponent(q)}`;
@@ -187,6 +199,39 @@ export default function NaverPopularPage() {
     }
   };
 
+  const openViewer = async (item: PopularItem) => {
+    setViewerOpen(true);
+    setViewerLoading(true);
+    setViewerItem({ ...item });
+    try {
+      const res = await fetch(
+        `/api/content?url=${encodeURIComponent(item.link)}`
+      );
+      const json = await res.json();
+      if (json.error) {
+        show(String(json.error), { type: 'error' });
+        setViewerLoading(false);
+        return;
+      }
+      setViewerItem((prev) =>
+        prev
+          ? {
+              ...prev,
+              title: json.title || prev.title,
+              content: json.content || '',
+              blogName: json.blogName || undefined,
+              image: (json.images && json.images[0]) || prev.image,
+              link: item.link,
+            }
+          : prev
+      );
+    } catch (e) {
+      show('본문을 가져오는데 실패했습니다.', { type: 'error' });
+    } finally {
+      setViewerLoading(false);
+    }
+  };
+
   return (
     <div className="relative py-16 sm:py-24">
       <div className="absolute inset-0 -z-10 overflow-hidden">
@@ -254,6 +299,81 @@ export default function NaverPopularPage() {
             </button>
           </div>
 
+          {/* 본문 뷰어 모달 */}
+          {viewerOpen && (
+            <div
+              className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+              onClick={() => setViewerOpen(false)}
+            >
+              <div
+                className="w-full max-w-3xl max-h-[85vh] overflow-hidden rounded-2xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+                  <div className="min-w-0">
+                    <div className="text-sm text-gray-500 truncate">
+                      {viewerItem?.blogName
+                        ? viewerItem.blogName
+                        : '네이버 블로그'}
+                    </div>
+                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+                      {viewerItem?.title || '제목 없음'}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {viewerItem?.link && (
+                      <a
+                        href={viewerItem.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white"
+                      >
+                        원문
+                      </a>
+                    )}
+                    <button
+                      onClick={() => setViewerOpen(false)}
+                      className="px-3 py-1.5 text-sm rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                    >
+                      닫기
+                    </button>
+                  </div>
+                </div>
+                <div
+                  className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 overflow-y-auto"
+                  style={{ maxHeight: 'calc(85vh - 64px)' }}
+                >
+                  <div className="md:col-span-1">
+                    {viewerItem?.image ? (
+                      <img
+                        src={viewerItem.image}
+                        alt="대표 이미지"
+                        className="w-full h-48 object-cover rounded-lg border border-gray-200 dark:border-gray-800"
+                      />
+                    ) : (
+                      <div className="w-full h-48 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-sm">
+                        이미지 없음
+                      </div>
+                    )}
+                    <div className="mt-3 text-sm text-gray-600 dark:text-gray-400 break-all">
+                      {viewerItem?.link}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    {viewerLoading ? (
+                      <div className="h-48 flex items-center justify-center text-gray-500">
+                        불러오는 중...
+                      </div>
+                    ) : (
+                      <pre className="whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100 leading-6">
+                        {viewerItem?.content || '본문이 비어있습니다.'}
+                      </pre>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <form onSubmit={fetchPopular} className="space-y-4">
             {useAutoUrl ? (
               <div>
@@ -393,7 +513,7 @@ export default function NaverPopularPage() {
               (() => {
                 const groupedItems = data.items.reduce(
                   (acc, item) => {
-                    const keyword = item.group || '기타';
+                    const keyword = item.group || '비즈니스·경제 인기글';
                     if (!acc[keyword]) acc[keyword] = [];
                     acc[keyword].push(item);
                     return acc;
@@ -525,6 +645,33 @@ export default function NaverPopularPage() {
                                       />
                                     </svg>
                                     전체 본문 복사
+                                  </button>
+                                )}
+                                {item.link.includes('blog.naver.com') && (
+                                  <button
+                                    onClick={() => openViewer(item)}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 rounded-xl border border-purple-200 dark:border-purple-700 transition-all hover:shadow-sm"
+                                  >
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                      />
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                      />
+                                    </svg>
+                                    보기
                                   </button>
                                 )}
                               </div>

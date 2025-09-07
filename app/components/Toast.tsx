@@ -20,7 +20,7 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const timers = useRef<Map<string, number>>(new Map());
 
@@ -52,31 +52,29 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       <ToastViewport toasts={toasts} onClose={remove} />
     </ToastContext.Provider>
   );
-}
+};
 
-export function useToast() {
+export const useToast = () => {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error("useToast must be used within ToastProvider");
   return ctx;
-}
+};
 
-function ToastViewport({ toasts, onClose }: { toasts: ToastItem[]; onClose: (id: string) => void }) {
-  return (
-    <div
-      className="fixed z-50 inset-0 pointer-events-none flex flex-col items-end gap-2 p-4 sm:p-6"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <div className="ml-auto w-full sm:max-w-sm space-y-2">
-        {toasts.map((t) => (
-          <ToastCard key={t.id} item={t} onClose={() => onClose(t.id)} />)
-        )}
-      </div>
+const ToastViewport: React.FC<{ toasts: ToastItem[]; onClose: (id: string) => void }> = ({ toasts, onClose }) => (
+  <div
+    className="fixed z-50 inset-0 pointer-events-none flex flex-col items-end gap-2 p-4 sm:p-6"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div className="ml-auto w-full sm:max-w-sm space-y-2">
+      {toasts.map((t) => (
+        <ToastCard key={t.id} item={t} onClose={() => onClose(t.id)} />)
+      )}
     </div>
-  );
-}
+  </div>
+);
 
-function ToastCard({ item, onClose }: { item: ToastItem; onClose: () => void }) {
+const ToastCard: React.FC<{ item: ToastItem; onClose: () => void }> = ({ item, onClose }) => {
   const color =
     item.type === "success"
       ? "bg-green-600"
@@ -112,5 +110,4 @@ function ToastCard({ item, onClose }: { item: ToastItem; onClose: () => void }) 
       </div>
     </div>
   );
-}
-
+};

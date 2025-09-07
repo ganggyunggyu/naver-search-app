@@ -1,11 +1,14 @@
-import type { Route } from "./+types/naver-extractor";
-import { useState } from "react";
-import { useToast } from "~/components/Toast";
+import type { Route } from './+types/naver-extractor';
+import { useState } from 'react';
+import { useToast } from '@/components/Toast';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Naver Mobile Search Extractor" },
-    { name: "description", content: "Extract text from Naver mobile search results" },
+    { title: 'Naver Mobile Search Extractor' },
+    {
+      name: 'description',
+      content: 'Extract text from Naver mobile search results',
+    },
   ];
 }
 
@@ -20,52 +23,54 @@ interface ExtractionResult {
 // 네이버 검색 결과 클래스 목록
 const NAVER_CLASS_OPTIONS = [
   {
-    label: "인기글/추천글",
-    value: "fds-comps-text fds-comps-header-headline pP6CrxLzumAlsR4_qelA",
-    description: "네이버 검색 결과의 인기글/추천글 제목"
+    label: '인기글/추천글',
+    value: 'fds-comps-text fds-comps-header-headline pP6CrxLzumAlsR4_qelA',
+    description: '네이버 검색 결과의 인기글/추천글 제목',
   },
   {
-    label: "일반 검색 결과 제목",
-    value: "fds-comps-text fds-comps-header-headline _2FC9jXOgF3yE5OOGgd8Cr",
-    description: "네이버 검색 결과의 일반 제목"
+    label: '일반 검색 결과 제목',
+    value: 'fds-comps-text fds-comps-header-headline _2FC9jXOgF3yE5OOGgd8Cr',
+    description: '네이버 검색 결과의 일반 제목',
   },
   {
-    label: "블로그 제목",
-    value: "total_tit",
-    description: "네이버 블로그 검색 결과 제목"
+    label: '블로그 제목',
+    value: 'total_tit',
+    description: '네이버 블로그 검색 결과 제목',
   },
   {
-    label: "뉴스 제목",
-    value: "news_tit",
-    description: "네이버 뉴스 검색 결과 제목"
+    label: '뉴스 제목',
+    value: 'news_tit',
+    description: '네이버 뉴스 검색 결과 제목',
   },
   {
-    label: "카페 글 제목",
-    value: "cafe_tit",
-    description: "네이버 카페 검색 결과 제목"
+    label: '카페 글 제목',
+    value: 'cafe_tit',
+    description: '네이버 카페 검색 결과 제목',
   },
   {
-    label: "사용자 정의",
-    value: "custom",
-    description: "직접 클래스명 입력"
-  }
+    label: '사용자 정의',
+    value: 'custom',
+    description: '직접 클래스명 입력',
+  },
 ];
 
 export default function NaverExtractor() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [url, setUrl] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [url, setUrl] = useState('');
   const [useAutoUrl, setUseAutoUrl] = useState(true);
-  const [selectedClassType, setSelectedClassType] = useState("인기글/추천글");
-  const [customClassName, setCustomClassName] = useState("");
+  const [selectedClassType, setSelectedClassType] = useState('인기글/추천글');
+  const [customClassName, setCustomClassName] = useState('');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ExtractionResult | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const { show } = useToast();
 
   // 현재 선택된 클래스명 가져오기
   const getCurrentClassName = () => {
-    const selectedOption = NAVER_CLASS_OPTIONS.find(option => option.label === selectedClassType);
-    if (selectedOption?.value === "custom") {
+    const selectedOption = NAVER_CLASS_OPTIONS.find(
+      (option) => option.label === selectedClassType
+    );
+    if (selectedOption?.value === 'custom') {
       return customClassName;
     }
     return selectedOption?.value || NAVER_CLASS_OPTIONS[0].value;
@@ -79,30 +84,32 @@ export default function NaverExtractor() {
 
   const handleExtract = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    let targetUrl = "";
-    
+
+    let targetUrl = '';
+
     if (useAutoUrl) {
       if (!searchQuery.trim()) {
-        setError("검색어를 입력해주세요.");
+        setError('검색어를 입력해주세요.');
         return;
       }
       targetUrl = generateNaverUrl(searchQuery.trim());
     } else {
       if (!url.trim()) {
-        setError("URL을 입력해주세요.");
+        setError('URL을 입력해주세요.');
         return;
       }
       targetUrl = url.trim();
     }
 
     setLoading(true);
-    setError("");
+    setError('');
     setResults(null);
 
     try {
       const currentClassName = getCurrentClassName();
-      const response = await fetch(`/api/naver-search?url=${encodeURIComponent(targetUrl)}&class=${encodeURIComponent(currentClassName)}`);
+      const response = await fetch(
+        `/api/naver-search?url=${encodeURIComponent(targetUrl)}&class=${encodeURIComponent(currentClassName)}`
+      );
       const data = await response.json();
 
       if (data.error) {
@@ -111,8 +118,8 @@ export default function NaverExtractor() {
         setResults(data);
       }
     } catch (err) {
-      console.error("Extraction error:", err);
-      setError("텍스트 추출 중 오류가 발생했습니다.");
+      console.error('Extraction error:', err);
+      setError('텍스트 추출 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -124,10 +131,12 @@ export default function NaverExtractor() {
     try {
       const content = results.results.join('\n');
       await navigator.clipboard.writeText(content);
-      show(`${results.results.length}개의 텍스트가 복사되었습니다!`, { type: 'success' });
+      show(`${results.results.length}개의 텍스트가 복사되었습니다!`, {
+        type: 'success',
+      });
     } catch (err) {
-      console.error("Copy error:", err);
-      show("복사에 실패했습니다.", { type: 'error' });
+      console.error('Copy error:', err);
+      show('복사에 실패했습니다.', { type: 'error' });
     }
   };
 
@@ -145,8 +154,8 @@ export default function NaverExtractor() {
               type="button"
               onClick={() => setUseAutoUrl(true)}
               className={`flex-1 px-4 py-2 rounded-lg font-medium ${
-                useAutoUrl 
-                  ? 'bg-blue-600 text-white' 
+                useAutoUrl
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -156,8 +165,8 @@ export default function NaverExtractor() {
               type="button"
               onClick={() => setUseAutoUrl(false)}
               className={`flex-1 px-4 py-2 rounded-lg font-medium ${
-                !useAutoUrl 
-                  ? 'bg-blue-600 text-white' 
+                !useAutoUrl
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -168,7 +177,10 @@ export default function NaverExtractor() {
           <form onSubmit={handleExtract} className="space-y-4">
             {useAutoUrl ? (
               <div>
-                <label htmlFor="searchQuery" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="searchQuery"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   검색어
                 </label>
                 <input
@@ -190,7 +202,10 @@ export default function NaverExtractor() {
               </div>
             ) : (
               <div>
-                <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="url"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   네이버 검색 URL
                 </label>
                 <input
@@ -221,14 +236,19 @@ export default function NaverExtractor() {
                     }`}
                   >
                     <div className="font-medium">{option.label}</div>
-                    <div className="text-xs text-gray-500 mt-1">{option.description}</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {option.description}
+                    </div>
                   </button>
                 ))}
               </div>
-              
-              {selectedClassType === "사용자 정의" && (
+
+              {selectedClassType === '사용자 정의' && (
                 <div>
-                  <label htmlFor="customClassName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="customClassName"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     사용자 정의 클래스명
                   </label>
                   <input
@@ -241,8 +261,8 @@ export default function NaverExtractor() {
                   />
                 </div>
               )}
-              
-              {selectedClassType !== "사용자 정의" && (
+
+              {selectedClassType !== '사용자 정의' && (
                 <div className="mt-2 p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600">현재 클래스명:</p>
                   <p className="text-xs font-mono text-gray-500 break-all mt-1">
@@ -254,10 +274,12 @@ export default function NaverExtractor() {
 
             <button
               type="submit"
-              disabled={loading || (useAutoUrl ? !searchQuery.trim() : !url.trim())}
+              disabled={
+                loading || (useAutoUrl ? !searchQuery.trim() : !url.trim())
+              }
               className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {loading ? "추출 중..." : "텍스트 추출"}
+              {loading ? '추출 중...' : '텍스트 추출'}
             </button>
           </form>
         </div>
@@ -287,7 +309,10 @@ export default function NaverExtractor() {
             {results.results.length > 0 ? (
               <div className="space-y-3">
                 {results.results.map((text, index) => (
-                  <div key={index} className="flex justify-between items-start p-3 border border-gray-200 rounded-lg">
+                  <div
+                    key={index}
+                    className="flex justify-between items-start p-3 border border-gray-200 rounded-lg"
+                  >
                     <div className="flex-1">
                       <span className="text-gray-800">{text}</span>
                     </div>
@@ -315,7 +340,8 @@ export default function NaverExtractor() {
 
             <div className="mt-4 pt-4 border-t border-gray-200">
               <p className="text-sm text-gray-600">
-                <strong>URL:</strong> <span className="break-all">{results.url}</span>
+                <strong>URL:</strong>{' '}
+                <span className="break-all">{results.url}</span>
               </p>
               <p className="text-sm text-gray-600 mt-1">
                 <strong>클래스:</strong> {results.className}
