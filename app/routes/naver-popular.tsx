@@ -9,10 +9,10 @@ import {
   viewerOpenAtom,
   viewerLoadingAtom,
   viewerItemAtom,
-} from '@/features/naverPopular/store/atoms';
-import { usePopularActions } from '@/features/naverPopular/hooks/usePopularActions';
-import { PopularSearchForm } from '@/features/naverPopular/components/PopularSearchForm';
-import { PopularResults } from '@/features/naverPopular/components/PopularResults';
+} from '@/features/naver-popular/store/atoms';
+import { usePopularActions } from '@/features/naver-popular/hooks/usePopularActions';
+import { PopularSearchForm } from '@/features/naver-popular/components/PopularSearchForm';
+import { PopularResults } from '@/features/naver-popular/components/PopularResults';
 import {
   PopularViewerModal,
   type PopularViewerItem,
@@ -20,7 +20,7 @@ import {
 import {
   copyPreviewToClipboard,
   copyFullContentToClipboard,
-} from '@/features/naverPopular/lib/clipboard';
+} from '@/features/naver-popular/lib/_clipboard';
 
 export const meta = (_: Route.MetaArgs) => [
   { title: 'Naver 인기글 추출' },

@@ -6,10 +6,10 @@ interface Props {
 }
 
 import { useToast } from '@/components/Toast';
-import { copyFullContentToClipboard } from '@/features/naverPopular/lib/clipboard';
+import { copyFullContentToClipboard } from '@/features/naver-popular/lib/_clipboard';
 import { useSetAtom } from 'jotai';
-import { viewerItemAtom } from '@/features/naverPopular/store/atoms';
-import { useViewerActions } from '@/features/naverPopular/hooks/useViewerActions';
+import { viewerItemAtom } from '@/features/naver-popular/store/atoms';
+import { useViewerActions } from '@/features/naver-popular/hooks/useViewerActions';
 
 export const PopularItemCard: React.FC<Props> = ({ item }) => {
   const { show } = useToast();
