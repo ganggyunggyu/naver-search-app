@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import type { PopularItem, PopularResponse } from '@/entities/naver/types';
+import type { PopularResponse } from '@/entities/naver/types';
 import type { PopularViewerItem } from '@/components/naverPopular/PopularViewerModal';
 
 export const popularQueryAtom = atom<string>('');

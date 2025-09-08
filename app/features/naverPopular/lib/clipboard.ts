@@ -1,14 +1,19 @@
-import type { PopularItem } from '@/shared/types/naver';
+import type { PopularItem } from '@/entities/naver/types';
 
 export const copyPreviewToClipboard = async (
   item: PopularItem,
-  show: (message: string, opts?: { type?: 'success' | 'error' | 'info' }) => void
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
 ) => {
   const cleanTitle = item.title.replace(/\s+/g, ' ').trim();
   const cleanSnippet = item.snippet
     ? item.snippet.replace(/\s+/g, ' ').replace(/\n+/g, ' ').trim()
     : '';
-  const plain = [cleanTitle, cleanSnippet, item.link].filter(Boolean).join('\n\n');
+  const plain = [cleanTitle, cleanSnippet, item.link]
+    .filter(Boolean)
+    .join('\n\n');
   try {
     await navigator.clipboard.writeText(plain);
     show('미리보기가 복사되었습니다!', { type: 'success' });
@@ -19,7 +24,10 @@ export const copyPreviewToClipboard = async (
 
 export const copyFullContentToClipboard = async (
   link: string,
-  show: (message: string, opts?: { type?: 'success' | 'error' | 'info' }) => void
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
 ) => {
   try {
     let directContent = '';
@@ -31,7 +39,8 @@ export const copyFullContentToClipboard = async (
       await new Promise<void>((resolve) => {
         iframe.onload = () => {
           try {
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+            const iframeDoc =
+              iframe.contentDocument || iframe.contentWindow?.document;
             if (iframeDoc) {
               const all = iframeDoc.querySelectorAll('*');
               all.forEach((el: any) => {
@@ -48,7 +57,9 @@ export const copyFullContentToClipboard = async (
           resolve();
         };
         setTimeout(() => {
-          try { document.body.removeChild(iframe); } catch {}
+          try {
+            document.body.removeChild(iframe);
+          } catch {}
           resolve();
         }, 5000);
       });
@@ -61,9 +72,14 @@ export const copyFullContentToClipboard = async (
       return;
     }
 
-    const cleanTitle = json.title ? String(json.title).replace(/[ \t\f\v\u00A0]+/g, ' ').trim() : '';
+    const cleanTitle = json.title
+      ? String(json.title)
+          .replace(/[ \t\f\v\u00A0]+/g, ' ')
+          .trim()
+      : '';
     let finalContent = json.content || '';
-    if (directContent && directContent.trim().length > finalContent.length) finalContent = directContent;
+    if (directContent && directContent.trim().length > finalContent.length)
+      finalContent = directContent;
     const cleanContent = finalContent
       ? String(finalContent)
           .replace(/\r\n?/g, '\n')
@@ -87,4 +103,3 @@ export const copyFullContentToClipboard = async (
     show('전체 본문 복사 실패', { type: 'error' });
   }
 };
-

@@ -1,6 +1,9 @@
 export interface PopularItem {
   title: string;
   link: string;
+  blogName?: string;
+  blogLink?: string;
+
   snippet?: string;
   image?: string;
   badge?: string;
@@ -14,4 +17,3 @@ export interface PopularResponse {
   status: number;
   error?: string;
 }
-

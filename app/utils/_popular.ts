@@ -1,18 +1,7 @@
 import type { CheerioAPI } from 'cheerio';
 import { loadHtml } from './html';
 import { KEYWORD_HEADER_SELECTOR } from '@/constants';
-
-export type PopularItem = {
-  title: string;
-  link: string;
-  blogName?: string;
-  blogLink?: string;
-
-  snippet?: string;
-  image?: string;
-  badge?: string;
-  group?: string;
-};
+import type { PopularItem } from '@/entities/naver/types';
 
 const findGroupLabelNear = ($: CheerioAPI, $node: any): string => {
   let $current: any = $node;
