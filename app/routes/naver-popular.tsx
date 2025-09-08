@@ -124,12 +124,7 @@ const NaverPopularPage: React.FC = () => {
                 {data.url}
               </span>
             </div>
-            <PopularResults
-              itemList={data.items}
-              onCopyPreview={copyPreview}
-              onCopyFull={copyFullContent}
-              onOpenViewer={openViewer}
-            />
+            <PopularResults />
           </div>
         )}
       </div>
