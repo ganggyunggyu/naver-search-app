@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { PopularItem, PopularResponse } from '@/shared/types/naver';
+import type { PopularItem, PopularResponse } from '@/entities/naver/types';
 
 export interface UsePopularState {
   query: string;
@@ -60,4 +60,3 @@ export const usePopular = (): UsePopularState => {
     generateNaverUrl,
   };
 };
-

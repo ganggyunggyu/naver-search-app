@@ -1,5 +1,5 @@
 import React from 'react';
-import type { PopularItem } from '@/shared/types/naver';
+import type { PopularItem } from '@/entities/naver/types';
 
 export interface PopularViewerItem extends PopularItem {
   content?: string;
@@ -52,4 +52,3 @@ export const PopularViewerModal: React.FC<Props> = ({ open, loading, item, onClo
     </div>
   );
 };
-

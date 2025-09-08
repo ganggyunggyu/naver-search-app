@@ -8,7 +8,7 @@ import {
   popularErrorAtom,
   popularDataAtom,
 } from '../store/atoms';
-import type { PopularResponse } from '@/shared/types/naver';
+import type { PopularResponse } from '@/entities/naver/types';
 
 export const usePopularActions = () => {
   const [query] = useAtom(popularQueryAtom);
@@ -49,4 +49,3 @@ export const usePopularActions = () => {
 
   return { fetchPopular, generateNaverUrl };
 };
-

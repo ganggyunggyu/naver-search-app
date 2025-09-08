@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { Route } from './+types/naver-popular';
 import { useToast } from '@/components/Toast';
-import type { PopularItem } from '@/utils';
+import type { PopularItem } from '@/entities/naver/types';
 import { useAtom } from 'jotai';
 import {
   popularDataAtom,
