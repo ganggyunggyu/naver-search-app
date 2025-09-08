@@ -1,28 +1,21 @@
 import React from 'react';
+import { useAtom } from 'jotai';
+import { usePopularActions } from '../hooks/usePopularActions';
+import {
+  popularQueryAtom,
+  popularIsAutoUrlAtom,
+  popularUrlAtom,
+  popularIsLoadingAtom,
+} from '../store/atoms';
 
-interface Props {
-  query: string;
-  setQuery: (v: string) => void;
-  isAutoUrl: boolean;
-  setIsAutoUrl: (v: boolean) => void;
-  url: string;
-  setUrl: (v: string) => void;
-  generateNaverUrl: (q: string) => string;
-  isLoading: boolean;
-  onSubmit: (e: React.FormEvent) => void;
-}
+export const PopularSearchForm: React.FC = () => {
+  const [query, setQuery] = useAtom(popularQueryAtom);
+  const [isAutoUrl, setIsAutoUrl] = useAtom(popularIsAutoUrlAtom);
+  const [url, setUrl] = useAtom(popularUrlAtom);
+  const [isLoading] = useAtom(popularIsLoadingAtom);
+  const { generateNaverUrl, fetchPopular } = usePopularActions();
 
-export const PopularSearchForm: React.FC<Props> = ({
-  query,
-  setQuery,
-  isAutoUrl,
-  setIsAutoUrl,
-  url,
-  setUrl,
-  generateNaverUrl,
-  isLoading,
-  onSubmit,
-}) => (
+  return (
   <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
     <div className="flex gap-3 mb-6">
       <button
@@ -48,7 +41,7 @@ export const PopularSearchForm: React.FC<Props> = ({
         직접 URL 입력
       </button>
     </div>
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={fetchPopular} className="space-y-4">
       {isAutoUrl ? (
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">검색어</label>
@@ -93,5 +86,5 @@ export const PopularSearchForm: React.FC<Props> = ({
       </button>
     </form>
   </div>
-);
-
+  );
+};

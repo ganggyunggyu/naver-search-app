@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Route } from './+types/naver-popular';
 import { useToast } from '@/components/Toast';
-import type { PopularItem } from '@/shared/types/naver';
-import { usePopular } from '@/features/naverPopular/hooks/usePopular';
+import type { PopularItem } from '@/utils';
+import { useAtom } from 'jotai';
+import {
+  popularDataAtom,
+  popularErrorAtom,
+  viewerOpenAtom,
+  viewerLoadingAtom,
+  viewerItemAtom,
+} from '@/features/naverPopular/store/atoms';
+import { usePopularActions } from '@/features/naverPopular/hooks/usePopularActions';
 import { PopularSearchForm } from '@/features/naverPopular/components/PopularSearchForm';
 import { PopularResults } from '@/features/naverPopular/components/PopularResults';
-import { PopularViewerModal, type PopularViewerItem } from '@/components/naverPopular/PopularViewerModal';
-import { copyPreviewToClipboard, copyFullContentToClipboard } from '@/features/naverPopular/lib/clipboard';
+import {
+  PopularViewerModal,
+  type PopularViewerItem,
+} from '@/components/naverPopular/PopularViewerModal';
+import {
+  copyPreviewToClipboard,
+  copyFullContentToClipboard,
+} from '@/features/naverPopular/lib/clipboard';
 
 export const meta = (_: Route.MetaArgs) => [
   { title: 'Naver 인기글 추출' },
@@ -18,23 +32,12 @@ export const meta = (_: Route.MetaArgs) => [
 
 const NaverPopularPage: React.FC = () => {
   const { show } = useToast();
-  const {
-    query,
-    setQuery,
-    isAutoUrl,
-    setIsAutoUrl,
-    url,
-    setUrl,
-    isLoading,
-    error,
-    data,
-    fetchPopular,
-    generateNaverUrl,
-  } = usePopular();
-
-  const [isViewerOpen, setIsViewerOpen] = useState(false);
-  const [isViewerLoading, setIsViewerLoading] = useState(false);
-  const [viewerItem, setViewerItem] = useState<PopularViewerItem | null>(null);
+  const [error] = useAtom(popularErrorAtom);
+  const [data] = useAtom(popularDataAtom);
+  const [isViewerOpen, setIsViewerOpen] = useAtom(viewerOpenAtom);
+  const [isViewerLoading, setIsViewerLoading] = useAtom(viewerLoadingAtom);
+  const [viewerItem, setViewerItem] = useAtom(viewerItemAtom);
+  const { fetchPopular } = usePopularActions();
 
   const copyPreview = (item: PopularItem) =>
     copyPreviewToClipboard(item, (m, o) => show(m, o));
@@ -46,7 +49,9 @@ const NaverPopularPage: React.FC = () => {
     setIsViewerLoading(true);
     setViewerItem({ ...item });
     try {
-      const res = await fetch(`/api/content?url=${encodeURIComponent(item.link)}`);
+      const res = await fetch(
+        `/api/content?url=${encodeURIComponent(item.link)}`
+      );
       const json = await res.json();
       if (json.error) {
         show(String(json.error), { type: 'error' });
@@ -72,6 +77,10 @@ const NaverPopularPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (data) show(`인기글 ${data.count}개 추출 완료`, { type: 'success' });
+  }, [data, show]);
+
   return (
     <div className="relative py-16 sm:py-24">
       <div className="absolute inset-0 -z-10 overflow-hidden">
@@ -79,8 +88,12 @@ const NaverPopularPage: React.FC = () => {
       </div>
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">네이버 인기글 추출</h1>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">네이버 검색 결과에서 인기 키워드별 블로그 글을 추출합니다</p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">
+            네이버 인기글 추출
+          </h1>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
+            네이버 검색 결과에서 인기 키워드별 블로그 글을 추출합니다
+          </p>
         </div>
 
         <PopularViewerModal
@@ -90,17 +103,7 @@ const NaverPopularPage: React.FC = () => {
           onClose={() => setIsViewerOpen(false)}
         />
 
-        <PopularSearchForm
-          query={query}
-          setQuery={setQuery}
-          isAutoUrl={isAutoUrl}
-          setIsAutoUrl={setIsAutoUrl}
-          url={url}
-          setUrl={setUrl}
-          generateNaverUrl={generateNaverUrl}
-          isLoading={isLoading}
-          onSubmit={fetchPopular}
-        />
+        <PopularSearchForm />
 
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-6 py-4 rounded-2xl mb-8 shadow-sm">
@@ -113,9 +116,13 @@ const NaverPopularPage: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
                 인기글 결과
-                <span className="text-lg font-normal text-gray-600 dark:text-gray-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">{data.count}개</span>
+                <span className="text-lg font-normal text-gray-600 dark:text-gray-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
+                  {data.count}개
+                </span>
               </h2>
-              <span className="text-sm text-gray-500 dark:text-gray-400 break-all max-w-xs truncate">{data.url}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 break-all max-w-xs truncate">
+                {data.url}
+              </span>
             </div>
             <PopularResults
               itemList={data.items}
@@ -131,4 +138,3 @@ const NaverPopularPage: React.FC = () => {
 };
 
 export default NaverPopularPage;
-
