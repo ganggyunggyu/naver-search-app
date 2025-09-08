@@ -13,6 +13,7 @@ import type { PopularResponse } from '@/entities/naver/types';
 
 export const usePopularActions = () => {
   const [query] = useAtom(popularQueryAtom);
+  const setQuery = useSetAtom(popularQueryAtom);
   const [isAutoUrl] = useAtom(popularIsAutoUrlAtom);
   const [url] = useAtom(popularUrlAtom);
   const setIsLoading = useSetAtom(popularIsLoadingAtom);
@@ -50,5 +51,31 @@ export const usePopularActions = () => {
     [isAutoUrl, query, url, setIsLoading, setError, setData]
   );
 
-  return { fetchPopular, generateNaverUrl };
+  const searchWithQuery = useCallback(
+    async (q: string) => {
+      const qq = (q || '').trim();
+      if (!qq) return;
+      setQuery(qq);
+      setIsLoading(true);
+      setError('');
+      setData(null);
+      try {
+        if (isAutoUrl) addRecentSearch(qq);
+        const endpoint = isAutoUrl
+          ? `/api/naver-popular?q=${encodeURIComponent(qq)}`
+          : `/api/naver-popular?url=${encodeURIComponent(url.trim())}`;
+        const res = await fetch(endpoint);
+        const json: PopularResponse = await res.json();
+        if ((json as any).error) setError((json as any).error);
+        else setData(json);
+      } catch {
+        setError('요청 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [setQuery, isAutoUrl, url, setIsLoading, setError, setData, addRecentSearch]
+  );
+
+  return { fetchPopular, generateNaverUrl, searchWithQuery };
 };

@@ -14,7 +14,7 @@ export const PopularSearchForm: React.FC = () => {
   const [isAutoUrl, setIsAutoUrl] = useAtom(popularIsAutoUrlAtom);
   const [url, setUrl] = useAtom(popularUrlAtom);
   const [isLoading] = useAtom(popularIsLoadingAtom);
-  const { generateNaverUrl, fetchPopular } = usePopularActions();
+  const { generateNaverUrl, fetchPopular, searchWithQuery } = usePopularActions();
   const { recentSearchList, addRecentSearch, clearRecentSearch } = useRecentSearch();
 
   return (
@@ -102,19 +102,16 @@ export const PopularSearchForm: React.FC = () => {
         )}
       </div>
       <div className="flex flex-wrap gap-2">
-        {recentSearchList.slice(0, 10).map((q) => (
-          <button
-            key={q}
-            type="button"
-            onClick={() => {
-              setQuery(q);
-              addRecentSearch(q);
-            }}
-            className="px-2.5 py-1 text-xs rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            {q}
-          </button>
-        ))}
+          {recentSearchList.slice(0, 10).map((q) => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => searchWithQuery(q)}
+              className="px-2.5 py-1 text-xs rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              {q}
+            </button>
+          ))}
       </div>
     </div>
   )}
