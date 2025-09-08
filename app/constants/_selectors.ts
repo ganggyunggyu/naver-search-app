@@ -10,17 +10,14 @@ export const POPULAR_SECTION_SELECTOR = [
 ].join(', ');
 
 export const KEYWORD_HEADER_SELECTOR =
-  ".cRDU8rdDgYK5R0AXfuCy .fds-comps-text.fds-comps-header-headline.pP6CrxLzumAlsR4_qelA, " +
-  ".fds-comps-header-headline.pP6CrxLzumAlsR4_qelA, " +
-  ".fds-comps-text.fds-comps-header-headline, " +
-  ".fds-comps-header-headline, " +
+  '.cRDU8rdDgYK5R0AXfuCy .fds-comps-text.fds-comps-header-headline.pP6CrxLzumAlsR4_qelA, ' +
+  '.fds-comps-header-headline.pP6CrxLzumAlsR4_qelA, ' +
+  '.fds-comps-text.fds-comps-header-headline, ' +
+  '.fds-comps-header-headline, ' +
   "[class*='fds-comps-header-headline']";
 
 // 인기글 카드 아이템 선택자 (변형 대비)
-export const POPULAR_ITEM_SELECTOR = [
-  "[class*='fds-comps-right-image-desktop']",
-  "[class*='fds-comps-right-image']",
-].join(', ');
+export const POPULAR_ITEM_SELECTOR = ["[class*='img']"].join(', ');
 
 // Search fallback selectors
 export const SEARCH_PARTIAL_SELECTORS = [

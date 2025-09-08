@@ -64,6 +64,7 @@ export default function NaverPopularPage() {
         : `/api/naver-popular?url=${encodeURIComponent(url.trim())}`;
       const res = await fetch(endpoint);
       const json: PopularResponse = await res.json();
+
       if ((json as any).error) {
         setError((json as any).error);
         show(String((json as any).error), { type: 'error' });
@@ -203,6 +204,7 @@ export default function NaverPopularPage() {
     setViewerOpen(true);
     setViewerLoading(true);
     setViewerItem({ ...item });
+
     try {
       const res = await fetch(
         `/api/content?url=${encodeURIComponent(item.link)}`
@@ -520,7 +522,6 @@ export default function NaverPopularPage() {
                   },
                   {} as Record<string, PopularItem[]>
                 );
-
                 const groups = Object.entries(groupedItems);
 
                 return (

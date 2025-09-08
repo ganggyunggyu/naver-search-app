@@ -7,7 +7,7 @@ export const fetchHtml = async (
 ): Promise<string> => {
   const res = await fetch(url, { headers });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  console.log(res.text);
+
   return await res.text();
 };
 
