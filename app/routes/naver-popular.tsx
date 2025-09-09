@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Route } from './+types/naver-popular';
 import { useToast } from '@/components/Toast';
 import type { PopularItem } from '@/entities/naver/types';
@@ -11,6 +11,13 @@ import {
   viewerItemAtom,
 } from '@/features/naver-popular/store';
 import { usePopularActions } from '@/features/naver-popular/hooks';
+import { useSetAtom } from 'jotai';
+import {
+  popularIsAutoUrlAtom,
+  popularQueryAtom,
+  popularUrlAtom,
+  popularIsLoadingAtom,
+} from '@/features/naver-popular/store';
 import {
   PopularSearchForm,
   PopularResults,
@@ -34,17 +41,82 @@ export const meta = (_: Route.MetaArgs) => [
   },
 ];
 
-const NaverPopularPage: React.FC = () => {
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+  const url = new URL(request.url);
+
+  const keyword = (((params as any) || {}).keyword || '').trim();
+  const q = keyword || (url.searchParams.get('q') || '').trim();
+  const directUrl = (url.searchParams.get('url') || '').trim();
+  return { q, url: directUrl };
+};
+
+const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   const { show } = useToast();
   const [error] = useAtom(popularErrorAtom);
   const [data] = useAtom(popularDataAtom);
   const [isViewerOpen, setIsViewerOpen] = useAtom(viewerOpenAtom);
   const [isViewerLoading, setIsViewerLoading] = useAtom(viewerLoadingAtom);
   const [viewerItem, setViewerItem] = useAtom(viewerItemAtom);
+  const setQuery = useSetAtom(popularQueryAtom);
+  const setUrl = useSetAtom(popularUrlAtom);
+  const setIsAutoUrl = useSetAtom(popularIsAutoUrlAtom);
+  const { fetchPopular } = usePopularActions();
+  const prevRef = useRef<{ q: string; u: string }>({ q: '', u: '' });
+  const setIsLoading = useSetAtom(popularIsLoadingAtom);
+  const setError = useSetAtom(popularErrorAtom);
+  const setData = useSetAtom(popularDataAtom);
 
   useEffect(() => {
     if (data) show(`인기글 ${data.count}개 추출 완료`, { type: 'success' });
   }, [data, show]);
+
+  useEffect(() => {
+    const q = (loaderData as any)?.q as string | undefined;
+    const u = (loaderData as any)?.url as string | undefined;
+    const qq = (q || '').trim();
+    const uu = (u || '').trim();
+
+    if (!qq && !uu) return;
+
+    if (prevRef.current.q === qq && prevRef.current.u === uu) return;
+    prevRef.current = { q: qq, u: uu };
+
+    if (qq) {
+      setIsAutoUrl(true);
+      setQuery(qq);
+    } else {
+      setIsAutoUrl(false);
+      setUrl(uu);
+    }
+
+    const endpoint = qq
+      ? `/api/naver-popular?q=${encodeURIComponent(qq)}`
+      : `/api/naver-popular?url=${encodeURIComponent(uu)}`;
+
+    (async () => {
+      try {
+        setIsLoading(true);
+        setError('');
+        setData(null);
+        const res = await fetch(endpoint);
+        const json = await res.json();
+        if ((json as any)?.error) setError(String((json as any).error));
+        else setData(json);
+      } catch {
+        setError('요청 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [
+    loaderData,
+    setIsAutoUrl,
+    setQuery,
+    setUrl,
+    setIsLoading,
+    setError,
+    setData,
+  ]);
 
   const getBlogId = (url: string): string => {
     try {
