@@ -62,11 +62,11 @@ export const useToast = () => {
 
 const ToastViewport: React.FC<{ toasts: ToastItem[]; onClose: (id: string) => void }> = ({ toasts, onClose }) => (
   <div
-    className="fixed z-50 inset-0 pointer-events-none flex flex-col items-end gap-2 p-4 sm:p-6"
+    className="fixed z-50 inset-x-0 bottom-4 sm:bottom-6 pointer-events-none flex justify-center"
     aria-live="polite"
     aria-atomic="true"
   >
-    <div className="ml-auto w-full sm:max-w-sm space-y-2">
+    <div className="w-full sm:max-w-sm space-y-2 flex flex-col items-center">
       {toasts.map((t) => (
         <ToastCard key={t.id} item={t} onClose={() => onClose(t.id)} />)
       )}
