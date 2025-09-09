@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { PopularItem } from '@/entities/naver/types';
 
 export interface PopularViewerItem extends PopularItem {
@@ -14,8 +14,37 @@ interface Props {
   onClose: () => void;
 }
 
+const STOPWORDS = new Set([
+  '그리고','그러나','하지만','또한','및','또','그','이','저','것','좀','더','수','수있다','대한','최근','관련','때문','정도','에서','이다','으로','해서','있는','합니다','했다','하는','하는데','이다','이다.',
+  '을','를','은','는','이','가','에','의','와','과','로','다','요','죠','님','합니다.','했습니다','했습니다.'
+]);
+
+const analyzeContent = (content: string) => {
+  const text = (content || '').trim();
+  const charCount = text.length;
+  const lines = text.split(/\n+/).filter(Boolean);
+  const paragraphCount = lines.length;
+  // 간단한 단어 분리 (공백 기준) + 특수문자 제거
+  const tokens = text
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+  const wordCount = tokens.length;
+  const freq = new Map<string, number>();
+  for (const t of tokens) freq.set(t, (freq.get(t) || 0) + 1);
+  const topKeywords = Array.from(freq.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([k]) => k);
+  // 한글 기준 대략 500자/분 가독 속도 가정
+  const readingTimeMin = Math.max(0.1, +(charCount / 500).toFixed(1));
+  return { charCount, wordCount, paragraphCount, readingTimeMin, topKeywords };
+};
+
 export const PopularViewerModal: React.FC<Props> = ({ open, loading, item, onClose }) => {
   if (!open) return null;
+  const analysis = useMemo(() => analyzeContent(item?.content || ''), [item?.content]);
   return (
     <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
       <div className="w-full max-w-3xl max-h[85vh] overflow-hidden rounded-2xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-xl" onClick={(e) => e.stopPropagation()}>
@@ -41,6 +70,22 @@ export const PopularViewerModal: React.FC<Props> = ({ open, loading, item, onClo
             <div className="mt-3 text-sm text-gray-600 dark:text-gray-400 break-all">{item?.link}</div>
           </div>
           <div className="md:col-span-2">
+            <div className="mb-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+              <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">원고 분석</div>
+              <div className="text-xs text-gray-700 dark:text-gray-300 flex flex-wrap gap-x-4 gap-y-1">
+                <span>문자수: <strong>{analysis.charCount}</strong></span>
+                <span>단어수: <strong>{analysis.wordCount}</strong></span>
+                <span>문단수: <strong>{analysis.paragraphCount}</strong></span>
+                <span>예상 읽기: <strong>{analysis.readingTimeMin}분</strong></span>
+              </div>
+              {analysis.topKeywords.length > 0 && (
+                <div className="mt-2 text-xs text-gray-700 dark:text-gray-300">
+                  키워드: {analysis.topKeywords.map((k) => (
+                    <span key={k} className="inline-block mr-1 px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">#{k}</span>
+                  ))}
+                </div>
+              )}
+            </div>
             {loading ? (
               <div className="h-48 flex items-center justify-center text-gray-500">불러오는 중...</div>
             ) : (
