@@ -20,6 +20,7 @@ import {
   PopularViewerModal,
   type PopularViewerItem,
 } from '@/components/naverPopular/PopularViewerModal';
+import { BLOG_IDS } from '@/constants';
 import {
   copyPreviewToClipboard,
   copyFullContentToClipboard,
@@ -40,49 +41,45 @@ const NaverPopularPage: React.FC = () => {
   const [isViewerOpen, setIsViewerOpen] = useAtom(viewerOpenAtom);
   const [isViewerLoading, setIsViewerLoading] = useAtom(viewerLoadingAtom);
   const [viewerItem, setViewerItem] = useAtom(viewerItemAtom);
-  const { fetchPopular } = usePopularActions();
-
-  const copyPreview = (item: PopularItem) =>
-    copyPreviewToClipboard(item, (m, o) => show(m, o));
-  const copyFullContent = (link: string) =>
-    copyFullContentToClipboard(link, (m, o) => show(m, o));
-
-  const openViewer = async (item: PopularItem) => {
-    setIsViewerOpen(true);
-    setIsViewerLoading(true);
-    setViewerItem({ ...item });
-    try {
-      const res = await fetch(
-        `/api/content?url=${encodeURIComponent(item.link)}`
-      );
-      const json = await res.json();
-      if (json.error) {
-        show(String(json.error), { type: 'error' });
-        setIsViewerLoading(false);
-        return;
-      }
-      setViewerItem((prev) =>
-        prev
-          ? {
-              ...prev,
-              title: json.title || prev.title,
-              content: json.content || '',
-              blogName: json.blogName || undefined,
-              image: (json.images && json.images[0]) || prev.image,
-              link: item.link,
-            }
-          : prev
-      );
-    } catch {
-      show('본문을 가져오는데 실패했습니다.', { type: 'error' });
-    } finally {
-      setIsViewerLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (data) show(`인기글 ${data.count}개 추출 완료`, { type: 'success' });
   }, [data, show]);
+
+  const getBlogId = (url: string): string => {
+    try {
+      const u = new URL(url);
+      if (
+        u.hostname.includes('blog.naver.com') ||
+        u.hostname.includes('m.blog.naver.com')
+      ) {
+        const seg = u.pathname.replace(/^\//, '').split('/')[0];
+        return (seg || '').toLowerCase();
+      }
+    } catch {}
+    return '';
+  };
+  type MatchItem = {
+    id: string;
+    item: PopularItem;
+  };
+  const matchedIdList = (() => {
+    const list = new Set<MatchItem>();
+    const allow = new Set(BLOG_IDS.map((v) => v.toLowerCase()));
+    const items = data?.items || [];
+    for (const it of items) {
+      const id = getBlogId(it.link);
+      if (id && allow.has(id)) {
+        const matchedItem: MatchItem = {
+          id,
+          item: it,
+        };
+        list.add(matchedItem);
+      }
+    }
+
+    return Array.from(list);
+  })();
 
   return (
     <div className="relative py-16 sm:py-24">
@@ -90,6 +87,38 @@ const NaverPopularPage: React.FC = () => {
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[1200px] h-[1200px] rounded-full bg-gradient-to-br from-green-200/40 via-blue-200/30 to-transparent blur-3xl" />
       </div>
       <div className="container mx-auto px-4">
+        <div className="mb-4">
+          {data && data.items?.length > 0 && (
+            <div className="mb-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                목록 매칭:{' '}
+              </span>
+              {matchedIdList.length > 0 ? (
+                <span className="text-sm font-semibold text-green-700 dark:text-green-400">
+                  {matchedIdList.length}개
+                </span>
+              ) : (
+                <span className="text-sm font-semibold text-red-700 dark:text-red-400">
+                  0개
+                </span>
+              )}
+              {matchedIdList.length > 0 && (
+                <span className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                  {matchedIdList.map((el) => (
+                    <span
+                      key={el.id}
+                      className="inline-block mr-1 px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+                    >
+                      #{el.id}
+                      {el.item.blogName}
+                      {el.item.title}
+                    </span>
+                  ))}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
         <div className="text-center mb-10">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">
             네이버 인기글 추출

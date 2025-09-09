@@ -9,6 +9,7 @@ const DEFAULT_GROUP = '비즈니스·경제 인기글';
 export const PopularResults: React.FC = () => {
   const [data] = useAtom(popularDataAtom);
   const itemList = data?.items || [];
+
   const grouped = useMemo(() => {
     const map: Record<string, PopularItem[]> = {};
     for (const it of itemList || []) {
