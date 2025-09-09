@@ -1,5 +1,5 @@
 import type { Route } from './+types/api.content';
-import { jsonError, resolveNaverBlogHtml, extractContentFromHtml } from '@/utils';
+import { jsonError, resolveNaverBlogHtml, extractContentFromHtml } from '@/shared';
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);

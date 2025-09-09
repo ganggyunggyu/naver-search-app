@@ -14,7 +14,6 @@ export const viewerOpenAtom = atom<boolean>(false);
 export const viewerLoadingAtom = atom<boolean>(false);
 export const viewerItemAtom = atom<PopularViewerItem | null>(null);
 
-// Recent searches (persisted)
 export const RECENT_SEARCH_STORAGE_KEY = 'recentSearchList';
 export const recentSearchListAtom = atomWithStorage<string[]>(
   RECENT_SEARCH_STORAGE_KEY,

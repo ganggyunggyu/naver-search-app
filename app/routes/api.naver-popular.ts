@@ -1,5 +1,5 @@
 import type { Route } from './+types/api.naver-popular';
-import { fetchHtml, NAVER_DESKTOP_HEADERS, buildNaverSearchUrl, jsonError, extractPopularItems } from '@/utils';
+import { fetchHtml, NAVER_DESKTOP_HEADERS, buildNaverSearchUrl, jsonError, extractPopularItems } from '@/shared';
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);

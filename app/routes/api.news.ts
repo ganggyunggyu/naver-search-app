@@ -1,5 +1,5 @@
 import type { Route } from './+types/api.news';
-import { fetchNaverOpenApi, jsonError } from '@/utils';
+import { fetchNaverOpenApi, jsonError } from '@/shared';
 
 interface NaverNewsItem {
   title: string;
