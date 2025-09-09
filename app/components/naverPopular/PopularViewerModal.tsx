@@ -22,8 +22,6 @@ const STOPWORDS = new Set([
 const analyzeContent = (content: string) => {
   const text = (content || '').trim();
   const charCount = text.length;
-  const lines = text.split(/\n+/).filter(Boolean);
-  const paragraphCount = lines.length;
   // 간단한 단어 분리 (공백 기준) + 특수문자 제거
   const tokens = text
     .replace(/[^\p{L}\p{N}\s]/gu, ' ')
@@ -36,10 +34,10 @@ const analyzeContent = (content: string) => {
   const topKeywords = Array.from(freq.entries())
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
-    .map(([k]) => k);
+    .map(([word, count]) => ({ word, count }));
   // 한글 기준 대략 500자/분 가독 속도 가정
   const readingTimeMin = Math.max(0.1, +(charCount / 500).toFixed(1));
-  return { charCount, wordCount, paragraphCount, readingTimeMin, topKeywords };
+  return { charCount, wordCount, readingTimeMin, topKeywords };
 };
 
 export const PopularViewerModal: React.FC<Props> = ({ open, loading, item, onClose }) => {
@@ -75,13 +73,12 @@ export const PopularViewerModal: React.FC<Props> = ({ open, loading, item, onClo
               <div className="text-xs text-gray-700 dark:text-gray-300 flex flex-wrap gap-x-4 gap-y-1">
                 <span>문자수: <strong>{analysis.charCount}</strong></span>
                 <span>단어수: <strong>{analysis.wordCount}</strong></span>
-                <span>문단수: <strong>{analysis.paragraphCount}</strong></span>
                 <span>예상 읽기: <strong>{analysis.readingTimeMin}분</strong></span>
               </div>
               {analysis.topKeywords.length > 0 && (
                 <div className="mt-2 text-xs text-gray-700 dark:text-gray-300">
                   키워드: {analysis.topKeywords.map((k) => (
-                    <span key={k} className="inline-block mr-1 px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">#{k}</span>
+                    <span key={k.word} className="inline-block mr-1 px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">#{k.word} <span className="opacity-70">x{k.count}</span></span>
                   ))}
                 </div>
               )}
