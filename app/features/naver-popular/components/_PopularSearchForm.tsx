@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import { useAtom } from 'jotai';
 import { usePopularActions, useRecentSearch } from '../hooks';
 import {
@@ -13,8 +14,9 @@ export const PopularSearchForm: React.FC = () => {
   const [isAutoUrl, setIsAutoUrl] = useAtom(popularIsAutoUrlAtom);
   const [url, setUrl] = useAtom(popularUrlAtom);
   const [isLoading] = useAtom(popularIsLoadingAtom);
-  const { generateNaverUrl, fetchPopular, searchWithQuery } = usePopularActions();
+  const { generateNaverUrl } = usePopularActions();
   const { recentSearchList, addRecentSearch, clearRecentSearch } = useRecentSearch();
+  const navigate = useNavigate();
 
   return (
   <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
@@ -42,7 +44,22 @@ export const PopularSearchForm: React.FC = () => {
         직접 URL 입력
       </button>
     </div>
-    <form onSubmit={fetchPopular} className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (isAutoUrl) {
+          const qq = (query || '').trim();
+          if (!qq) return;
+          addRecentSearch(qq);
+          navigate(`/${encodeURIComponent(qq)}`);
+        } else {
+          const u = (url || '').trim();
+          if (!u) return;
+          navigate(`/url/${encodeURIComponent(u)}`);
+        }
+      }}
+      className="space-y-4"
+    >
       {isAutoUrl ? (
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">검색어</label>
@@ -105,7 +122,7 @@ export const PopularSearchForm: React.FC = () => {
             <button
               key={q}
               type="button"
-              onClick={() => searchWithQuery(q)}
+              onClick={() => navigate(`/${encodeURIComponent(q)}`)}
               className="px-2.5 py-1 text-xs rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               {q}
