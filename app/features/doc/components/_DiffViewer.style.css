@@ -1,0 +1,155 @@
+/* =========================================================
+   Diff Viewer — Dark-first theme (light override at bottom)
+   기본은 다크 모드. light 테마는 .theme-light 로 덮어씀.
+   색은 전부 CSS 변수로 묶어서 유지보수 쉽게.
+========================================================= */
+
+/* Dark (default) */
+:root {
+  --bg: #0b0f14; /* 전체 배경 */
+  --panel: #0f1620; /* 카드/패널 배경 */
+  --panel-alt: #0c131b; /* 패널 상단/라인 배경 */
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #e5edf5; /* 본문 */
+  --text-dim: #a9b4c2; /* 보조 텍스트 */
+  --tab-bg: rgba(255, 255, 255, 0.06);
+  --tab-active-bg: rgba(59, 130, 246, 0.16); /* blue-500/16 */
+  --tab-active-text: #93c5fd;
+  --chip-border: rgba(255, 255, 255, 0.12);
+
+  --added-bg: rgba(16, 185, 129, 0.6); /* emerald-500/18 */
+  --removed-bg: rgba(239, 68, 68, 0.6); /* red-500/22 */
+  --same-bg: transparent;
+
+  --select-bg: #101826;
+  --select-border: rgba(255, 255, 255, 0.14);
+  --select-text: #d9e4ef;
+}
+
+/* 컨테이너 */
+.diff-viewer {
+  display: grid;
+  gap: 12px;
+  color: var(--text);
+  width: 80vw;
+  margin: auto;
+}
+
+/* 툴바 */
+.diff-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-dim);
+}
+
+/* 탭 */
+.tabs {
+  display: inline-flex;
+  background: var(--tab-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--chip-border);
+}
+.tab {
+  padding: 6px 12px;
+  font-size: 14px;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+.tab.active {
+  background: var(--tab-active-bg);
+  color: var(--tab-active-text);
+}
+
+/* Granularity 선택 */
+.granularity {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.granularity select {
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-text);
+  outline: none;
+}
+
+/* Unified 뷰 */
+.diff-unified {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.diff-chunk {
+  white-space: pre-wrap;
+}
+.diff-chunk.added {
+  background: var(--added-bg);
+}
+.diff-chunk.removed {
+  background: var(--removed-bg);
+  text-decoration: line-through;
+}
+.diff-chunk.same {
+  background: var(--same-bg);
+}
+
+/* Side-by-side */
+.diff-sbs .panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  overflow: hidden;
+}
+.diff-sbs .panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  color: var(--text-dim);
+  background: var(--panel-alt);
+  border-bottom: 1px solid var(--border);
+}
+.diff-sbs .panel-body {
+  padding: 12px;
+  white-space: pre-wrap;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+/* =========================================
+   Light theme (선택적으로 사용)
+   컨테이너 상위에 .theme-light 붙이면 활성화
+========================================= */
+.theme-light {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel-alt: #f8fafc;
+  --border: rgba(0, 0, 0, 0.08);
+  --text: #0f172a;
+  --text-dim: #475569;
+  --tab-bg: rgba(0, 0, 0, 0.04);
+  --tab-active-bg: #e5f2ff;
+  --tab-active-text: #0f52ba;
+  --chip-border: rgba(0, 0, 0, 0.08);
+
+  --added-bg: rgba(16, 185, 129, 0.16);
+  --removed-bg: rgba(239, 68, 68, 0.18);
+  --same-bg: transparent;
+
+  --select-bg: #ffffff;
+  --select-border: #cbd5e1;
+  --select-text: #111827;
+}

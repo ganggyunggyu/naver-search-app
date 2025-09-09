@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import type { Route } from './+types/url-search';
+import type { Route } from './+types/url-search.dynamic';
 import { useToast } from '@/components/Toast';
-import { analyzeManuscript } from '@/shared';
+import { analyzeManuscript, formatManuscriptAnalysis } from '@/shared';
 
 interface ContentResult {
   title: string;
@@ -53,6 +53,19 @@ const UrlSearchPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     () => analyzeManuscript(data?.content || ''),
     [data?.content]
   );
+  const copyAnalysis = async () => {
+    if (!data) return;
+    try {
+      const text = formatManuscriptAnalysis(analysis, {
+        title: data.title,
+        url: data.url,
+      });
+      await navigator.clipboard.writeText(text);
+      show('분석 결과가 복사되었습니다!', { type: 'success' });
+    } catch {
+      show('복사 실패', { type: 'error' });
+    }
+  };
 
   const fetchByUrl = async (u: string) => {
     const target = (u || '').trim();
@@ -195,12 +208,6 @@ const UrlSearchPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
                   원문
                 </a>
                 <button
-                  onClick={copyPreview}
-                  className="px-3 py-1.5 text-sm rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
-                >
-                  미리보기 복사
-                </button>
-                <button
                   onClick={copyFull}
                   className="px-3 py-1.5 text-sm rounded-md bg-green-600 text-white"
                 >
@@ -239,6 +246,14 @@ const UrlSearchPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
                   ))}
                 </div>
               )}
+              <div className="mt-3">
+                <button
+                  onClick={copyAnalysis}
+                  className="px-3 py-1.5 text-xs rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
+                >
+                  분석 복사
+                </button>
+              </div>
             </div>
             <div className="text-xs text-gray-600 dark:text-gray-400 break-all mb-3">
               {data.actualUrl || data.url}
