@@ -111,7 +111,7 @@ const NaverPopularPage: React.FC = () => {
                     >
                       #{el.id}
                       {el.item.blogName}
-                      {el.item.title}
+                      {el.item.group}
                     </span>
                   ))}
                 </span>
