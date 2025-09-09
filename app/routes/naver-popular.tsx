@@ -91,7 +91,7 @@ const NaverPopularPage: React.FC = () => {
           {data && data.items?.length > 0 && (
             <div className="mb-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
               <span className="text-sm text-gray-700 dark:text-gray-300">
-                목록 매칭:{' '}
+                노출항목:{' '}
               </span>
               {matchedIdList.length > 0 ? (
                 <span className="text-sm font-semibold text-green-700 dark:text-green-400">
