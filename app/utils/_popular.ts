@@ -1,5 +1,5 @@
 import type { CheerioAPI } from 'cheerio';
-import { loadHtml } from './html';
+import { loadHtml } from '@/shared/utils/html';
 import { KEYWORD_HEADER_SELECTOR } from '@/constants';
 import type { PopularItem } from '@/entities/naver/types';
 
