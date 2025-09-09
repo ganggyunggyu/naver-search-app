@@ -5,7 +5,7 @@ import {
   buildNaverSearchUrl,
   jsonError,
   extractPopularItems,
-} from '@/utils';
+} from '@/shared';
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);

@@ -1,16 +1,20 @@
 import type { Route } from './+types/api.content';
-import { jsonError, resolveNaverBlogHtml, extractContentFromHtml } from '@/utils';
+import {
+  jsonError,
+  resolveNaverBlogHtml,
+  extractContentFromHtml,
+} from '@/shared';
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
   const blogUrl = url.searchParams.get('url');
 
   if (!blogUrl) return jsonError('블로그 URL이 필요합니다.', 400);
-  if (!blogUrl.includes('blog.naver.com')) return jsonError('네이버 블로그 URL만 지원됩니다.', 400);
 
   try {
     const { html, actualUrl } = await resolveNaverBlogHtml(blogUrl);
-    const { title, content, images, blogName, debug } = extractContentFromHtml(html);
+    const { title, content, images, blogName, debug } =
+      extractContentFromHtml(html);
 
     if (!content.trim() || content.length < 50) {
       return Response.json({
@@ -26,7 +30,15 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       });
     }
 
-    return Response.json({ title: title.trim(), blogName: blogName || undefined, content: content.trim(), images, url: blogUrl, actualUrl, status: 200 });
+    return Response.json({
+      title: title.trim(),
+      blogName: blogName || undefined,
+      content: content.trim(),
+      images,
+      url: blogUrl,
+      actualUrl,
+      status: 200,
+    });
   } catch (error) {
     console.error('Content fetch error:', error);
     const msg = error instanceof Error ? error.message : '알 수 없는 오류';

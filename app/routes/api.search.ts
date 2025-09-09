@@ -1,4 +1,4 @@
-import { fetchNaverOpenApi, jsonError } from '@/utils';
+import { fetchNaverOpenApi, jsonError } from '@/shared';
 import type { Route } from './+types/api.search';
 
 interface NaverBlogItem {
