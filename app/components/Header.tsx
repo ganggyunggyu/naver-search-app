@@ -42,6 +42,26 @@ const Header: React.FC<Props> = () => (
         >
           인기글
         </NavLink>
+        <NavLink
+          to="/url-search"
+          className={({ isActive }) =>
+            `px-2 py-1 rounded-md transition-colors ${
+              isActive ? "text-amber-700 bg-amber-50" : "text-gray-600 hover:text-gray-900"
+            }`
+          }
+        >
+          URL검색
+        </NavLink>
+        <NavLink
+          to="/doc-analyzer"
+          className={({ isActive }) =>
+            `px-2 py-1 rounded-md transition-colors ${
+              isActive ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900"
+            }`
+          }
+        >
+          문서 분석
+        </NavLink>
       </nav>
     </div>
   </header>

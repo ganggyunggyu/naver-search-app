@@ -5,6 +5,7 @@ export default [
   route('/search', 'routes/search.tsx'),
   route('/naver-extractor', 'routes/naver-extractor.tsx'),
   route('/url-search', 'routes/url-search.tsx'),
+  route('/doc-analyzer', 'routes/doc-analyzer.tsx'),
 
   // API 엔드포인트
   route('/api/search', 'routes/api.search.ts'),
