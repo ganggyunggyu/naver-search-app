@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router";
+import { Link, NavLink } from 'react-router';
 
 interface Props {}
 
@@ -16,27 +16,9 @@ const Header: React.FC<Props> = () => (
           to="/"
           className={({ isActive }) =>
             `px-2 py-1 rounded-md transition-colors ${
-              isActive ? "text-green-700 bg-green-50" : "text-gray-600 hover:text-gray-900"
-            }`
-          }
-        >
-          홈
-        </NavLink>
-        <NavLink
-          to="/search"
-          className={({ isActive }) =>
-            `px-2 py-1 rounded-md transition-colors ${
-              isActive ? "text-blue-700 bg-blue-50" : "text-gray-600 hover:text-gray-900"
-            }`
-          }
-        >
-          검색
-        </NavLink>
-        <NavLink
-          to="/naver-popular"
-          className={({ isActive }) =>
-            `px-2 py-1 rounded-md transition-colors ${
-              isActive ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900"
+              isActive
+                ? 'text-purple-700 bg-purple-50'
+                : 'text-gray-600 hover:text-gray-900'
             }`
           }
         >
@@ -46,7 +28,9 @@ const Header: React.FC<Props> = () => (
           to="/url-search"
           className={({ isActive }) =>
             `px-2 py-1 rounded-md transition-colors ${
-              isActive ? "text-amber-700 bg-amber-50" : "text-gray-600 hover:text-gray-900"
+              isActive
+                ? 'text-amber-700 bg-amber-50'
+                : 'text-gray-600 hover:text-gray-900'
             }`
           }
         >
@@ -56,11 +40,25 @@ const Header: React.FC<Props> = () => (
           to="/doc-analyzer"
           className={({ isActive }) =>
             `px-2 py-1 rounded-md transition-colors ${
-              isActive ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900"
+              isActive
+                ? 'text-purple-700 bg-purple-50'
+                : 'text-gray-600 hover:text-gray-900'
             }`
           }
         >
           문서 분석
+        </NavLink>
+        <NavLink
+          to="/doc-compare"
+          className={({ isActive }) =>
+            `px-2 py-1 rounded-md transition-colors ${
+              isActive
+                ? 'text-indigo-700 bg-indigo-50'
+                : 'text-gray-600 hover:text-gray-900'
+            }`
+          }
+        >
+          문서 비교
         </NavLink>
       </nav>
     </div>
