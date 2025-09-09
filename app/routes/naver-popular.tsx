@@ -11,7 +11,11 @@ import {
   viewerItemAtom,
 } from '@/features/naver-popular/store';
 import { usePopularActions } from '@/features/naver-popular/hooks';
-import { PopularSearchForm, PopularResults } from '@/features/naver-popular/components';
+import {
+  PopularSearchForm,
+  PopularResults,
+} from '@/features/naver-popular/components';
+
 import {
   PopularViewerModal,
   type PopularViewerItem,

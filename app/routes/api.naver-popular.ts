@@ -1,5 +1,15 @@
 import type { Route } from './+types/api.naver-popular';
+<<<<<<< HEAD
 import { fetchHtml, NAVER_DESKTOP_HEADERS, buildNaverSearchUrl, jsonError, extractPopularItems } from '@/shared';
+=======
+import {
+  fetchHtml,
+  NAVER_DESKTOP_HEADERS,
+  buildNaverSearchUrl,
+  jsonError,
+  extractPopularItems,
+} from '@/utils';
+>>>>>>> main
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
@@ -14,7 +24,12 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     const html = await fetchHtml(finalUrl, NAVER_DESKTOP_HEADERS);
     const items = extractPopularItems(html);
 
-    return Response.json({ url: finalUrl, count: items.length, items, status: 200 });
+    return Response.json({
+      url: finalUrl,
+      count: items.length,
+      items,
+      status: 200,
+    });
   } catch (err) {
     console.error('Popular extraction error:', err);
     const msg = err instanceof Error ? err.message : '알 수 없는 오류';
