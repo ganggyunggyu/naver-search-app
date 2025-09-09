@@ -1,0 +1,62 @@
+export type KeywordCount = { word: string; count: number };
+export type ManuscriptAnalysis = {
+  charCount: number;
+  charCountNoSpace: number;
+  wordCount: number;
+  readingTimeMin: number;
+  topKeywords: KeywordCount[];
+};
+
+const STOPWORDS = new Set([
+  '그리고','그러나','하지만','또한','및','또','그','이','저','것','좀','더','수','수있다','대한','최근','관련','때문','정도','에서','이다','으로','해서','있는','합니다','했다','하는','하는데','이다','이다.',
+  '을','를','은','는','이','가','에','의','와','과','로','다','요','죠','님','합니다.','했습니다','했습니다.'
+]);
+
+export const analyzeManuscript = (
+  content: string,
+  include?: string
+): ManuscriptAnalysis => {
+  const text = (content || '').trim();
+  const charCount = text.length;
+  const charCountNoSpace = text.replace(/\s+/g, '').length;
+
+  const tokens = text
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+
+  const wordCount = tokens.length;
+  const freq = new Map<string, number>();
+  for (const t of tokens) freq.set(t, (freq.get(t) || 0) + 1);
+
+  const entries: Array<[string, number]> = Array.from(freq.entries());
+  const q = (include || '').trim();
+  if (q) {
+    const lcText = text.toLowerCase();
+    const lcQ = q.toLowerCase();
+    let qCount = 0;
+    if (lcQ.length > 0) qCount = Math.max(0, lcText.split(lcQ).length - 1);
+    const idx = entries.findIndex(([w]) => w.toLowerCase() === lcQ);
+    if (idx >= 0) {
+      if (qCount > entries[idx][1]) entries[idx][1] = qCount;
+    } else {
+      entries.push([q, qCount]);
+    }
+  }
+
+  let topKeywords = entries
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([word, count]) => ({ word, count }));
+
+  if (q && !topKeywords.some((k) => k.word.toLowerCase() === q.toLowerCase())) {
+    const qCount = entries.find((e) => e[0].toLowerCase() === q.toLowerCase())?.[1] ?? 0;
+    if (topKeywords.length >= 5) topKeywords[topKeywords.length - 1] = { word: q, count: qCount };
+    else topKeywords.push({ word: q, count: qCount });
+  }
+
+  const readingTimeMin = Math.max(0.1, +(charCount / 500).toFixed(1));
+  return { charCount, charCountNoSpace, wordCount, readingTimeMin, topKeywords };
+};
+

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { popularQueryAtom } from '@/features/naver-popular/store';
 import type { PopularItem } from '@/entities/naver/types';
+import { analyzeManuscript } from '@/shared';
 
 export interface PopularViewerItem extends PopularItem {
   content?: string;
@@ -16,60 +17,12 @@ interface Props {
   onClose: () => void;
 }
 
-const STOPWORDS = new Set([
-  '그리고','그러나','하지만','또한','및','또','그','이','저','것','좀','더','수','수있다','대한','최근','관련','때문','정도','에서','이다','으로','해서','있는','합니다','했다','하는','하는데','이다','이다.',
-  '을','를','은','는','이','가','에','의','와','과','로','다','요','죠','님','합니다.','했습니다','했습니다.'
-]);
-
-const analyzeContent = (content: string, include?: string) => {
-  const text = (content || '').trim();
-  const charCount = text.length;
-  // 간단한 단어 분리 (공백 기준) + 특수문자 제거
-  const tokens = text
-    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
-    .split(/\s+/)
-    .map((t) => t.trim())
-    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
-  const wordCount = tokens.length;
-  const freq = new Map<string, number>();
-  for (const t of tokens) freq.set(t, (freq.get(t) || 0) + 1);
-  // 추가 포함 키워드 처리(검색어)
-  const entries: Array<[string, number]> = Array.from(freq.entries());
-  const q = (include || '').trim();
-  if (q) {
-    const lcText = text.toLowerCase();
-    const lcQ = q.toLowerCase();
-    let qCount = 0;
-    if (lcQ.length > 0) qCount = Math.max(0, lcText.split(lcQ).length - 1);
-    const idx = entries.findIndex(([w]) => w.toLowerCase() === lcQ);
-    if (idx >= 0) {
-      // 기존 카운트보다 검색어 카운트가 크면 갱신
-      if (qCount > entries[idx][1]) entries[idx][1] = qCount;
-    } else {
-      entries.push([q, qCount]);
-    }
-  }
-
-  let topKeywords = entries
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([word, count]) => ({ word, count }));
-  // 반드시 검색어 포함
-  if (q && !topKeywords.some((k) => k.word.toLowerCase() === q.toLowerCase())) {
-    const qCount = entries.find((e) => e[0].toLowerCase() === q.toLowerCase())?.[1] ?? 0;
-    if (topKeywords.length >= 5) topKeywords[topKeywords.length - 1] = { word: q, count: qCount };
-    else topKeywords.push({ word: q, count: qCount });
-  }
-  // 한글 기준 대략 500자/분 가독 속도 가정
-  const readingTimeMin = Math.max(0.1, +(charCount / 500).toFixed(1));
-  return { charCount, wordCount, readingTimeMin, topKeywords };
-};
 
 export const PopularViewerModal: React.FC<Props> = ({ open, loading, item, onClose }) => {
   const [query] = useAtom(popularQueryAtom);
   const content = item?.content || '';
   // hooks must be called unconditionally
-  const analysis = useMemo(() => analyzeContent(content, query), [content, query]);
+  const analysis = useMemo(() => analyzeManuscript(content, query), [content, query]);
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -100,6 +53,7 @@ export const PopularViewerModal: React.FC<Props> = ({ open, loading, item, onClo
               <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">원고 분석</div>
               <div className="text-xs text-gray-700 dark:text-gray-300 flex flex-wrap gap-x-4 gap-y-1">
                 <span>문자수: <strong>{analysis.charCount}</strong></span>
+                <span>공백제외: <strong>{analysis.charCountNoSpace}</strong></span>
                 <span>단어수: <strong>{analysis.wordCount}</strong></span>
                 <span>예상 읽기: <strong>{analysis.readingTimeMin}분</strong></span>
               </div>
