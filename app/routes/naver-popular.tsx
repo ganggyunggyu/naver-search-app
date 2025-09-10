@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Route } from './+types/naver-popular';
-import { useToast } from '@/components/Toast';
-import type { PopularItem } from '@/entities/naver/types';
+import { useToast } from '@/shared/ui/Toast';
+import type { PopularItem } from '@/entities/naver/_types';
 import { useAtom } from 'jotai';
 import {
   popularDataAtom,
@@ -26,7 +26,7 @@ import {
 import {
   PopularViewerModal,
   type PopularViewerItem,
-} from '@/components/naver-popular/PopularViewerModal';
+} from '@/features/naver-popular/components/PopularViewerModal';
 import { BLOG_IDS } from '@/constants';
 import {
   copyPreviewToClipboard,

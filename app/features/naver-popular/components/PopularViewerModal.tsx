@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { popularQueryAtom } from '@/features/naver-popular/store';
-import type { PopularItem } from '@/entities/naver/types';
+import type { PopularItem } from '@/entities/naver/_types';
 import { analyzeManuscript, formatManuscriptAnalysis } from '@/shared';
-import { useToast } from '@/components/Toast';
+import { useToast } from '@/shared/ui/Toast';
 import {
   copyPreviewToClipboard,
   copyFullContentToClipboard,

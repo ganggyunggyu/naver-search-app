@@ -1,4 +1,4 @@
-import type { PopularItem } from '@/entities/naver/types';
+import type { PopularItem } from '@/entities/naver/_types';
 
 export const copyPreviewToClipboard = async (
   item: PopularItem,

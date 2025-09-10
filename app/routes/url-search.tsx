@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Route } from './+types/url-search.dynamic';
-import { useToast } from '@/components/Toast';
+import { useToast } from '@/shared/ui/Toast';
 import { analyzeManuscript, formatManuscriptAnalysis } from '@/shared';
 
 interface ContentResult {

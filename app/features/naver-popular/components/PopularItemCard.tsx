@@ -1,11 +1,11 @@
-import type { PopularItem } from '@/entities/naver/types';
+import type { PopularItem } from '@/entities/naver/_types';
 import React from 'react';
 
 interface Props {
   item: PopularItem;
 }
 
-import { useToast } from '@/components/Toast';
+import { useToast } from '@/shared/ui/Toast';
 import { copyFullContentToClipboard } from '@/features/naver-popular/lib';
 import { useSetAtom } from 'jotai';
 import { useViewerActions, viewerItemAtom } from '@/features';

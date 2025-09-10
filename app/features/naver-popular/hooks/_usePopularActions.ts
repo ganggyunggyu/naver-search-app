@@ -9,7 +9,7 @@ import {
   popularErrorAtom,
   popularDataAtom,
 } from '../store';
-import type { PopularResponse } from '@/entities/naver/types';
+import type { PopularResponse } from '@/entities/naver/_types';
 
 export const usePopularActions = () => {
   const [query] = useAtom(popularQueryAtom);
