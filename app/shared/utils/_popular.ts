@@ -42,7 +42,6 @@ const readBlock = (
       )
     : root.find('.bx');
 
-  console.log($root.length);
   $root.each((i: number, el: any) => {
     const $el = $(el);
 

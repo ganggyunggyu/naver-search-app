@@ -26,7 +26,7 @@ import {
 import {
   PopularViewerModal,
   type PopularViewerItem,
-} from '@/components/naverPopular/PopularViewerModal';
+} from '@/components/naver-popular/PopularViewerModal';
 import { BLOG_IDS } from '@/constants';
 import {
   copyPreviewToClipboard,

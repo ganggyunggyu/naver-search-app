@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import type { PopularItem } from '@/entities/naver/types';
-import { PopularItemCard } from '@/components/naverPopular/PopularItemCard';
+import { PopularItemCard } from '@/components/naver-popular/PopularItemCard';
 import { useAtom } from 'jotai';
 import { popularDataAtom } from '@/features/naver-popular/store';
 
