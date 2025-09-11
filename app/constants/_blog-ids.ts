@@ -1,4 +1,5 @@
 export const BLOG_IDS = [
+  'im_tang',
   'solantoro',
   'busansmart',
   'mygury1',
