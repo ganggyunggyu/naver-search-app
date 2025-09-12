@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import type { PopularResponse } from '@/entities/naver/_types';
+import type { PopularResponse, BlogCrawlResponse } from '@/entities/naver/_types';
 import type { PopularViewerItem } from '../components/PopularViewerModal';
 
 export const popularQueryAtom = atom<string>('');
@@ -9,6 +9,9 @@ export const popularUrlAtom = atom<string>('');
 export const popularIsLoadingAtom = atom<boolean>(false);
 export const popularErrorAtom = atom<string>('');
 export const popularDataAtom = atom<PopularResponse | null>(null);
+
+export const blogSearchDataAtom = atom<BlogCrawlResponse | null>(null);
+export const blogSearchErrorAtom = atom<string>('');
 
 export const viewerOpenAtom = atom<boolean>(false);
 export const viewerLoadingAtom = atom<boolean>(false);

@@ -6,7 +6,7 @@ interface Props {
 }
 
 import { useToast } from '@/shared/ui/Toast';
-import { copyFullContentToClipboard } from '@/features/naver-popular/lib';
+import { copyFullContentToClipboard, copyTitleToClipboard } from '@/features/naver-popular/lib';
 import { useSetAtom } from 'jotai';
 import { useViewerActions, viewerItemAtom } from '@/features';
 
@@ -44,6 +44,15 @@ export const PopularItemCard: React.FC<Props> = ({ item }) => {
         </div>
       </div>
       <div className="mt-4 flex gap-3">
+        <button
+          onClick={() =>
+            copyTitleToClipboard(item.title, (m, o) => show(m, o))
+          }
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 text-green-700 dark:text-green-300 rounded-xl border border-green-200 dark:border-green-700 transition-all hover:shadow-sm hover:scale-110 cursor-pointer active:scale-105"
+        >
+          제목 복사
+        </button>
+
         <button
           onClick={() =>
             copyFullContentToClipboard(item.link, (m, o) => show(m, o))

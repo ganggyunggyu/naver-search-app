@@ -22,6 +22,22 @@ export const copyPreviewToClipboard = async (
   }
 };
 
+export const copyTitleToClipboard = async (
+  title: string,
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
+) => {
+  try {
+    const cleanTitle = title.replace(/\s+/g, ' ').trim();
+    await navigator.clipboard.writeText(cleanTitle);
+    show('제목이 복사되었습니다!', { type: 'success' });
+  } catch {
+    show('제목 복사 실패', { type: 'error' });
+  }
+};
+
 export const copyFullContentToClipboard = async (
   link: string,
   show: (
