@@ -13,6 +13,7 @@ export default [
   route('/api/content', 'routes/api.content.ts'),
   route('/api/naver-search', 'routes/api.naver-search.ts'),
   route('/api/naver-popular', 'routes/api.naver-popular.ts'),
+  route('/api/blog-search', 'routes/api.blog-search.ts'),
 
   // Dynamic redirects (place after static routes)
   // Map dynamic paths directly to page modules for shareable URLs
