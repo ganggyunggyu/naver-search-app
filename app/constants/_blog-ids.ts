@@ -60,4 +60,6 @@ export const BLOG_IDS = [
   'guselvkvk',
   'adorableash',
   'yevencho',
+  'dlsdo9495',
+  'ddo_ddi_appa',
 ];
