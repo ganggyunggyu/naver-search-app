@@ -112,7 +112,7 @@ export const PopularSearchForm: React.FC = () => {
           {isLoading
             ? '추출 중...'
             : isAutoUrl
-              ? '인기글 + 블로그 검색 🕷️'
+              ? '인기글 + 블로그 검색'
               : '인기글 가져오기'}
         </button>
       </form>
