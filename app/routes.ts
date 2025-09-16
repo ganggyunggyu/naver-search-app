@@ -7,7 +7,6 @@ export default [
   route('/doc-analyzer', 'routes/doc-analyzer.tsx'),
   route('/doc-compare', 'routes/doc-compare.tsx'),
 
-  // API 엔드포인트
   route('/api/search', 'routes/api.search.ts'),
   route('/api/news', 'routes/api.news.ts'),
   route('/api/content', 'routes/api.content.ts'),
@@ -15,8 +14,6 @@ export default [
   route('/api/naver-popular', 'routes/api.naver-popular.ts'),
   route('/api/blog-search', 'routes/api.blog-search.ts'),
 
-  // Dynamic redirects (place after static routes)
-  // Map dynamic paths directly to page modules for shareable URLs
   route('/url/:encoded', 'routes/url-search.dynamic.tsx'),
   route('/:keyword', 'routes/naver-popular.dynamic.tsx'),
 ] satisfies RouteConfig;

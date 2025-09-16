@@ -242,7 +242,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
             </div>
           )}
 
-          {/* 블로그 검색 결과 표시 */}
+          
           {(blogSearchData !== null || isLoading) && (
             <div className="mb-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
               <span className="text-sm text-gray-700 dark:text-gray-300">

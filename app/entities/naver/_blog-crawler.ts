@@ -2,11 +2,6 @@ import { fetchHtml, NAVER_MOBILE_HEADERS } from '@/shared/utils/_http';
 import { loadHtml, extractTextsBySelector } from '@/shared/utils/html';
 import type { BlogCrawlItem, BlogCrawlResponse } from './_types';
 
-/**
- * 네이버 모바일 블로그 검색 페이지 크롤링
- * @param keyword 검색 키워드
- * @returns 크롤링 결과
- */
 export const crawlNaverBlogSearch = async (
   keyword: string
 ): Promise<BlogCrawlResponse> => {
@@ -241,9 +236,6 @@ export const crawlNaverBlogSearch = async (
   }
 };
 
-/**
- * 블로그 크롤링 결과를 콘솔에 예쁘게 출력
- */
 export const logBlogCrawlResults = (response: BlogCrawlResponse) => {
   console.log('\n🕷️ ====== 네이버 블로그 크롤링 결과 ======');
   console.log(`🔍 검색어: "${response.keyword}"`);

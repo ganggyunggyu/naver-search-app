@@ -325,7 +325,7 @@ const Search: React.FC<Route.ComponentProps> = ({ loaderData }) => {
           Naver Search & Extractor
         </h1>
 
-        {/* 검색/추출 공통 검색 폼 */}
+        
         <form onSubmit={handleNewSearch} className="mb-6">
           <div className="group flex gap-3 items-center rounded-2xl border border-gray-300 bg-white p-2 shadow-sm transition focus-within:ring-2 focus-within:ring-green-500 dark:bg-gray-900 dark:border-gray-700">
             <input
@@ -344,7 +344,7 @@ const Search: React.FC<Route.ComponentProps> = ({ loaderData }) => {
           </div>
         </form>
 
-        {/* Tabs */}
+        
         <div className="mb-4 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden dark:bg-gray-900 dark:border-gray-800">
           <div className="flex">
             <button
@@ -362,7 +362,7 @@ const Search: React.FC<Route.ComponentProps> = ({ loaderData }) => {
           </div>
         </div>
 
-        {/* Tab Content */}
+        
         {activeTab === 'results' ? (
           <div>
             {query && (
@@ -377,7 +377,7 @@ const Search: React.FC<Route.ComponentProps> = ({ loaderData }) => {
               </div>
             )}
 
-            {/* 키워드 그룹화 컨트롤 */}
+            
             {results.length > 0 && (
               <form
                 onSubmit={applyKeywords}
@@ -408,7 +408,7 @@ const Search: React.FC<Route.ComponentProps> = ({ loaderData }) => {
               </form>
             )}
 
-            {/* 결과 렌더링 */}
+            
             {results.length > 0 ? (
               keywords.length === 0 ? (
                 <div className="space-y-4">
@@ -637,7 +637,7 @@ const Search: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         ) : (
           <div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6 dark:bg-gray-900 dark:border-gray-800">
-              {/* URL 생성 방식 선택 */}
+              
               <div className="flex gap-4 mb-6">
                 <button
                   type="button"

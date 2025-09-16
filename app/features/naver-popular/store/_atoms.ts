@@ -17,8 +17,10 @@ export const viewerOpenAtom = atom<boolean>(false);
 export const viewerLoadingAtom = atom<boolean>(false);
 export const viewerItemAtom = atom<PopularViewerItem | null>(null);
 
-export const RECENT_SEARCH_STORAGE_KEY = 'recentSearchList';
+export const RECENT_SEARCH_STORAGE_KEY = 'naver_recent_search_list_v2';
 export const recentSearchListAtom = atomWithStorage<string[]>(
   RECENT_SEARCH_STORAGE_KEY,
-  []
+  [],
+  undefined,
+  { getOnInit: true }
 );

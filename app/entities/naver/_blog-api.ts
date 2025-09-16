@@ -1,12 +1,5 @@
 import type { BlogSearchResponse } from './_types';
 
-/**
- * 네이버 블로그 검색 API 호출 함수
- * @param query 검색 키워드
- * @param display 검색 결과 수 (기본 10개, 최대 100개)
- * @param start 검색 시작 위치 (기본 1)
- * @param sort 정렬 방식 ('sim': 정확도순, 'date': 날짜순)
- */
 export const searchNaverBlog = async (
   query: string,
   display: number = 10,
@@ -48,9 +41,6 @@ export const searchNaverBlog = async (
   }
 };
 
-/**
- * 블로그 검색 결과를 콘솔에 예쁘게 출력하는 함수
- */
 export const logBlogSearchResults = (response: BlogSearchResponse, keyword: string) => {
   console.log('\n🔍 ====== 네이버 블로그 검색 결과 ======');
   console.log(`📝 검색어: "${keyword}"`);

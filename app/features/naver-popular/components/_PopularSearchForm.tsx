@@ -132,13 +132,13 @@ export const PopularSearchForm: React.FC = () => {
               </button>
             )}
           </div>
-          <div className="flex flex-wrap gap-2">
-            {recentSearchList.slice(0, 10).map((q) => (
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+            {recentSearchList.map((q) => (
               <button
                 key={q}
                 type="button"
                 onClick={() => navigate(`/${encodeURIComponent(q)}`)}
-                className="px-2.5 py-1 text-xs rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="px-3 py-1.5 text-sm rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 whitespace-nowrap flex-shrink-0 transition-colors"
               >
                 {q}
               </button>

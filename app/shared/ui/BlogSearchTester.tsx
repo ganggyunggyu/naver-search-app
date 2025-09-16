@@ -56,7 +56,6 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
         </div>
 
         <div className="space-y-4">
-          {/* 입력 필드 */}
           <div>
             <label htmlFor="blog-keyword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               검색 키워드
@@ -73,7 +72,7 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
             />
           </div>
 
-          {/* 빠른 검색 버튼들 */}
+          
           <div className="flex flex-wrap gap-2">
             <span className="text-sm text-gray-600 dark:text-gray-400">빠른 검색:</span>
             {['리액트', '자바스크립트', 'TypeScript', 'Next.js', 'Vue.js'].map((quick) => (
@@ -88,7 +87,7 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
             ))}
           </div>
 
-          {/* 검색 버튼 */}
+          
           <button
             onClick={handleBlogSearch}
             disabled={isLoading}
@@ -101,7 +100,7 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
             {isLoading ? '검색 중...' : '🔍 블로그 검색하기'}
           </button>
 
-          {/* 안내 문구 */}
+          
           <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
             <p className="text-sm text-blue-800 dark:text-blue-200">
               💡 <strong>사용법:</strong> 검색 버튼을 클릭하면 콘솔(F12)에 네이버 블로그 검색 결과가 예쁘게 출력됩니다!
