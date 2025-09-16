@@ -105,7 +105,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         const res = await fetch(endpoint);
         const json = await res.json();
 
-        console.log('🎯 API 응답:', json);
+        console.log('[API] API 응답:', json);
         if ((json as any)?.error) {
           setError(String((json as any).error));
         } else {
@@ -113,7 +113,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
           // 블로그 데이터가 있으면 저장
           if (json.blog) {
             setBlogSearchData(json.blog);
-            console.log('🕷️ 블로그 데이터 저장됨:', json.blog);
+            console.log('[BLOG] 블로그 데이터 저장됨:', json.blog);
           }
         }
       } catch {
@@ -182,9 +182,9 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     for (let index = 0; index < items.length; index++) {
       const item = items[index];
       const id = getBlogId(item.link);
-      // console.log(`🔍 블로그 링크 ${index + 1}: ${item.link} -> ID: ${id}`);
+      // console.log(`[LINK] 블로그 링크 ${index + 1}: ${item.link} -> ID: ${id}`);
       if (id && allow.has(id)) {
-        // console.log(`✅ 매칭됨! ${id} (${index + 1}번째)`);
+        // console.log(`[MATCH] 매칭됨! ${id} (${index + 1}번째)`);
         const matchedItem: BlogMatchItem = {
           id,
           item,
@@ -199,9 +199,9 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
 
   // 블로그 매칭 정보 콘솔 디버깅 (useEffect로 감싸서 무한 로그 방지)
   React.useEffect(() => {
-    // console.log('🔍 블로그 크롤링 데이터:', blogSearchData);
-    // console.log('🎯 매칭된 블로그 리스트:', blogMatchedIdList);
-    console.log('📊 매칭된 블로그 개수:', blogMatchedIdList.length);
+    // console.log('[CRAWLER] 블로그 크롤링 데이터:', blogSearchData);
+    // console.log('[MATCHED] 매칭된 블로그 리스트:', blogMatchedIdList);
+    console.log('[COUNT] 매칭된 블로그 개수:', blogMatchedIdList.length);
   }, [blogSearchData, blogMatchedIdList]);
 
   return (
@@ -250,7 +250,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
               </span>
               {isLoading ? (
                 <span className="text-sm font-semibold text-blue-700 dark:text-blue-400">
-                  크롤링 중... 🕷️
+                  크롤링 중...
                 </span>
               ) : blogSearchData && blogSearchData.items?.length > 0 ? (
                 <React.Fragment>

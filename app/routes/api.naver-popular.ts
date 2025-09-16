@@ -32,7 +32,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
     // 블로그 검색이 요청되고 검색어가 있는 경우
     if (includeBlog && q) {
-      console.log(`🕷️ 블로그 검색도 함께 실행: "${q}"`);
+      console.log(`[BLOG] 블로그 검색도 함께 실행: "${q}"`);
       try {
         const blogData = await crawlNaverBlogSearch(q);
         result.blog = blogData;
