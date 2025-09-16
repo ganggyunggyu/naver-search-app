@@ -1,4 +1,5 @@
 import type { PopularItem } from '@/entities/naver/_types';
+import JSZip from 'jszip';
 
 export const copyPreviewToClipboard = async (
   item: PopularItem,
@@ -119,3 +120,228 @@ export const copyFullContentToClipboard = async (
     show('전체 본문 복사 실패', { type: 'error' });
   }
 };
+
+export const downloadContentToFile = async (
+  link: string,
+  title: string,
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
+) => {
+  try {
+    let directContent = '';
+    try {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = link;
+      document.body.appendChild(iframe);
+      await new Promise<void>((resolve) => {
+        iframe.onload = () => {
+          try {
+            const iframeDoc =
+              iframe.contentDocument || iframe.contentWindow?.document;
+            if (iframeDoc) {
+              const all = iframeDoc.querySelectorAll('*');
+              all.forEach((el: any) => {
+                el.style.userSelect = 'auto';
+                el.removeAttribute('onselectstart');
+                el.removeAttribute('ondragstart');
+                el.removeAttribute('oncontextmenu');
+              });
+              const main = iframeDoc.querySelector('.se-main-container');
+              if (main) directContent = main.textContent || '';
+            }
+          } catch {}
+          document.body.removeChild(iframe);
+          resolve();
+        };
+        setTimeout(() => {
+          try {
+            document.body.removeChild(iframe);
+          } catch {}
+          resolve();
+        }, 5000);
+      });
+    } catch {}
+
+    const res = await fetch(`/api/content?url=${encodeURIComponent(link)}`);
+    const json = await res.json();
+    if (json.error) {
+      show(String(json.error), { type: 'error' });
+      return;
+    }
+
+    const cleanTitle = json.title
+      ? String(json.title)
+          .replace(/[ \t\f\v\u00A0]+/g, ' ')
+          .trim()
+      : title;
+    let finalContent = json.content || '';
+    if (directContent && directContent.trim().length > finalContent.length)
+      finalContent = directContent;
+    const cleanContent = finalContent
+      ? String(finalContent)
+          .replace(/\r\n?/g, '\n')
+          .replace(/<[^>]*>/g, '')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"')
+          .replace(/&#x27;|&#39;/g, "'")
+          .replace(/[ \t\f\v\u00A0]+/g, ' ')
+          .replace(/\n{3,}/g, '\n\n')
+          .split('\n')
+          .map((l) => l.replace(/[ \t\f\v\u00A0]+$/g, ''))
+          .join('\n')
+          .trim()
+      : '';
+
+    const full = [cleanTitle, cleanContent].filter(Boolean).join('\n\n');
+
+    const safeFileName = cleanTitle
+      .replace(/[<>:"/\\|?*]/g, '')
+      .replace(/\s+/g, '_')
+      .substring(0, 100);
+
+    const blob = new Blob([full], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${safeFileName || 'content'}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    show('파일이 다운로드되었습니다!', { type: 'success' });
+  } catch {
+    show('파일 다운로드 실패', { type: 'error' });
+  }
+};
+
+export const downloadAllContentToZip = async (
+  itemList: PopularItem[],
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
+) => {
+  try {
+    const zip = new JSZip();
+    let successCount = 0;
+
+    show('ZIP 파일 생성 중...', { type: 'info' });
+
+    for (let i = 0; i < itemList.length; i++) {
+      const item = itemList[i];
+      try {
+        let directContent = '';
+        try {
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = item.link;
+          document.body.appendChild(iframe);
+          await new Promise<void>((resolve) => {
+            iframe.onload = () => {
+              try {
+                const iframeDoc =
+                  iframe.contentDocument || iframe.contentWindow?.document;
+                if (iframeDoc) {
+                  const all = iframeDoc.querySelectorAll('*');
+                  all.forEach((el: any) => {
+                    el.style.userSelect = 'auto';
+                    el.removeAttribute('onselectstart');
+                    el.removeAttribute('ondragstart');
+                    el.removeAttribute('oncontextmenu');
+                  });
+                  const main = iframeDoc.querySelector('.se-main-container');
+                  if (main) directContent = main.textContent || '';
+                }
+              } catch {}
+              document.body.removeChild(iframe);
+              resolve();
+            };
+            setTimeout(() => {
+              try {
+                document.body.removeChild(iframe);
+              } catch {}
+              resolve();
+            }, 3000);
+          });
+        } catch {}
+
+        const res = await fetch(`/api/content?url=${encodeURIComponent(item.link)}`);
+        const json = await res.json();
+
+        if (!json.error) {
+          const cleanTitle = json.title
+            ? String(json.title)
+                .replace(/[ \t\f\v\u00A0]+/g, ' ')
+                .trim()
+            : item.title;
+          let finalContent = json.content || '';
+          if (directContent && directContent.trim().length > finalContent.length)
+            finalContent = directContent;
+          const cleanContent = finalContent
+            ? String(finalContent)
+                .replace(/\r\n?/g, '\n')
+                .replace(/<[^>]*>/g, '')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&amp;/g, '&')
+                .replace(/&quot;/g, '"')
+                .replace(/&#x27;|&#39;/g, "'")
+                .replace(/[ \t\f\v\u00A0]+/g, ' ')
+                .replace(/\n{3,}/g, '\n\n')
+                .split('\n')
+                .map((l) => l.replace(/[ \t\f\v\u00A0]+$/g, ''))
+                .join('\n')
+                .trim()
+            : '';
+
+          if (cleanContent) {
+            const full = [cleanTitle, cleanContent].filter(Boolean).join('\n\n');
+            const safeFileName = cleanTitle
+              .replace(/[<>:"/\\|?*]/g, '')
+              .replace(/\s+/g, '_')
+              .substring(0, 80);
+
+            zip.file(`${safeFileName || `인기글_${i + 1}`}.txt`, full);
+            successCount++;
+          }
+        }
+
+        if ((i + 1) % 3 === 0 || i === itemList.length - 1) {
+          show(`${i + 1}/${itemList.length} 처리 중... (성공: ${successCount})`, { type: 'info' });
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch {
+        // 개별 아이템 실패는 건너뛰기
+      }
+    }
+
+    if (successCount === 0) {
+      show('다운로드할 콘텐츠가 없습니다', { type: 'error' });
+      return;
+    }
+
+    show('ZIP 파일 압축 중...', { type: 'info' });
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `네이버_인기글_${successCount}개_${new Date().toISOString().split('T')[0]}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    show(`ZIP 다운로드 완료! (${successCount}개 파일)`, { type: 'success' });
+  } catch {
+    show('ZIP 다운로드 실패', { type: 'error' });
+  }
+};
+
+// 하위 호환성을 위한 별칭
+export const downloadAllContentToFile = downloadAllContentToZip;
