@@ -1,12 +1,13 @@
 import type { PopularItem } from '@/entities/naver/_types';
 import React from 'react';
+import { Download, Copy, FileText, Eye } from 'lucide-react';
 
 interface Props {
   item: PopularItem;
 }
 
 import { useToast } from '@/shared/ui/Toast';
-import { copyFullContentToClipboard, copyTitleToClipboard } from '@/features/naver-popular/lib';
+import { copyFullContentToClipboard, copyTitleToClipboard, downloadContentToFile } from '@/features/naver-popular/lib';
 import { useSetAtom } from 'jotai';
 import { useViewerActions, viewerItemAtom } from '@/features';
 
@@ -43,13 +44,14 @@ export const PopularItemCard: React.FC<Props> = ({ item }) => {
           </p>
         </div>
       </div>
-      <div className="mt-4 flex gap-3">
+      <div className="mt-4 flex flex-wrap gap-3">
         <button
           onClick={() =>
             copyTitleToClipboard(item.title, (m, o) => show(m, o))
           }
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 text-green-700 dark:text-green-300 rounded-xl border border-green-200 dark:border-green-700 transition-all hover:shadow-sm hover:scale-110 cursor-pointer active:scale-105"
         >
+          <Copy size={16} />
           제목 복사
         </button>
 
@@ -59,7 +61,18 @@ export const PopularItemCard: React.FC<Props> = ({ item }) => {
           }
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-xl border border-blue-200 dark:border-blue-700 transition-all hover:shadow-sm hover:scale-110 cursor-pointer active:scale-105"
         >
+          <FileText size={16} />
           전체 본문 복사
+        </button>
+
+        <button
+          onClick={() =>
+            downloadContentToFile(item.link, item.title, (m, o) => show(m, o))
+          }
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-orange-100 dark:bg-orange-900/30 hover:bg-orange-200 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-300 rounded-xl border border-orange-200 dark:border-orange-700 transition-all hover:shadow-sm hover:scale-110 cursor-pointer active:scale-105"
+        >
+          <Download size={16} />
+          다운로드
         </button>
 
         <button
@@ -69,6 +82,7 @@ export const PopularItemCard: React.FC<Props> = ({ item }) => {
           }}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 rounded-xl border border-purple-200 dark:border-purple-700 transition-all hover:shadow-sm hover:scale-110 cursor-pointer active:scale-105"
         >
+          <Eye size={16} />
           미리보기
         </button>
       </div>
