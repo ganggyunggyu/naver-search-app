@@ -42,21 +42,21 @@ export const searchNaverBlog = async (
 };
 
 export const logBlogSearchResults = (response: BlogSearchResponse, keyword: string) => {
-  console.log('\n🔍 ====== 네이버 블로그 검색 결과 ======');
-  console.log(`📝 검색어: "${keyword}"`);
-  console.log(`📊 전체 결과: ${response.total.toLocaleString()}개`);
-  console.log(`📄 표시 결과: ${response.items.length}개`);
-  console.log(`🕐 검색 시간: ${response.lastBuildDate}`);
+  console.log('\n[SEARCH] ====== 네이버 블로그 검색 결과 ======');
+  console.log(`[KEYWORD] 검색어: "${keyword}"`);
+  console.log(`[STATS] 전체 결과: ${response.total.toLocaleString()}개`);
+  console.log(`[DISPLAY] 표시 결과: ${response.items.length}개`);
+  console.log(`[TIME] 검색 시간: ${response.lastBuildDate}`);
   console.log('==========================================\n');
 
   response.items.forEach((item, index) => {
-    console.log(`${index + 1}. 📝 ${item.title.replace(/<\/?[^>]+(>|$)/g, '')}`);
-    console.log(`   👤 블로거: ${item.bloggername}`);
-    console.log(`   📅 작성일: ${item.postdate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')}`);
-    console.log(`   🔗 링크: ${item.link}`);
-    console.log(`   📄 요약: ${item.description.replace(/<\/?[^>]+(>|$)/g, '').slice(0, 100)}...`);
+    console.log(`${index + 1}. [TITLE] ${item.title.replace(/<\/?[^>]+(>|$)/g, '')}`);
+    console.log(`   [BLOGGER] 블로거: ${item.bloggername}`);
+    console.log(`   [DATE] 작성일: ${item.postdate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')}`);
+    console.log(`   [LINK] 링크: ${item.link}`);
+    console.log(`   [DESC] 요약: ${item.description.replace(/<\/?[^>]+(>|$)/g, '').slice(0, 100)}...`);
     console.log('   ─────────────────────────────────────────');
   });
 
-  console.log('\n🎯 === 검색 완료 === 🎯\n');
+  console.log('\n[COMPLETE] === 검색 완료 ===\n');
 };

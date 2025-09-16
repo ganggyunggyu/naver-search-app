@@ -9,8 +9,8 @@ export const crawlNaverBlogSearch = async (
   const searchUrl = `https://m.search.naver.com/search.naver?ssc=tab.m_blog.all&sm=mtb_jum&query=${encodeURIComponent(keyword)}&start=1&display=500&sort=sim`;
 
   try {
-    console.log(`🕷️ 네이버 모바일 블로그 검색 크롤링 시작: "${keyword}"`);
-    console.log(`📍 크롤링 URL: ${searchUrl}`);
+    console.log(`[CRAWLER] 네이버 모바일 블로그 검색 크롤링 시작: "${keyword}"`);
+    console.log(`[URL] 크롤링 URL: ${searchUrl}`);
 
     // HTML 가져오기
     const html = await fetchHtml(searchUrl, NAVER_MOBILE_HEADERS);
@@ -35,7 +35,7 @@ export const crawlNaverBlogSearch = async (
 
       if (blogElements.length > 0) {
         console.log(
-          `✅ 블로그 요소 발견: ${selector} (${blogElements.length}개)`
+          `[FOUND] 블로그 요소 발견: ${selector} (${blogElements.length}개)`
         );
         foundResults = true;
 
@@ -106,11 +106,11 @@ export const crawlNaverBlogSearch = async (
             } else {
               if (fullLink.includes('ader.naver.com')) {
                 console.log(
-                  `⛔ 광고 링크 제외: ${fullLink.substring(0, 50)}...`
+                  `[SKIP] 광고 링크 제외: ${fullLink.substring(0, 50)}...`
                 );
               } else {
                 console.log(
-                  `⛔ 유효하지 않은 포스트 링크 제외: ${fullLink.substring(0, 50)}...`
+                  `[SKIP] 유효하지 않은 포스트 링크 제외: ${fullLink.substring(0, 50)}...`
                 );
               }
             }
@@ -123,7 +123,7 @@ export const crawlNaverBlogSearch = async (
 
     // 결과가 없으면 일반적인 링크 요소들 시도
     if (!foundResults) {
-      console.log('⚠️ 기본 선택자로 결과 없음, 일반 링크 요소 시도');
+      console.log('[WARN] 기본 선택자로 결과 없음, 일반 링크 요소 시도');
 
       const generalLinks = $('a[href*="blog"], a[href*="post"]');
       generalLinks.each((_, element) => {
@@ -172,10 +172,10 @@ export const crawlNaverBlogSearch = async (
             });
           } else {
             if (fullLink.includes('ader.naver.com')) {
-              console.log(`⛔ 광고 링크 제외: ${fullLink.substring(0, 50)}...`);
+              console.log(`[SKIP] 광고 링크 제외: ${fullLink.substring(0, 50)}...`);
             } else {
               console.log(
-                `⛔ 유효하지 않은 포스트 링크 제외: ${fullLink.substring(0, 50)}...`
+                `[SKIP] 유효하지 않은 포스트 링크 제외: ${fullLink.substring(0, 50)}...`
               );
             }
           }
@@ -219,7 +219,7 @@ export const crawlNaverBlogSearch = async (
     }
 
     console.log(
-      `🎯 크롤링 완료: ${deduplicatedItems.length}개 결과 추출 (원본: ${uniqueItems.length}개)`
+      `[COMPLETE] 크롤링 완료: ${deduplicatedItems.length}개 결과 추출 (원본: ${uniqueItems.length}개)`
     );
 
     return {
@@ -229,7 +229,7 @@ export const crawlNaverBlogSearch = async (
       url: searchUrl,
     };
   } catch (error) {
-    console.error('🚨 네이버 블로그 크롤링 오류:', error);
+    console.error('[ERROR] 네이버 블로그 크롤링 오류:', error);
     throw new Error(
       `블로그 크롤링 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
     );
@@ -237,24 +237,24 @@ export const crawlNaverBlogSearch = async (
 };
 
 export const logBlogCrawlResults = (response: BlogCrawlResponse) => {
-  console.log('\n🕷️ ====== 네이버 블로그 크롤링 결과 ======');
-  console.log(`🔍 검색어: "${response.keyword}"`);
-  console.log(`📊 크롤링 결과: ${response.total}개`);
-  console.log(`🌐 크롤링 URL: ${response.url}`);
+  console.log('\n[CRAWLER] ====== 네이버 블로그 크롤링 결과 ======');
+  console.log(`[SEARCH] 검색어: "${response.keyword}"`);
+  console.log(`[STATS] 크롤링 결과: ${response.total}개`);
+  console.log(`[URL] 크롤링 URL: ${response.url}`);
   console.log('==========================================\n');
 
   response.items.forEach((item, index) => {
-    console.log(`${index + 1}. 📝 ${item.title}`);
-    if (item.blogName) console.log(`   🏠 블로그: ${item.blogName}`);
-    if (item.date) console.log(`   📅 날짜: ${item.date}`);
-    console.log(`   🔗 링크: ${item.link}`);
+    console.log(`${index + 1}. [TITLE] ${item.title}`);
+    if (item.blogName) console.log(`   [BLOG] 블로그: ${item.blogName}`);
+    if (item.date) console.log(`   [DATE] 날짜: ${item.date}`);
+    console.log(`   [LINK] 링크: ${item.link}`);
     if (item.description) {
       console.log(
-        `   📄 요약: ${item.description.slice(0, 100)}${item.description.length > 100 ? '...' : ''}`
+        `   [DESC] 요약: ${item.description.slice(0, 100)}${item.description.length > 100 ? '...' : ''}`
       );
     }
     console.log('   ─────────────────────────────────────────');
   });
 
-  console.log('\n🎯 === 크롤링 완료 === 🎯\n');
+  console.log('\n[COMPLETE] === 크롤링 완료 ===\n');
 };
