@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { CheckCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 type ToastType = "success" | "error" | "info";
 
@@ -82,7 +83,7 @@ const ToastCard: React.FC<{ item: ToastItem; onClose: () => void }> = ({ item, o
       ? "bg-red-600"
       : "bg-gray-800";
 
-  const icon = item.type === "success" ? "✅" : item.type === "error" ? "⚠️" : "ℹ️";
+  const IconComponent = item.type === "success" ? CheckCircle : item.type === "error" ? AlertTriangle : Info;
 
   return (
     <div
@@ -90,7 +91,9 @@ const ToastCard: React.FC<{ item: ToastItem; onClose: () => void }> = ({ item, o
       className="pointer-events-auto overflow-hidden rounded-lg shadow-lg ring-1 ring-black/10 bg-white dark:bg-gray-900"
     >
       <div className="p-3 pl-0 flex items-start">
-        <div className={`${color} text-white flex items-center justify-center w-10 h-10 shrink-0`}>{icon}</div>
+        <div className={`${color} text-white flex items-center justify-center w-10 h-10 shrink-0`}>
+          <IconComponent size={20} />
+        </div>
         <div className="px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 flex-1">
           {item.message}
         </div>
@@ -99,7 +102,7 @@ const ToastCard: React.FC<{ item: ToastItem; onClose: () => void }> = ({ item, o
           className="p-2 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200"
           aria-label="Close"
         >
-          ✕
+          <X size={16} />
         </button>
       </div>
       <div className="h-1 bg-gray-200 dark:bg-gray-800">

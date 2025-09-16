@@ -1,4 +1,5 @@
 import React from 'react';
+import { Search, Rocket, Target, X } from 'lucide-react';
 import { useToast } from './Toast';
 
 interface BlogSearchTesterProps {
@@ -19,23 +20,23 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
     setIsLoading(true);
     
     try {
-      console.log('🚀 블로그 검색 테스트 시작...');
+      console.log('[SEARCH] 블로그 검색 테스트 시작...');
       
       const response = await fetch(`/api/blog-search?query=${encodeURIComponent(keyword)}&display=5&log=true`);
       const result = await response.json();
 
       if (result.success) {
-        show(`"${keyword}" 검색 완료! 콘솔을 확인하세요 📝`, { type: 'success' });
+        show(`"${keyword}" 검색 완료! 콘솔을 확인하세요`, { type: 'success' });
         
         // 추가로 콘솔에 간단한 정보 출력
-        console.log('🎯 API 응답 결과:', result);
+        console.log('[RESULT] API 응답 결과:', result);
       } else {
         show('검색 실패!', { type: 'error' });
-        console.error('❌ 검색 실패:', result);
+        console.error('[ERROR] 검색 실패:', result);
       }
     } catch (error) {
       show('API 호출 중 오류 발생!', { type: 'error' });
-      console.error('❌ API 호출 오류:', error);
+      console.error('[ERROR] API 호출 오류:', error);
     } finally {
       setIsLoading(false);
     }
@@ -49,7 +50,7 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
     <React.Fragment>
       <div className={`bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 shadow-sm ${className || ''}`}>
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-2xl">🔍</span>
+          <Search className="w-6 h-6 text-blue-500" />
           <h3 className="text-lg font-bold text-gray-900 dark:text-white">
             네이버 블로그 검색 테스터
           </h3>
@@ -97,16 +98,16 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
                 : 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
-            {isLoading ? '검색 중...' : '🔍 블로그 검색하기'}
+            {isLoading ? '검색 중...' : '블로그 검색하기'}
           </button>
 
           
           <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
             <p className="text-sm text-blue-800 dark:text-blue-200">
-              💡 <strong>사용법:</strong> 검색 버튼을 클릭하면 콘솔(F12)에 네이버 블로그 검색 결과가 예쁘게 출력됩니다!
+              <strong>사용법:</strong> 검색 버튼을 클릭하면 콘솔(F12)에 네이버 블로그 검색 결과가 예쁘게 출력됩니다!
             </p>
             <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
-              개발자 도구(F12) → Console 탭에서 확인하세요 📊
+              개발자 도구(F12) → Console 탭에서 확인하세요
             </p>
           </div>
         </div>
