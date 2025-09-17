@@ -117,8 +117,8 @@ export const PopularSearchForm: React.FC = () => {
         </button>
       </form>
       {isAutoUrl && (
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
+        <div className="mt-6 py-4 pb-6">
+          <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-gray-600 dark:text-gray-400">
               최근 검색어
             </span>
@@ -132,13 +132,13 @@ export const PopularSearchForm: React.FC = () => {
               </button>
             )}
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+          <div className="flex gap-2 overflow-x-auto py-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
             {recentSearchList.map((q) => (
               <button
                 key={q}
                 type="button"
                 onClick={() => navigate(`/${encodeURIComponent(q)}`)}
-                className="px-3 py-1.5 text-sm rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 whitespace-nowrap flex-shrink-0 transition-colors"
+                className="px-4 py-3 text-sm rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 whitespace-nowrap flex-shrink-0 transition-colors"
               >
                 {q}
               </button>
