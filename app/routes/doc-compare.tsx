@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Route } from './+types/doc-compare';
-import { analyzeManuscript, topKoreanTokens, normalizeForCopy } from '@/shared';
+import { analyzeManuscript, normalizeForCopy } from '@/shared';
 import DiffViewer from '@/features/doc/components/_DiffViewer';
 
 export const meta = (_: Route.MetaArgs) => [
@@ -58,7 +58,7 @@ const DocComparePage: React.FC = () => {
 
   type Match = { start: number; end: number };
   const getMatches = (text: string, q: string): Match[] => {
-    const t = (text || '');
+    const t = text || '';
     const qq = (q || '').trim();
     if (!qq) return [];
     const tl = t.toLowerCase();
@@ -85,10 +85,7 @@ const DocComparePage: React.FC = () => {
     if (findBIndex >= bMatches.length) setFindBIndex(0);
   }, [bMatches.length, findBIndex]);
 
-  const jumpToMatch = (
-    which: 'a' | 'b',
-    dir: 1 | -1 = 1,
-  ) => {
+  const jumpToMatch = (which: 'a' | 'b', dir: 1 | -1 = 1) => {
     if (which === 'a') {
       const total = aMatches.length;
       if (!total || !aRef.current) return;
@@ -120,7 +117,9 @@ const DocComparePage: React.FC = () => {
     setB(normalized);
   };
 
-  const onKeyDownFindA: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+  const onKeyDownFindA: React.KeyboardEventHandler<HTMLTextAreaElement> = (
+    e
+  ) => {
     if ((e.metaKey || e.ctrlKey) && (e.key === 'f' || e.key === 'F')) {
       e.preventDefault();
       if (findAOpen) {
@@ -140,7 +139,9 @@ const DocComparePage: React.FC = () => {
     }
   };
 
-  const onKeyDownFindB: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+  const onKeyDownFindB: React.KeyboardEventHandler<HTMLTextAreaElement> = (
+    e
+  ) => {
     if ((e.metaKey || e.ctrlKey) && (e.key === 'f' || e.key === 'F')) {
       e.preventDefault();
       if (findBOpen) {
@@ -165,29 +166,13 @@ const DocComparePage: React.FC = () => {
     [a, b]
   );
 
-  const tokens: Pair<ReturnType<typeof topKoreanTokens>> = useMemo(
-    () => ({ a: topKoreanTokens(a, 15), b: topKoreanTokens(b, 15) }),
-    [a, b]
-  );
 
   const words: Pair<{ word: string; count: number }[]> = useMemo(
     () => ({ a: stat.a.topKeywords, b: stat.b.topKeywords }),
     [stat]
   );
 
-  const commonTokens = useMemo(
-    () => intersectWords(tokens.a, tokens.b),
-    [tokens]
-  );
   const commonWords = useMemo(() => intersectWords(words.a, words.b), [words]);
-  const uniqueATokens = useMemo(
-    () => uniqueWords(tokens.a, tokens.b),
-    [tokens]
-  );
-  const uniqueBTokens = useMemo(
-    () => uniqueWords(tokens.b, tokens.a),
-    [tokens]
-  );
 
   // --- Similarity metrics (token-based) ---
   const tokenize = (t: string) =>
@@ -276,7 +261,10 @@ const DocComparePage: React.FC = () => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
                       jumpToMatch('a', e.shiftKey ? -1 : 1);
-                    } else if ((e.metaKey || e.ctrlKey) && (e.key === 'f' || e.key === 'F')) {
+                    } else if (
+                      (e.metaKey || e.ctrlKey) &&
+                      (e.key === 'f' || e.key === 'F')
+                    ) {
                       e.preventDefault();
                       setFindAOpen(false);
                     } else if (e.key === 'Escape') {
@@ -287,7 +275,9 @@ const DocComparePage: React.FC = () => {
                   className="h-7 w-40 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 text-sm"
                 />
                 <span className="text-xs text-gray-600 dark:text-gray-400 w-14 text-right">
-                  {aMatches.length ? `${(findAIndex % aMatches.length) + 1}/${aMatches.length}` : '0/0'}
+                  {aMatches.length
+                    ? `${(findAIndex % aMatches.length) + 1}/${aMatches.length}`
+                    : '0/0'}
                 </span>
                 <button
                   type="button"
@@ -339,7 +329,10 @@ const DocComparePage: React.FC = () => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
                       jumpToMatch('b', e.shiftKey ? -1 : 1);
-                    } else if ((e.metaKey || e.ctrlKey) && (e.key === 'f' || e.key === 'F')) {
+                    } else if (
+                      (e.metaKey || e.ctrlKey) &&
+                      (e.key === 'f' || e.key === 'F')
+                    ) {
                       e.preventDefault();
                       setFindBOpen(false);
                     } else if (e.key === 'Escape') {
@@ -350,7 +343,9 @@ const DocComparePage: React.FC = () => {
                   className="h-7 w-40 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 text-sm"
                 />
                 <span className="text-xs text-gray-600 dark:text-gray-400 w-14 text-right">
-                  {bMatches.length ? `${(findBIndex % bMatches.length) + 1}/${bMatches.length}` : '0/0'}
+                  {bMatches.length
+                    ? `${(findBIndex % bMatches.length) + 1}/${bMatches.length}`
+                    : '0/0'}
                 </span>
                 <button
                   type="button"
@@ -379,9 +374,9 @@ const DocComparePage: React.FC = () => {
         </div>
 
         {(a || b) && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6 border border-gray-200 dark:border-gray-700 max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
+              <div className="md:col-span-1">
                 <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">
                   글자수 비교
                 </div>
@@ -402,15 +397,15 @@ const DocComparePage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="md:col-span-2">
                 <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                  주요 표현 비교(단어)
+                  주요 표현 비교
                 </div>
                 <div className="text-xs text-gray-700 dark:text-gray-300">
-                  <div className="mb-1">공통</div>
+                  <div className="mb-1">공통 ({commonWords.length}개)</div>
                   {commonWords.length ? (
-                    <div className="mb-3">
-                      {commonWords.slice(0, 10).map((k) => (
+                    <div className="mb-3 max-h-40 overflow-y-auto">
+                      {commonWords.map((k) => (
                         <span
                           key={k.word}
                           className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
@@ -427,94 +422,39 @@ const DocComparePage: React.FC = () => {
                       공통 단어가 부족합니다.
                     </div>
                   )}
-                  <div className="mb-1">A 고유</div>
-                  <div className="mb-3">
+                  <div className="mb-1">
+                    A 고유 ({uniqueWords(words.a, words.b).length}개)
+                  </div>
+                  <div className="mb-3 max-h-40 overflow-y-auto">
                     {words.a.length ? (
-                      uniqueWords(words.a, words.b)
-                        .slice(0, 10)
-                        .map((k) => (
-                          <span
-                            key={k.word}
-                            className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200"
-                          >
-                            #{k.word}{' '}
-                            <span className="opacity-70">x{k.count}</span>
-                          </span>
-                        ))
-                    ) : (
-                      <span className="text-xs text-gray-500">없음</span>
-                    )}
-                  </div>
-                  <div className="mb-1">B 고유</div>
-                  <div>
-                    {words.b.length ? (
-                      uniqueWords(words.b, words.a)
-                        .slice(0, 10)
-                        .map((k) => (
-                          <span
-                            key={k.word}
-                            className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200"
-                          >
-                            #{k.word}{' '}
-                            <span className="opacity-70">x{k.count}</span>
-                          </span>
-                        ))
-                    ) : (
-                      <span className="text-xs text-gray-500">없음</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                  형태소(한글 토큰) 비교
-                </div>
-                <div className="text-xs text-gray-700 dark:text-gray-300">
-                  <div className="mb-1">공통</div>
-                  {commonTokens.length ? (
-                    <div className="mb-3">
-                      {commonTokens.map((k) => (
+                      uniqueWords(words.a, words.b).map((k) => (
                         <span
                           key={k.word}
-                          className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
+                          className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200"
                         >
                           #{k.word}{' '}
-                          <span className="opacity-70">
-                            A:{k.a} / B:{k.b}
-                          </span>
+                          <span className="opacity-70">x{k.count}</span>
                         </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-xs text-gray-500">
-                      공통 토큰이 부족합니다.
-                    </div>
-                  )}
-                  <div className="mb-1">A 고유</div>
-                  <div className="mb-3">
-                    {uniqueATokens.slice(0, 10).map((k) => (
-                      <span
-                        key={k.word}
-                        className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200"
-                      >
-                        #{k.word} <span className="opacity-70">x{k.count}</span>
-                      </span>
-                    ))}
-                    {!uniqueATokens.length && (
+                      ))
+                    ) : (
                       <span className="text-xs text-gray-500">없음</span>
                     )}
                   </div>
-                  <div className="mb-1">B 고유</div>
-                  <div>
-                    {uniqueBTokens.slice(0, 10).map((k) => (
-                      <span
-                        key={k.word}
-                        className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200"
-                      >
-                        #{k.word} <span className="opacity-70">x{k.count}</span>
-                      </span>
-                    ))}
-                    {!uniqueBTokens.length && (
+                  <div className="mb-1">
+                    B 고유 ({uniqueWords(words.b, words.a).length}개)
+                  </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    {words.b.length ? (
+                      uniqueWords(words.b, words.a).map((k) => (
+                        <span
+                          key={k.word}
+                          className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200"
+                        >
+                          #{k.word}{' '}
+                          <span className="opacity-70">x{k.count}</span>
+                        </span>
+                      ))
+                    ) : (
                       <span className="text-xs text-gray-500">없음</span>
                     )}
                   </div>
@@ -533,7 +473,9 @@ const DocComparePage: React.FC = () => {
         ) : (
           <>
             <div className="mb-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-              <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">유사도</div>
+              <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                유사도
+              </div>
               <div className="text-xs text-gray-700 dark:text-gray-300 flex flex-wrap gap-x-6 gap-y-1">
                 <span>
                   코사인: <strong>{Math.round(cosine * 1000) / 10}%</strong>
