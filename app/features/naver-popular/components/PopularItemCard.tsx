@@ -31,39 +31,39 @@ export const PopularItemCard: React.FC<Props> = ({
   return (
     <React.Fragment>
       <div className={cn(
-        "border rounded-2xl p-3 sm:p-5 transition-all duration-200",
-        "hover:shadow-xl hover:-translate-y-0.5",
+        "border rounded-lg p-4 transition-all duration-200",
+        "hover:shadow-md",
         isMatched
-          ? "border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30"
-          : "border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-700 dark:hover:bg-gray-750",
+          ? "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-950/30"
+          : "border-gray-200 dark:border-gray-800 bg-white dark:bg-black",
         className
       )}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             {/* 순위와 매칭 표시 (블로그 카드용) */}
             {position && (
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 <span className={cn(
-                  "inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold",
+                  "inline-flex items-center justify-center w-5 h-5 rounded text-xs font-bold",
                   isMatched
                     ? "bg-green-500 text-white"
-                    : "bg-gray-400 text-white"
+                    : "bg-gray-500 text-white"
                 )}>
                   {position}
                 </span>
-                {isMatched && blogId && (
-                  <span className="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
-                    매칭!
-                  </span>
-                )}
                 {blogId && (
                   <span className={cn(
-                    "px-2 py-1 text-xs font-medium rounded-full",
+                    "px-2 py-1 text-xs font-medium rounded",
                     isMatched
-                      ? "bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200"
-                      : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                      ? "bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800"
+                      : "bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100 border border-gray-200 dark:border-gray-800"
                   )}>
                     #{blogId}
+                  </span>
+                )}
+                {isMatched && (
+                  <span className="px-2 py-1 bg-green-500 text-white text-xs font-medium rounded">
+                    MATCH
                   </span>
                 )}
               </div>
@@ -75,10 +75,8 @@ export const PopularItemCard: React.FC<Props> = ({
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "text-sm sm:text-lg font-bold break-all transition-colors hover:underline",
-                isMatched
-                  ? "text-green-700 dark:text-green-300 hover:text-green-800 dark:hover:text-green-200"
-                  : "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                "text-sm font-semibold break-all transition-colors hover:underline mb-2 block",
+                "text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300"
               )}
             >
               {item.title}
@@ -86,94 +84,105 @@ export const PopularItemCard: React.FC<Props> = ({
 
             {/* 블로그명 (인기글용) */}
             {item.blogName && item.blogLink && (
-              <p>
+              <div className="mb-2">
                 <a
                   href={item.blogLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    "text-xs sm:text-md font-bold text-black dark:text-white",
-                    "hover:text-blue-800 dark:hover:text-blue-300 hover:underline break-all transition-colors"
+                    "text-xs font-medium text-gray-600 dark:text-gray-200",
+                    "hover:text-black dark:hover:text-white transition-colors"
                   )}
                 >
                   {item.blogName}
                 </a>
-              </p>
+              </div>
             )}
 
-            {/* 설명 (블로그용) */}
+            {/* 설명 (블로그용) - 간소화 */}
             {(item as any).description && (
               <p className={cn(
-                "mt-2 text-xs sm:text-sm break-all",
-                isMatched
-                  ? "text-green-600 dark:text-green-400"
-                  : "text-gray-600 dark:text-gray-400"
+                "mt-2 text-xs text-gray-500 dark:text-gray-300 line-clamp-2"
               )}>
-                {((item as any).description as string).replace(/<[^>]*>/g, '')}
+                {((item as any).description as string).replace(/<[^>]*>/g, '').slice(0, 120)}
+                {((item as any).description as string).length > 120 ? '...' : ''}
               </p>
             )}
 
-            {/* 링크 */}
-            <p className={cn(
-              "mt-2 sm:mt-3 text-xs font-mono break-all px-2 py-1 rounded-lg",
-              isMatched
-                ? "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30"
-                : "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20"
+            {/* 링크 - 간소화 */}
+            <div className={cn(
+              "mt-2 text-xs font-mono text-gray-400 dark:text-gray-400 truncate"
             )}>
               {item.link}
-            </p>
+            </div>
           </div>
         </div>
 
-        {/* 액션 버튼들 */}
+        {/* 액션 버튼들 - 간소화된 검흰 버전 */}
         <div className={cn(
-          "mt-3 sm:mt-4 flex flex-wrap gap-2 sm:gap-3"
+          "mt-4 pt-3 border-t border-gray-100 dark:border-gray-900",
+          "flex flex-wrap gap-2"
         )}>
-          <Button
-            variant="success"
-            size="sm"
-            icon={<Copy size={14} />}
+          <button
             onClick={() =>
               copyTitleToClipboard(item.title, (m, o) => show(m, o))
             }
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium",
+              "bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100",
+              "hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors",
+              "border border-gray-200 dark:border-gray-800"
+            )}
           >
-            제목 복사
-          </Button>
+            <Copy size={12} />
+            제목
+          </button>
 
-          <Button
-            variant="primary"
-            size="sm"
-            icon={<FileText size={14} />}
+          <button
             onClick={() =>
               copyFullContentToClipboard(item.link, (m, o) => show(m, o))
             }
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium",
+              "bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100",
+              "hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors",
+              "border border-gray-200 dark:border-gray-800"
+            )}
           >
-            <span className="hidden sm:inline">전체 본문 복사</span>
-            <span className="sm:hidden">본문 복사</span>
-          </Button>
+            <FileText size={12} />
+            <span className="hidden sm:inline">본문</span>
+            <span className="sm:hidden">본문</span>
+          </button>
 
-          <Button
-            variant="warning"
-            size="sm"
-            icon={<Download size={14} />}
+          <button
             onClick={() =>
               downloadContentToFile(item.link, item.title, (m, o) => show(m, o))
             }
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium",
+              "bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100",
+              "hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors",
+              "border border-gray-200 dark:border-gray-800"
+            )}
           >
-            다운로드
-          </Button>
+            <Download size={12} />
+            저장
+          </button>
 
-          <Button
-            variant="info"
-            size="sm"
-            icon={<Eye size={14} />}
+          <button
             onClick={() => {
               setViewerItem(item);
               openViewer(item.link);
             }}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium",
+              "bg-black dark:bg-white text-white dark:text-black",
+              "hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+            )}
           >
-            미리보기
-          </Button>
+            <Eye size={12} />
+            보기
+          </button>
         </div>
       </div>
     </React.Fragment>
