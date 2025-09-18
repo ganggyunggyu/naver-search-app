@@ -6,6 +6,7 @@ import { popularDataAtom } from '@/features/naver-popular/store';
 import { useToast } from '@/shared/ui/Toast';
 import { downloadAllContentToFile } from '@/features/naver-popular/lib';
 import { Download } from 'lucide-react';
+import { cn, Chip, Button } from '@/shared';
 
 const DEFAULT_GROUP = '비즈니스·경제 인기글';
 
@@ -43,13 +44,20 @@ export const PopularResults: React.FC = () => {
         <div className="flex justify-center">
           <button
             onClick={() => downloadAllContentToFile(itemList, (m, o) => show(m, o))}
-            className="flex items-center gap-3 px-6 py-3 text-lg font-semibold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
+            className={cn(
+              "flex items-center gap-3 px-4 sm:px-6 py-2 sm:py-3",
+              "text-base sm:text-lg font-semibold",
+              "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
+              "text-white rounded-2xl shadow-lg hover:shadow-xl",
+              "transition-all duration-200 hover:scale-105 active:scale-95"
+            )}
           >
-            <Download size={20} />
-            전체 인기글 다운로드
-            <span className="text-sm bg-white/20 px-2 py-1 rounded-full">
+            <Download size={18} className="sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">전체 인기글 다운로드</span>
+            <span className="sm:hidden">전체 다운로드</span>
+            <Chip variant="primary" size="sm" className="bg-white/20 text-white border-white/30">
               {itemList.length}개
-            </span>
+            </Chip>
           </button>
         </div>
       )}

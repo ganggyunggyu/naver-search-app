@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Route } from './+types/naver-popular';
 import { useToast } from '@/shared/ui/Toast';
+import { cn } from '@/shared';
 import type { PopularItem } from '@/entities/naver/_types';
 import { useAtom } from 'jotai';
 import {
@@ -205,15 +206,22 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   }, [blogSearchData, blogMatchedIdList]);
 
   return (
-    <div className="relative py-16 sm:py-24">
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[1200px] h-[1200px] rounded-full bg-gradient-to-br from-green-200/40 via-blue-200/30 to-transparent blur-3xl" />
+    <div className={cn("relative py-12 sm:py-16 lg:py-24")}>
+      <div className={cn("absolute inset-0 -z-10 overflow-hidden")}>
+        <div className={cn(
+          "absolute -top-24 left-1/2 -translate-x-1/2 w-[800px] sm:w-[1200px] h-[800px] sm:h-[1200px]",
+          "rounded-full bg-gradient-to-br from-green-200/40 via-blue-200/30 to-transparent blur-3xl"
+        )} />
       </div>
-      <div className="container mx-auto px-4">
-        <div className="mb-4">
+      <div className={cn("container mx-auto px-3 sm:px-4")}>
+        <div className={cn("mb-3 sm:mb-4")}>
           {data && data.items?.length > 0 && (
-            <div className="mb-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-              <span className="text-sm text-gray-700 dark:text-gray-300">
+            <div className={cn(
+              "mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg",
+              "border border-gray-200 dark:border-gray-700",
+              "bg-gray-50 dark:bg-gray-900"
+            )}>
+              <span className={cn("text-xs sm:text-sm text-gray-700 dark:text-gray-300")}>
                 노출항목:{' '}
               </span>
               {matchedIdList.length > 0 ? (
