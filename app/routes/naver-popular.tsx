@@ -29,7 +29,7 @@ import {
 import {
   PopularViewerModal,
   type PopularViewerItem,
-} from '@/features/naver-popular/components/PopularViewerModal';
+} from '@/features/naver-popular/components/_PopularViewerModal';
 import { BLOG_IDS } from '@/constants';
 import {
   copyPreviewToClipboard,
@@ -429,43 +429,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
             </div>
           )}
 
-          {data && (
-            <div
-              className={cn(
-                'rounded-2xl border mb-12',
-                'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
-                'shadow-sm hover:shadow-md transition-shadow duration-200'
-              )}
-            >
-              <div
-                className={cn(
-                  'flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-900'
-                )}
-              >
-                <h2
-                  className={cn(
-                    'text-2xl font-bold text-black dark:text-white flex items-center gap-4'
-                  )}
-                >
-                  인기글 추출 결과
-                  <div
-                    className={cn(
-                      'flex items-center gap-2 px-4 py-2 rounded-full',
-                      'bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800'
-                    )}
-                  >
-                    <div className={cn('w-2 h-2 rounded-full bg-green-500')} />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {data.count}개 추출
-                    </span>
-                  </div>
-                </h2>
-              </div>
-              <div className={cn('p-6')}>
-                <PopularResults />
-              </div>
-            </div>
-          )}
+          <PopularResults />
 
           {(blogSearchData !== null || isLoading) && (
             <div className={cn('mb-12')}>
