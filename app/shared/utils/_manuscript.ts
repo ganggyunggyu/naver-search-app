@@ -47,13 +47,11 @@ export const analyzeManuscript = (
 
   let topKeywords = entries
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
     .map(([word, count]) => ({ word, count }));
 
   if (q && !topKeywords.some((k) => k.word.toLowerCase() === q.toLowerCase())) {
     const qCount = entries.find((e) => e[0].toLowerCase() === q.toLowerCase())?.[1] ?? 0;
-    if (topKeywords.length >= 5) topKeywords[topKeywords.length - 1] = { word: q, count: qCount };
-    else topKeywords.push({ word: q, count: qCount });
+    topKeywords.push({ word: q, count: qCount });
   }
 
   const readingTimeMin = Math.max(0.1, +(charCount / 500).toFixed(1));
