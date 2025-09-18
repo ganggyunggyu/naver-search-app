@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAtom } from 'jotai';
+import { X } from 'lucide-react';
 import { cn, Chip, Button } from '@/shared';
 import { useToast } from '@/shared/ui/Toast';
 import { usePopularActions, useRecentSearch } from '../hooks';
@@ -17,8 +18,12 @@ export const PopularSearchForm: React.FC = () => {
   const [url, setUrl] = useAtom(popularUrlAtom);
   const [isLoading] = useAtom(popularIsLoadingAtom);
   const { generateNaverUrl } = usePopularActions();
-  const { recentSearchList, addRecentSearch, clearRecentSearch } =
-    useRecentSearch();
+  const {
+    recentSearchList,
+    addRecentSearch,
+    clearRecentSearch,
+    removeRecentSearch,
+  } = useRecentSearch();
   const { show } = useToast();
   const navigate = useNavigate();
 
@@ -235,19 +240,39 @@ export const PopularSearchForm: React.FC = () => {
               )}
             >
               {recentSearchList.map((q) => (
-                <button
+                <div
                   key={q}
-                  onClick={() => navigate(`/${encodeURIComponent(q)}`)}
                   className={cn(
-                    'flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-medium',
+                    'flex-shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium',
                     'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300',
-                    'hover:bg-gray-200 dark:hover:bg-gray-800',
                     'border border-gray-200 dark:border-gray-800',
                     'transition-colors duration-200'
                   )}
                 >
-                  {q}
-                </button>
+                  <button
+                    onClick={() => navigate(`/${encodeURIComponent(q)}`)}
+                    className={cn(
+                      'hover:text-black dark:hover:text-white transition-colors'
+                    )}
+                  >
+                    {q}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeRecentSearch(q);
+                    }}
+                    className={cn(
+                      'ml-1 w-3 h-3 flex items-center justify-center rounded-full',
+                      'hover:bg-gray-200 dark:hover:bg-gray-800',
+                      'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300',
+                      'transition-colors'
+                    )}
+                    aria-label={`${q} 검색어 삭제`}
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
               ))}
             </div>
           ) : isClient ? (

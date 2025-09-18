@@ -16,5 +16,12 @@ export const useRecentSearch = () => {
 
   const clearRecentSearch = useCallback(() => setRecentSearchList([]), [setRecentSearchList]);
 
-  return { recentSearchList, addRecentSearch, clearRecentSearch };
+  const removeRecentSearch = useCallback(
+    (query: string) => {
+      setRecentSearchList((prev) => prev.filter((v) => v !== query));
+    },
+    [setRecentSearchList]
+  );
+
+  return { recentSearchList, addRecentSearch, clearRecentSearch, removeRecentSearch };
 };
