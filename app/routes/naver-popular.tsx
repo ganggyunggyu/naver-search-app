@@ -231,7 +231,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
             >
               <span
                 className={cn(
-                  'text-xs sm:text-sm text-gray-700 dark:text-gray-300'
+                  'text-xs sm:text-sm font-medium text-gray-800 dark:text-gray-200'
                 )}
               >
                 블로그 매칭:{' '}
@@ -273,28 +273,28 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
                 if (matchedBlogArray.length > 0) {
                   return (
                     <React.Fragment>
-                      <span className="text-sm font-semibold text-blue-700 dark:text-blue-400">
+                      <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">
                         {matchedBlogArray.length}개
                       </span>
-                      <span className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                      <span className="ml-2 text-xs text-gray-700 dark:text-gray-300">
                         (총 {blogSearchData.items.length}개 중)
                       </span>
                       <div className="mt-2 flex flex-wrap gap-1">
                         {matchedBlogArray.map(([blogId, info], idx) => (
                           <span
                             key={`blog-match-${String(blogId)}-${idx}`}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-100 dark:bg-blue-800/30 text-blue-800 dark:text-blue-200 text-xs"
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-100 dark:bg-blue-800/50 text-blue-900 dark:text-blue-100 text-xs font-medium"
                           >
                             <span className="font-semibold">
                               {String(blogId)}
                             </span>
-                            <span className="text-blue-600 dark:text-blue-300">
+                            <span className="text-blue-700 dark:text-blue-200">
                               ({info.count}개)
                             </span>
-                            <span className="text-blue-500 dark:text-blue-400">
+                            <span className="text-blue-800 dark:text-blue-100">
                               "{info.keyword}"
                             </span>
-                            <span className="text-blue-400 dark:text-blue-500">
+                            <span className="text-blue-600 dark:text-blue-300">
                               [{info.positions.slice(0, 3).join(', ')}
                               {info.positions.length > 3 ? '...' : ''}위]
                             </span>
@@ -306,10 +306,10 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
                 } else {
                   return (
                     <React.Fragment>
-                      <span className="text-sm font-semibold text-red-700 dark:text-red-400">
+                      <span className="text-sm font-semibold text-red-800 dark:text-red-300">
                         0개
                       </span>
-                      <span className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                      <span className="ml-2 text-xs text-gray-700 dark:text-gray-300">
                         (총 {blogSearchData.items.length}개 중)
                       </span>
                     </React.Fragment>
