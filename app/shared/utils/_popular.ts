@@ -26,12 +26,7 @@ const findGroupLabelNear = ($: CheerioAPI, $node: any): string => {
   return '';
 };
 
-const readBlock = (
-  $: CheerioAPI,
-  root: any,
-  items: PopularItem[],
-  fixedGroup?: string
-) => {
+const readBlock = ($: CheerioAPI, root: any, items: PopularItem[]) => {
   let itemsAdded = 0;
 
   const $root = root.find(
@@ -42,11 +37,14 @@ const readBlock = (
       )
     : root.find('.bx');
 
-  $root.each((i: number, el: any) => {
+  const headline = $root
+    .find('span.sds-comps-text.sds-comps-text-type-headline1')
+    .text();
+
+  $root.each((_i: number, el: any) => {
     const $el = $(el);
 
     const $blog = $el.find('.fds-info-inner-text, .name').first();
-
     const blogName = ($blog.text() || '').trim();
     const blogHref =
       ($blog.is('a') ? $blog : $blog.closest('a')).attr('href')?.trim() || '';
@@ -71,7 +69,7 @@ const readBlock = (
       !postHref.includes('cafe.naver.com') &&
       !postHref.includes('ader.naver.com')
     ) {
-      const group = fixedGroup || findGroupLabelNear($, $el);
+      const group = findGroupLabelNear($, $el);
 
       const item = {
         title,
