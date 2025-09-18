@@ -23,6 +23,7 @@ import {
 import {
   PopularSearchForm,
   PopularResults,
+  BlogResultList,
 } from '@/features/naver-popular/components';
 
 import {
@@ -106,7 +107,6 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         const res = await fetch(endpoint);
         const json = await res.json();
 
-        console.log('[API] API 응답:', json);
         if ((json as any)?.error) {
           setError(String((json as any).error));
         } else {
@@ -114,7 +114,6 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
           // 블로그 데이터가 있으면 저장
           if (json.blog) {
             setBlogSearchData(json.blog);
-            console.log('[BLOG] 블로그 데이터 저장됨:', json.blog);
           }
         }
       } catch {
@@ -168,60 +167,31 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     return Array.from(list);
   })();
 
-  // 블로그 크롤링 결과에서 매칭 정보 추출
-  type BlogMatchItem = {
-    id: string;
-    item: any;
-    position: number; // 순위 (1부터 시작)
-  };
-
-  const blogMatchedIdList = (() => {
-    const list: BlogMatchItem[] = [];
-    const allow = new Set(BLOG_IDS.map((v) => v.toLowerCase()));
-    const items = blogSearchData?.items || [];
-
-    for (let index = 0; index < items.length; index++) {
-      const item = items[index];
-      const id = getBlogId(item.link);
-      // console.log(`[LINK] 블로그 링크 ${index + 1}: ${item.link} -> ID: ${id}`);
-      if (id && allow.has(id)) {
-        // console.log(`[MATCH] 매칭됨! ${id} (${index + 1}번째)`);
-        const matchedItem: BlogMatchItem = {
-          id,
-          item,
-          position: index + 1, // 1부터 시작하는 순위
-        };
-        list.push(matchedItem);
-      }
-    }
-
-    return list;
-  })();
-
-  // 블로그 매칭 정보 콘솔 디버깅 (useEffect로 감싸서 무한 로그 방지)
-  React.useEffect(() => {
-    // console.log('[CRAWLER] 블로그 크롤링 데이터:', blogSearchData);
-    // console.log('[MATCHED] 매칭된 블로그 리스트:', blogMatchedIdList);
-    console.log('[COUNT] 매칭된 블로그 개수:', blogMatchedIdList.length);
-  }, [blogSearchData, blogMatchedIdList]);
-
   return (
-    <div className={cn("relative py-12 sm:py-16 lg:py-24")}>
-      <div className={cn("absolute inset-0 -z-10 overflow-hidden")}>
-        <div className={cn(
-          "absolute -top-24 left-1/2 -translate-x-1/2 w-[800px] sm:w-[1200px] h-[800px] sm:h-[1200px]",
-          "rounded-full bg-gradient-to-br from-green-200/40 via-blue-200/30 to-transparent blur-3xl"
-        )} />
+    <div className={cn('relative py-12 sm:py-16 lg:py-24')}>
+      <div className={cn('absolute inset-0 -z-10 overflow-hidden')}>
+        <div
+          className={cn(
+            'absolute -top-24 left-1/2 -translate-x-1/2 w-[800px] sm:w-[1200px] h-[800px] sm:h-[1200px]',
+            'rounded-full bg-gradient-to-br from-green-200/40 via-blue-200/30 to-transparent blur-3xl'
+          )}
+        />
       </div>
-      <div className={cn("container mx-auto px-3 sm:px-4")}>
-        <div className={cn("mb-3 sm:mb-4")}>
+      <div className={cn('container mx-auto px-3 sm:px-4')}>
+        <div className={cn('mb-3 sm:mb-4')}>
           {data && data.items?.length > 0 && (
-            <div className={cn(
-              "mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg",
-              "border border-gray-200 dark:border-gray-700",
-              "bg-gray-50 dark:bg-gray-900"
-            )}>
-              <span className={cn("text-xs sm:text-sm text-gray-700 dark:text-gray-300")}>
+            <div
+              className={cn(
+                'mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg',
+                'border border-gray-200 dark:border-gray-700',
+                'bg-gray-50 dark:bg-gray-900'
+              )}
+            >
+              <span
+                className={cn(
+                  'text-xs sm:text-sm text-gray-700 dark:text-gray-300'
+                )}
+              >
                 노출항목:{' '}
               </span>
               {matchedIdList.length > 0 ? (
@@ -250,52 +220,102 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
             </div>
           )}
 
-          
-          {(blogSearchData !== null || isLoading) && (
-            <div className="mb-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
-              <span className="text-sm text-gray-700 dark:text-gray-300">
-                블로그 검색 결과:{' '}
+          {/* 블로그 검색 결과 매칭 정보 */}
+          {blogSearchData && blogSearchData.items?.length > 0 && (
+            <div
+              className={cn(
+                'mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg',
+                'border border-blue-200 dark:border-blue-700',
+                'bg-blue-50 dark:bg-blue-900/20'
+              )}
+            >
+              <span
+                className={cn(
+                  'text-xs sm:text-sm text-gray-700 dark:text-gray-300'
+                )}
+              >
+                블로그 매칭:{' '}
               </span>
-              {isLoading ? (
-                <span className="text-sm font-semibold text-blue-700 dark:text-blue-400">
-                  크롤링 중...
-                </span>
-              ) : blogSearchData && blogSearchData.items?.length > 0 ? (
-                <React.Fragment>
-                  <span className="text-sm font-semibold text-blue-700 dark:text-blue-400">
-                    총 {blogSearchData.total}개
-                  </span>
-                  {blogMatchedIdList.length > 0 ? (
+              {(() => {
+                const allowedIds = new Set(
+                  BLOG_IDS.map((v) => v.toLowerCase())
+                );
+                const matchedBlogs = new Map(); // blogId -> { count, keyword, positions }
+
+                blogSearchData.items.forEach((item, index) => {
+                  try {
+                    const u = new URL(item.link);
+                    if (
+                      u.hostname.includes('blog.naver.com') ||
+                      u.hostname.includes('m.blog.naver.com')
+                    ) {
+                      const seg = u.pathname.replace(/^\//, '').split('/')[0];
+                      const id = (seg || '').toLowerCase();
+                      if (id && allowedIds.has(id)) {
+                        if (!matchedBlogs.has(id)) {
+                          matchedBlogs.set(id, {
+                            count: 0,
+                            keyword: blogSearchData.keyword,
+                            blogName: item?.blogName || '', // 실제로는 블로그명을 가져와야 하지만 일단 ID 사용
+                            positions: [],
+                          });
+                        }
+                        const current = matchedBlogs.get(id);
+                        current.count++;
+                        current.positions.push(index + 1); // 1부터 시작하는 순위
+                      }
+                    }
+                  } catch {}
+                });
+
+                const matchedBlogArray = Array.from(matchedBlogs.entries());
+
+                if (matchedBlogArray.length > 0) {
+                  return (
                     <React.Fragment>
-                      <span className="ml-4 text-sm text-gray-700 dark:text-gray-300">
-                        매칭된 블로그:{' '}
+                      <span className="text-sm font-semibold text-blue-700 dark:text-blue-400">
+                        {matchedBlogArray.length}개
                       </span>
-                      <span className="text-sm font-semibold text-green-700 dark:text-green-400">
-                        {blogMatchedIdList.length}개
+                      <span className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                        (총 {blogSearchData.items.length}개 중)
                       </span>
-                      <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
-                        {blogMatchedIdList.map((el, idx) => (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {matchedBlogArray.map(([blogId, info], idx) => (
                           <span
-                            key={`blog-match-${el.position}-${idx}`}
-                            className="inline-block mr-2 mb-1 px-2 py-1 rounded bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                            key={`blog-match-${String(blogId)}-${idx}`}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-100 dark:bg-blue-800/30 text-blue-800 dark:text-blue-200 text-xs"
                           >
-                            #{el.position} {el.id} -{' '}
-                            {el.item.title.substring(0, 30)}...
+                            <span className="font-semibold">
+                              {String(blogId)}
+                            </span>
+                            <span className="text-blue-600 dark:text-blue-300">
+                              ({info.count}개)
+                            </span>
+                            <span className="text-blue-500 dark:text-blue-400">
+                              "{info.keyword}"
+                            </span>
+                            <span className="text-blue-400 dark:text-blue-500">
+                              [{info.positions.slice(0, 3).join(', ')}
+                              {info.positions.length > 3 ? '...' : ''}위]
+                            </span>
                           </span>
                         ))}
                       </div>
                     </React.Fragment>
-                  ) : (
-                    <span className="ml-4 text-sm font-semibold text-orange-700 dark:text-orange-400">
-                      매칭된 블로그: 0개 (대상 블로그 없음)
-                    </span>
-                  )}
-                </React.Fragment>
-              ) : (
-                <span className="text-sm font-semibold text-red-700 dark:text-red-400">
-                  블로그 검색 결과 없음 (크롤링 실패 또는 결과 없음)
-                </span>
-              )}
+                  );
+                } else {
+                  return (
+                    <React.Fragment>
+                      <span className="text-sm font-semibold text-red-700 dark:text-red-400">
+                        0개
+                      </span>
+                      <span className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                        (총 {blogSearchData.items.length}개 중)
+                      </span>
+                    </React.Fragment>
+                  );
+                }
+              })()}
             </div>
           )}
         </div>
@@ -324,7 +344,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         )}
 
         {data && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
                 인기글 결과
@@ -337,6 +357,13 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
               </span>
             </div>
             <PopularResults />
+          </div>
+        )}
+
+        {/* 블로그 검색 결과 카드 UI */}
+        {(blogSearchData !== null || isLoading) && (
+          <div className="mb-8">
+            <BlogResultList blogData={blogSearchData} isLoading={isLoading} />
           </div>
         )}
       </div>

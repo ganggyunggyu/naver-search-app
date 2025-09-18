@@ -1,5 +1,5 @@
 import { fetchHtml, NAVER_MOBILE_HEADERS } from '@/shared/utils/_http';
-import { loadHtml, extractTextsBySelector } from '@/shared/utils/html';
+import { loadHtml } from '@/shared/utils/html';
 import type { BlogCrawlItem, BlogCrawlResponse } from './_types';
 
 export const crawlNaverBlogSearch = async (
@@ -9,9 +9,6 @@ export const crawlNaverBlogSearch = async (
   const searchUrl = `https://m.search.naver.com/search.naver?ssc=tab.m_blog.all&sm=mtb_jum&query=${encodeURIComponent(keyword)}&start=1&display=500&sort=sim`;
 
   try {
-    console.log(`[CRAWLER] 네이버 모바일 블로그 검색 크롤링 시작: "${keyword}"`);
-    console.log(`[URL] 크롤링 URL: ${searchUrl}`);
-
     // HTML 가져오기
     const html = await fetchHtml(searchUrl, NAVER_MOBILE_HEADERS);
     const $ = loadHtml(html);
@@ -34,9 +31,6 @@ export const crawlNaverBlogSearch = async (
       const blogElements = $(selector);
 
       if (blogElements.length > 0) {
-        console.log(
-          `[FOUND] 블로그 요소 발견: ${selector} (${blogElements.length}개)`
-        );
         foundResults = true;
 
         blogElements.each((_, element) => {
@@ -103,16 +97,6 @@ export const crawlNaverBlogSearch = async (
                 date: date,
                 thumbnail: thumbnail,
               });
-            } else {
-              if (fullLink.includes('ader.naver.com')) {
-                console.log(
-                  `[SKIP] 광고 링크 제외: ${fullLink.substring(0, 50)}...`
-                );
-              } else {
-                console.log(
-                  `[SKIP] 유효하지 않은 포스트 링크 제외: ${fullLink.substring(0, 50)}...`
-                );
-              }
             }
           }
         });
@@ -123,8 +107,6 @@ export const crawlNaverBlogSearch = async (
 
     // 결과가 없으면 일반적인 링크 요소들 시도
     if (!foundResults) {
-      console.log('[WARN] 기본 선택자로 결과 없음, 일반 링크 요소 시도');
-
       const generalLinks = $('a[href*="blog"], a[href*="post"]');
       generalLinks.each((_, element) => {
         const $el = $(element);
@@ -170,14 +152,6 @@ export const crawlNaverBlogSearch = async (
               link: fullLink,
               description: description.replace(/<\/?[^>]+(>|$)/g, ''),
             });
-          } else {
-            if (fullLink.includes('ader.naver.com')) {
-              console.log(`[SKIP] 광고 링크 제외: ${fullLink.substring(0, 50)}...`);
-            } else {
-              console.log(
-                `[SKIP] 유효하지 않은 포스트 링크 제외: ${fullLink.substring(0, 50)}...`
-              );
-            }
           }
         }
       });
@@ -218,10 +192,6 @@ export const crawlNaverBlogSearch = async (
       lastBlogId = currentBlogId;
     }
 
-    console.log(
-      `[COMPLETE] 크롤링 완료: ${deduplicatedItems.length}개 결과 추출 (원본: ${uniqueItems.length}개)`
-    );
-
     return {
       keyword,
       items: deduplicatedItems,
@@ -236,25 +206,6 @@ export const crawlNaverBlogSearch = async (
   }
 };
 
-export const logBlogCrawlResults = (response: BlogCrawlResponse) => {
-  console.log('\n[CRAWLER] ====== 네이버 블로그 크롤링 결과 ======');
-  console.log(`[SEARCH] 검색어: "${response.keyword}"`);
-  console.log(`[STATS] 크롤링 결과: ${response.total}개`);
-  console.log(`[URL] 크롤링 URL: ${response.url}`);
-  console.log('==========================================\n');
-
-  response.items.forEach((item, index) => {
-    console.log(`${index + 1}. [TITLE] ${item.title}`);
-    if (item.blogName) console.log(`   [BLOG] 블로그: ${item.blogName}`);
-    if (item.date) console.log(`   [DATE] 날짜: ${item.date}`);
-    console.log(`   [LINK] 링크: ${item.link}`);
-    if (item.description) {
-      console.log(
-        `   [DESC] 요약: ${item.description.slice(0, 100)}${item.description.length > 100 ? '...' : ''}`
-      );
-    }
-    console.log('   ─────────────────────────────────────────');
-  });
-
-  console.log('\n[COMPLETE] === 크롤링 완료 ===\n');
+export const logBlogCrawlResults = (_response: BlogCrawlResponse) => {
+  // 로그 출력 함수 (필요시 구현)
 };

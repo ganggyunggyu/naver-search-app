@@ -20,7 +20,6 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
     setIsLoading(true);
     
     try {
-      console.log('[SEARCH] 블로그 검색 테스트 시작...');
       
       const response = await fetch(`/api/blog-search?query=${encodeURIComponent(keyword)}&display=5&log=true`);
       const result = await response.json();
@@ -29,7 +28,6 @@ export const BlogSearchTester: React.FC<BlogSearchTesterProps> = ({ className })
         show(`"${keyword}" 검색 완료! 콘솔을 확인하세요`, { type: 'success' });
         
         // 추가로 콘솔에 간단한 정보 출력
-        console.log('[RESULT] API 응답 결과:', result);
       } else {
         show('검색 실패!', { type: 'error' });
         console.error('[ERROR] 검색 실패:', result);

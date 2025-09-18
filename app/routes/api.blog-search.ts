@@ -12,7 +12,6 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   }
 
   try {
-    console.log(`네이버 블로그 크롤링 시작: "${query}"`);
 
     const results = await crawlNaverBlogSearch(query);
 
