@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Route } from './+types/doc-compare';
-import { analyzeManuscript, normalizeForCopy } from '@/shared';
+import { analyzeManuscript, normalizeForCopy, cn } from '@/shared';
 import DiffViewer from '@/features/doc/components/_DiffViewer';
+import { FileText, Search, BarChart3, GitCompare } from 'lucide-react';
 
 export const meta = (_: Route.MetaArgs) => [
   { title: '문서 비교' },
@@ -166,7 +167,6 @@ const DocComparePage: React.FC = () => {
     [a, b]
   );
 
-
   const words: Pair<{ word: string; count: number }[]> = useMemo(
     () => ({ a: stat.a.topKeywords, b: stat.b.topKeywords }),
     [stat]
@@ -223,282 +223,514 @@ const DocComparePage: React.FC = () => {
   }, [tokenA, tokenB]);
 
   return (
-    <div className="relative py-16 sm:py-24">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">
-            문서 비교
-          </h1>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
-            두 개의 원고를 붙여넣고 통계를 비교하세요
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow p-4 border border-gray-200 dark:border-gray-700">
-            <div className="text-sm font-semibold mb-2 text-gray-800 dark:text-gray-200">
-              원고 A
-            </div>
-            <textarea
-              ref={aRef}
-              value={a}
-              onChange={onChangeA}
-              onKeyDown={onKeyDownFindA}
-              rows={12}
-              placeholder="여기에 첫 번째 텍스트를 붙여넣으세요"
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-            {findAOpen && (
-              <div className="absolute top-2 right-2 flex items-center gap-1 rounded-md border border-gray-300 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 px-2 py-1 shadow">
-                <input
-                  autoFocus
-                  value={findAQuery}
-                  onChange={(e) => {
-                    setFindAQuery(e.target.value);
-                    setFindAIndex(0);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      jumpToMatch('a', e.shiftKey ? -1 : 1);
-                    } else if (
-                      (e.metaKey || e.ctrlKey) &&
-                      (e.key === 'f' || e.key === 'F')
-                    ) {
-                      e.preventDefault();
-                      setFindAOpen(false);
-                    } else if (e.key === 'Escape') {
-                      setFindAOpen(false);
-                    }
-                  }}
-                  placeholder="이 영역에서 찾기"
-                  className="h-7 w-40 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 text-sm"
-                />
-                <span className="text-xs text-gray-600 dark:text-gray-400 w-14 text-right">
-                  {aMatches.length
-                    ? `${(findAIndex % aMatches.length) + 1}/${aMatches.length}`
-                    : '0/0'}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => jumpToMatch('a', -1)}
-                  className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-                >
-                  이전
-                </button>
-                <button
-                  type="button"
-                  onClick={() => jumpToMatch('a', 1)}
-                  className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-                >
-                  다음
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFindAOpen(false)}
-                  className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-                >
-                  닫기
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow p-4 border border-gray-200 dark:border-gray-700">
-            <div className="text-sm font-semibold mb-2 text-gray-800 dark:text-gray-200">
-              원고 B
-            </div>
-            <textarea
-              ref={bRef}
-              value={b}
-              onChange={onChangeB}
-              onKeyDown={onKeyDownFindB}
-              rows={12}
-              placeholder="여기에 두 번째 텍스트를 붙여넣으세요"
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {findBOpen && (
-              <div className="absolute top-2 right-2 flex items-center gap-1 rounded-md border border-gray-300 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 px-2 py-1 shadow">
-                <input
-                  autoFocus
-                  value={findBQuery}
-                  onChange={(e) => {
-                    setFindBQuery(e.target.value);
-                    setFindBIndex(0);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      jumpToMatch('b', e.shiftKey ? -1 : 1);
-                    } else if (
-                      (e.metaKey || e.ctrlKey) &&
-                      (e.key === 'f' || e.key === 'F')
-                    ) {
-                      e.preventDefault();
-                      setFindBOpen(false);
-                    } else if (e.key === 'Escape') {
-                      setFindBOpen(false);
-                    }
-                  }}
-                  placeholder="이 영역에서 찾기"
-                  className="h-7 w-40 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 text-sm"
-                />
-                <span className="text-xs text-gray-600 dark:text-gray-400 w-14 text-right">
-                  {bMatches.length
-                    ? `${(findBIndex % bMatches.length) + 1}/${bMatches.length}`
-                    : '0/0'}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => jumpToMatch('b', -1)}
-                  className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-                >
-                  이전
-                </button>
-                <button
-                  type="button"
-                  onClick={() => jumpToMatch('b', 1)}
-                  className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-                >
-                  다음
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFindBOpen(false)}
-                  className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
-                >
-                  닫기
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {(a || b) && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6 border border-gray-200 dark:border-gray-700 max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-1">
-                <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                  글자수 비교
-                </div>
-                <div className="text-xs text-gray-700 dark:text-gray-300 space-y-1">
-                  <div>
-                    A 문자수: <strong>{stat.a.charCount}</strong> (공백제외{' '}
-                    <strong>{stat.a.charCountNoSpace}</strong>)
-                  </div>
-                  <div>
-                    B 문자수: <strong>{stat.b.charCount}</strong> (공백제외{' '}
-                    <strong>{stat.b.charCountNoSpace}</strong>)
-                  </div>
-                  <div>
-                    차이:{' '}
-                    <strong>
-                      {Math.abs(stat.a.charCount - stat.b.charCount)}
-                    </strong>
-                  </div>
-                </div>
-              </div>
-              <div className="md:col-span-2">
-                <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                  주요 표현 비교
-                </div>
-                <div className="text-xs text-gray-700 dark:text-gray-300">
-                  <div className="mb-1">공통 ({commonWords.length}개)</div>
-                  {commonWords.length ? (
-                    <div className="mb-3 max-h-40 overflow-y-auto">
-                      {commonWords.map((k) => (
-                        <span
-                          key={k.word}
-                          className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
-                        >
-                          #{k.word}{' '}
-                          <span className="opacity-70">
-                            A:{k.a} / B:{k.b}
-                          </span>
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-xs text-gray-500">
-                      공통 단어가 부족합니다.
-                    </div>
-                  )}
-                  <div className="mb-1">
-                    A 고유 ({uniqueWords(words.a, words.b).length}개)
-                  </div>
-                  <div className="mb-3 max-h-40 overflow-y-auto">
-                    {words.a.length ? (
-                      uniqueWords(words.a, words.b).map((k) => (
-                        <span
-                          key={k.word}
-                          className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-green-50 text-green-800 border border-green-200"
-                        >
-                          #{k.word}{' '}
-                          <span className="opacity-70">x{k.count}</span>
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-xs text-gray-500">없음</span>
-                    )}
-                  </div>
-                  <div className="mb-1">
-                    B 고유 ({uniqueWords(words.b, words.a).length}개)
-                  </div>
-                  <div className="max-h-40 overflow-y-auto">
-                    {words.b.length ? (
-                      uniqueWords(words.b, words.a).map((k) => (
-                        <span
-                          key={k.word}
-                          className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200"
-                        >
-                          #{k.word}{' '}
-                          <span className="opacity-70">x{k.count}</span>
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-xs text-gray-500">없음</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+    <div className={cn('min-h-screen bg-white dark:bg-black transition-colors duration-300')}>
+      {/* 배경 패턴 */}
+      <div className={cn('absolute inset-0 -z-10')}>
+        <div
+          className={cn(
+            'absolute inset-0 opacity-[0.015] dark:opacity-[0.03]',
+            'bg-[radial-gradient(circle_at_center,black_1px,transparent_1px)]',
+            'dark:bg-[radial-gradient(circle_at_center,white_1px,transparent_1px)]'
+          )}
+          style={{ backgroundSize: '24px 24px' }}
+        />
       </div>
 
-      <div className="mt-8">
-        {!a && !b ? (
-          <div className="text-xs text-gray-500">
-            비교할 텍스트를 입력하세요.
-          </div>
-        ) : (
-          <>
-            <div className="mb-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-              <div className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                유사도
+      <div className={cn('relative')}>
+        <div className={cn('container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16')}>
+          {/* 헤더 */}
+          <div className={cn('text-center mb-12')}>
+            <div className={cn('inline-flex items-center gap-3 mb-4')}>
+              <div className={cn('w-12 h-12 rounded-xl bg-black dark:bg-white flex items-center justify-center')}>
+                <GitCompare size={24} className="text-white dark:text-black" />
               </div>
-              <div className="text-xs text-gray-700 dark:text-gray-300 flex flex-wrap gap-x-6 gap-y-1">
-                <span>
-                  코사인: <strong>{Math.round(cosine * 1000) / 10}%</strong>
-                </span>
-                <span>
-                  자카드: <strong>{Math.round(jaccard * 1000) / 10}%</strong>
-                </span>
-                <span>
-                  토큰 A: <strong>{tokenA.length}</strong>
-                </span>
-                <span>
-                  토큰 B: <strong>{tokenB.length}</strong>
-                </span>
+              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-black dark:text-white">
+                문서 비교
+              </h1>
+            </div>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+              두 개의 원고를 비교하여 차이점과 유사성을 분석합니다
+            </p>
+          </div>
+
+          {/* 원고 입력 영역 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div
+              className={cn(
+                'rounded-2xl border p-6 relative',
+                'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+                'shadow-sm hover:shadow-md transition-shadow duration-200'
+              )}
+            >
+              <div className={cn('flex items-center gap-3 mb-4 pb-3 border-b border-gray-100 dark:border-gray-900')}>
+                <div className={cn('w-8 h-8 rounded-lg bg-green-50 dark:bg-green-950/30 flex items-center justify-center border border-green-200 dark:border-green-800')}>
+                  <FileText size={16} className="text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-black dark:text-white">
+                  원고 A
+                </h3>
+              </div>
+              <textarea
+                ref={aRef}
+                value={a}
+                onChange={onChangeA}
+                onKeyDown={onKeyDownFindA}
+                rows={12}
+                placeholder="첫 번째 문서를 여기에 붙여넣으세요..."
+                className={cn(
+                  'w-full px-4 py-3 rounded-xl border resize-none',
+                  'border-gray-200 dark:border-gray-800',
+                  'bg-gray-50 dark:bg-gray-950',
+                  'text-gray-900 dark:text-gray-100',
+                  'placeholder:text-gray-500 dark:placeholder:text-gray-400',
+                  'focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400',
+                  'focus:border-transparent',
+                  'transition-colors duration-200'
+                )}
+              />
+              {findAOpen && (
+                <div className={cn(
+                  'absolute top-16 right-6 flex items-center gap-2',
+                  'rounded-xl border backdrop-blur-sm px-3 py-2 shadow-lg',
+                  'bg-white/95 dark:bg-black/95',
+                  'border-gray-200 dark:border-gray-800'
+                )}>
+                  <Search size={14} className="text-gray-400" />
+                  <input
+                    autoFocus
+                    value={findAQuery}
+                    onChange={(e) => {
+                      setFindAQuery(e.target.value);
+                      setFindAIndex(0);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        jumpToMatch('a', e.shiftKey ? -1 : 1);
+                      } else if (
+                        (e.metaKey || e.ctrlKey) &&
+                        (e.key === 'f' || e.key === 'F')
+                      ) {
+                        e.preventDefault();
+                        setFindAOpen(false);
+                      } else if (e.key === 'Escape') {
+                        setFindAOpen(false);
+                      }
+                    }}
+                    placeholder="이 영역에서 찾기"
+                    className={cn(
+                      'h-7 w-36 rounded-lg border px-2 text-sm',
+                      'border-gray-200 dark:border-gray-800',
+                      'bg-gray-50 dark:bg-gray-950',
+                      'focus:outline-none focus:ring-1 focus:ring-green-500'
+                    )}
+                  />
+                  <span className="text-xs text-gray-500 dark:text-gray-400 min-w-[40px] text-center">
+                    {aMatches.length
+                      ? `${(findAIndex % aMatches.length) + 1}/${aMatches.length}`
+                      : '0/0'}
+                  </span>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => jumpToMatch('a', -1)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded-md transition-colors',
+                        'bg-gray-100 dark:bg-gray-900',
+                        'hover:bg-gray-200 dark:hover:bg-gray-800',
+                        'text-gray-700 dark:text-gray-300'
+                      )}
+                    >
+                      ←
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => jumpToMatch('a', 1)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded-md transition-colors',
+                        'bg-gray-100 dark:bg-gray-900',
+                        'hover:bg-gray-200 dark:hover:bg-gray-800',
+                        'text-gray-700 dark:text-gray-300'
+                      )}
+                    >
+                      →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFindAOpen(false)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded-md transition-colors',
+                        'bg-gray-100 dark:bg-gray-900',
+                        'hover:bg-gray-200 dark:hover:bg-gray-800',
+                        'text-gray-700 dark:text-gray-300'
+                      )}
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div
+              className={cn(
+                'rounded-2xl border p-6 relative',
+                'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+                'shadow-sm hover:shadow-md transition-shadow duration-200'
+              )}
+            >
+              <div className={cn('flex items-center gap-3 mb-4 pb-3 border-b border-gray-100 dark:border-gray-900')}>
+                <div className={cn('w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center border border-blue-200 dark:border-blue-800')}>
+                  <FileText size={16} className="text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-black dark:text-white">
+                  원고 B
+                </h3>
+              </div>
+              <textarea
+                ref={bRef}
+                value={b}
+                onChange={onChangeB}
+                onKeyDown={onKeyDownFindB}
+                rows={12}
+                placeholder="두 번째 문서를 여기에 붙여넣으세요..."
+                className={cn(
+                  'w-full px-4 py-3 rounded-xl border resize-none',
+                  'border-gray-200 dark:border-gray-800',
+                  'bg-gray-50 dark:bg-gray-950',
+                  'text-gray-900 dark:text-gray-100',
+                  'placeholder:text-gray-500 dark:placeholder:text-gray-400',
+                  'focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400',
+                  'focus:border-transparent',
+                  'transition-colors duration-200'
+                )}
+              />
+              {findBOpen && (
+                <div className={cn(
+                  'absolute top-16 right-6 flex items-center gap-2',
+                  'rounded-xl border backdrop-blur-sm px-3 py-2 shadow-lg',
+                  'bg-white/95 dark:bg-black/95',
+                  'border-gray-200 dark:border-gray-800'
+                )}>
+                  <Search size={14} className="text-gray-400" />
+                  <input
+                    autoFocus
+                    value={findBQuery}
+                    onChange={(e) => {
+                      setFindBQuery(e.target.value);
+                      setFindBIndex(0);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        jumpToMatch('b', e.shiftKey ? -1 : 1);
+                      } else if (
+                        (e.metaKey || e.ctrlKey) &&
+                        (e.key === 'f' || e.key === 'F')
+                      ) {
+                        e.preventDefault();
+                        setFindBOpen(false);
+                      } else if (e.key === 'Escape') {
+                        setFindBOpen(false);
+                      }
+                    }}
+                    placeholder="이 영역에서 찾기"
+                    className={cn(
+                      'h-7 w-36 rounded-lg border px-2 text-sm',
+                      'border-gray-200 dark:border-gray-800',
+                      'bg-gray-50 dark:bg-gray-950',
+                      'focus:outline-none focus:ring-1 focus:ring-blue-500'
+                    )}
+                  />
+                  <span className="text-xs text-gray-500 dark:text-gray-400 min-w-[40px] text-center">
+                    {bMatches.length
+                      ? `${(findBIndex % bMatches.length) + 1}/${bMatches.length}`
+                      : '0/0'}
+                  </span>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => jumpToMatch('b', -1)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded-md transition-colors',
+                        'bg-gray-100 dark:bg-gray-900',
+                        'hover:bg-gray-200 dark:hover:bg-gray-800',
+                        'text-gray-700 dark:text-gray-300'
+                      )}
+                    >
+                      ←
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => jumpToMatch('b', 1)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded-md transition-colors',
+                        'bg-gray-100 dark:bg-gray-900',
+                        'hover:bg-gray-200 dark:hover:bg-gray-800',
+                        'text-gray-700 dark:text-gray-300'
+                      )}
+                    >
+                      →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFindBOpen(false)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded-md transition-colors',
+                        'bg-gray-100 dark:bg-gray-900',
+                        'hover:bg-gray-200 dark:hover:bg-gray-800',
+                        'text-gray-700 dark:text-gray-300'
+                      )}
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 통계 영역 */}
+          {(a || b) && (
+            <div
+              className={cn(
+                'rounded-2xl border p-6 max-w-7xl mx-auto',
+                'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+                'shadow-sm hover:shadow-md transition-shadow duration-200'
+              )}
+            >
+              <div className={cn('flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-900')}>
+                <div className={cn('w-10 h-10 rounded-xl bg-black dark:bg-white flex items-center justify-center')}>
+                  <BarChart3 size={20} className="text-white dark:text-black" />
+                </div>
+                <h2 className="text-2xl font-bold text-black dark:text-white">
+                  문서 분석 결과
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div>
+                  <div className={cn('flex items-center gap-2 mb-4')}>
+                    <div className={cn('w-2 h-2 rounded-full bg-green-500')} />
+                    <h3 className="text-lg font-semibold text-black dark:text-white">
+                      글자수 비교
+                    </h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div className={cn('p-3 rounded-lg bg-gray-50 dark:bg-gray-950 border border-gray-100 dark:border-gray-900')}>
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300">문서 A</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        전체: <span className="font-semibold text-black dark:text-white">{stat.a.charCount}</span>  |  공백제외: <span className="font-semibold text-black dark:text-white">{stat.a.charCountNoSpace}</span>
+                      </div>
+                    </div>
+                    <div className={cn('p-3 rounded-lg bg-gray-50 dark:bg-gray-950 border border-gray-100 dark:border-gray-900')}>
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300">문서 B</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        전체: <span className="font-semibold text-black dark:text-white">{stat.b.charCount}</span>  |  공백제외: <span className="font-semibold text-black dark:text-white">{stat.b.charCountNoSpace}</span>
+                      </div>
+                    </div>
+                    <div className={cn('p-3 rounded-lg bg-black dark:bg-white border border-gray-200 dark:border-gray-800')}>
+                      <div className="text-sm font-semibold text-white dark:text-black">
+                        차이: {Math.abs(stat.a.charCount - stat.b.charCount)}글자
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-2">
+                  <div className={cn('flex items-center gap-2 mb-4')}>
+                    <div className={cn('w-2 h-2 rounded-full bg-blue-500')} />
+                    <h3 className="text-lg font-semibold text-black dark:text-white">
+                      키워드 분석
+                    </h3>
+                  </div>
+
+                  <div className="space-y-6">
+                    {/* 공통 키워드 */}
+                    <div>
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        공통 키워드 ({commonWords.length}개)
+                      </div>
+                      {commonWords.length ? (
+                        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                          {commonWords.map((k) => (
+                            <span
+                              key={k.word}
+                              className={cn(
+                                'inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm',
+                                'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200',
+                                'border border-gray-200 dark:border-gray-800'
+                              )}
+                            >
+                              {k.word}
+                              <span className="text-xs opacity-70 ml-1">
+                                A:{k.a} B:{k.b}
+                              </span>
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-500 dark:text-gray-400 py-4 text-center bg-gray-50 dark:bg-gray-950 rounded-lg">
+                          공통 단어가 발견되지 않았습니다
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* A 고유 */}
+                      <div>
+                        <div className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">
+                          A 고유 키워드 ({uniqueWords(words.a, words.b).length}개)
+                        </div>
+                        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                          {words.a.length && uniqueWords(words.a, words.b).length ? (
+                            uniqueWords(words.a, words.b).map((k) => (
+                              <span
+                                key={k.word}
+                                className={cn(
+                                  'inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs',
+                                  'bg-green-50 dark:bg-green-950/30 text-green-800 dark:text-green-200',
+                                  'border border-green-200 dark:border-green-800'
+                                )}
+                              >
+                                {k.word}
+                                <span className="opacity-70">{k.count}</span>
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-sm text-gray-500 dark:text-gray-400">없음</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* B 고유 */}
+                      <div>
+                        <div className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2">
+                          B 고유 키워드 ({uniqueWords(words.b, words.a).length}개)
+                        </div>
+                        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                          {words.b.length && uniqueWords(words.b, words.a).length ? (
+                            uniqueWords(words.b, words.a).map((k) => (
+                              <span
+                                key={k.word}
+                                className={cn(
+                                  'inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs',
+                                  'bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-200',
+                                  'border border-blue-200 dark:border-blue-800'
+                                )}
+                              >
+                                {k.word}
+                                <span className="opacity-70">{k.count}</span>
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-sm text-gray-500 dark:text-gray-400">없음</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <DiffViewer
-              a={a}
-              b={b}
-              initialMode="unified"
-              initialGranularity="word"
-            />
-          </>
-        )}
+          )}
+
+          {/* 유사도 및 Diff 비교 */}
+          <div className="mt-8 space-y-8">
+            {!a && !b ? (
+              <div
+                className={cn(
+                  'text-center py-16 rounded-2xl border',
+                  'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+                  'shadow-sm'
+                )}
+              >
+                <div className={cn('w-16 h-16 mx-auto mb-4 rounded-full bg-gray-50 dark:bg-gray-950 flex items-center justify-center')}>
+                  <FileText size={24} className="text-gray-400 dark:text-gray-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+                  문서를 입력해주세요
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  비교할 두 개의 문서를 위 텍스트 영역에 붙여넣으세요
+                </p>
+              </div>
+            ) : (
+              <React.Fragment>
+                {/* 유사도 지표 */}
+                <div
+                  className={cn(
+                    'rounded-2xl border p-6',
+                    'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+                    'shadow-sm hover:shadow-md transition-shadow duration-200'
+                  )}
+                >
+                  <div className={cn('flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-900')}>
+                    <div className={cn('w-10 h-10 rounded-xl bg-black dark:bg-white flex items-center justify-center')}>
+                      <BarChart3 size={20} className="text-white dark:text-black" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-black dark:text-white">
+                      유사도 분석
+                    </h2>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className={cn('text-center p-4 rounded-xl bg-gray-50 dark:bg-gray-950 border border-gray-100 dark:border-gray-900')}>
+                      <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                        {Math.round(cosine * 1000) / 10}%
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">코사인 유사도</div>
+                    </div>
+                    <div className={cn('text-center p-4 rounded-xl bg-gray-50 dark:bg-gray-950 border border-gray-100 dark:border-gray-900')}>
+                      <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        {Math.round(jaccard * 1000) / 10}%
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">자카드 유사도</div>
+                    </div>
+                    <div className={cn('text-center p-4 rounded-xl bg-gray-50 dark:bg-gray-950 border border-gray-100 dark:border-gray-900')}>
+                      <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+                        {tokenA.length}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">문서 A 토큰</div>
+                    </div>
+                    <div className={cn('text-center p-4 rounded-xl bg-gray-50 dark:bg-gray-950 border border-gray-100 dark:border-gray-900')}>
+                      <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+                        {tokenB.length}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">문서 B 토큰</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Diff 비교 */}
+                <div
+                  className={cn(
+                    'rounded-2xl border overflow-hidden',
+                    'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+                    'shadow-sm'
+                  )}
+                >
+                  <div className={cn('px-6 py-4 border-b border-gray-100 dark:border-gray-900')}>
+                    <div className={cn('flex items-center gap-3')}>
+                      <div className={cn('w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center')}>
+                        <GitCompare size={16} className="text-white dark:text-black" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-black dark:text-white">
+                        차이점 비교
+                      </h3>
+                    </div>
+                  </div>
+                  <DiffViewer
+                    a={a}
+                    b={b}
+                    initialMode="unified"
+                    initialGranularity="word"
+                  />
+                </div>
+              </React.Fragment>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
