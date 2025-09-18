@@ -21,6 +21,13 @@ export const PopularSearchForm: React.FC = () => {
   const { show } = useToast();
   const navigate = useNavigate();
 
+  // Hydration 오류 방지: 클라이언트에서만 렌더링
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <div className={cn(
       "bg-white dark:bg-gray-900 rounded-2xl shadow-lg",
@@ -168,7 +175,7 @@ export const PopularSearchForm: React.FC = () => {
             <span className={cn("text-xs sm:text-sm text-gray-600 dark:text-gray-400")}>
               최근 검색어
             </span>
-            {recentSearchList.length > 0 && (
+            {isClient && recentSearchList.length > 0 && (
               <button
                 type="button"
                 onClick={clearRecentSearch}
@@ -185,7 +192,7 @@ export const PopularSearchForm: React.FC = () => {
             "flex gap-2 overflow-x-auto py-2",
             "scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent"
           )}>
-            {recentSearchList.map((q) => (
+            {isClient && recentSearchList.map((q) => (
               <Chip
                 key={q}
                 variant="secondary"
