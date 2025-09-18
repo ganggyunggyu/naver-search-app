@@ -100,15 +100,33 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
 
   if (isLoading) {
     return (
-      <div className={cn('space-y-4', className)}>
-        <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+      <div className={cn('space-y-6', className)}>
+        <div
+          className={cn(
+            'rounded-2xl border p-6 animate-pulse',
+            'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+            'shadow-sm'
+          )}
+        >
+          <div className={cn('flex items-center justify-between mb-6')}>
+            <div
+              className={cn('h-8 w-48 bg-gray-100 dark:bg-gray-900 rounded-lg')}
+            />
+            <div
+              className={cn(
+                'h-10 w-32 bg-gray-100 dark:bg-gray-900 rounded-lg'
+              )}
+            />
+          </div>
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className="h-48 bg-gray-200 dark:bg-gray-700 rounded-2xl"
-              ></div>
+                className={cn(
+                  'h-32 bg-gray-50 dark:bg-gray-950 rounded-xl border',
+                  'border-gray-100 dark:border-gray-900'
+                )}
+              />
             ))}
           </div>
         </div>
@@ -120,13 +138,25 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
     return (
       <div
         className={cn(
-          'text-center py-12 text-gray-500 dark:text-gray-400',
+          'rounded-2xl border p-12 text-center',
+          'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+          'shadow-sm',
           className
         )}
       >
-        <Search size={48} className="mx-auto mb-4 opacity-50" />
-        <p className="text-lg font-medium mb-2">블로그 검색 결과가 없습니다</p>
-        <p className="text-sm">다른 키워드로 검색해보세요</p>
+        <div
+          className={cn(
+            'w-16 h-16 mx-auto mb-4 rounded-full bg-gray-50 dark:bg-gray-950 flex items-center justify-center'
+          )}
+        >
+          <Search size={24} className="text-gray-400 dark:text-gray-600" />
+        </div>
+        <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+          블로그 검색 결과가 없습니다
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          다른 키워드로 검색해보세요
+        </p>
       </div>
     );
   }
@@ -134,71 +164,73 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
   return (
     <React.Fragment>
       <div className={cn('space-y-8', className)}>
-        {/* 전체 다운로드 버튼 */}
-        {blogData.items.length > 0 && (
-          <div className="flex justify-center">
-            <button
-              onClick={handleDownloadAll}
+        {/* 블로그 검색 결과 */}
+        {allBlogs.length > 0 && (
+          <section
+            className={cn(
+              'rounded-2xl border p-6',
+              'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+              'shadow-sm hover:shadow-md transition-shadow duration-200'
+            )}
+          >
+            <div
               className={cn(
-                'flex items-center gap-3 px-4 sm:px-6 py-2 sm:py-3',
-                'text-base sm:text-lg font-semibold',
-                'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
-                'text-white rounded-2xl shadow-lg hover:shadow-xl',
-                'transition-all duration-200 hover:scale-105 active:scale-95'
+                'flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-gray-900'
               )}
             >
-              <Download size={18} className="sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">
-                전체 블로그 검색 결과 다운로드
-              </span>
-              <span className="sm:hidden">전체 다운로드</span>
-              <Chip
-                variant="primary"
-                size="sm"
-                className="bg-white/20 text-white border-white/30"
-              >
-                {blogData.items.length}개
-              </Chip>
-            </button>
-          </div>
-        )}
-
-        {/* 블로그 검색 결과 (매칭 하이라이트 포함) */}
-        {allBlogs.length > 0 && (
-          <section className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-lg">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <div className="flex items-center gap-4">
+                <h3 className="text-xl font-bold text-black dark:text-white">
                   블로그 검색 결과
                 </h3>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-3 py-2 rounded-full border border-blue-200 dark:border-blue-800">
-                    "{blogData.keyword}" 총 {blogData.total}개
+                <div
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800'
+                  )}
+                >
+                  <div className={cn('w-2 h-2 rounded-full bg-green-500')} />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {blogData.total}개 발견
                   </span>
-                  {matchedCount > 0 && (
-                    <span className="text-sm font-medium text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-2 rounded-full border border-green-200 dark:border-green-800">
+                </div>
+                {matchedCount > 0 && (
+                  <div
+                    className={cn(
+                      'flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800'
+                    )}
+                  >
+                    <div className={cn('w-2 h-2 rounded-full bg-green-500')} />
+                    <span className="text-sm font-medium text-green-700 dark:text-green-300">
                       매칭 {matchedCount}개
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
-              {/* 네이버에서 더보기 버튼 */}
-              <button
-                onClick={() =>
-                  window.open(blogData.url, '_blank', 'noopener,noreferrer')
-                }
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-xl border border-blue-200 dark:border-blue-700 transition-all hover:shadow-sm hover:scale-110 cursor-pointer active:scale-105"
-              >
-                네이버에서 더보기 ({blogData.total}개)
-              </button>
+
+              {blogData.items.length > 0 && (
+                <button
+                  onClick={handleDownloadAll}
+                  className={cn(
+                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium',
+                    'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300',
+                    'hover:bg-gray-200 dark:hover:bg-gray-800',
+                    'border border-gray-200 dark:border-gray-800',
+                    'transition-colors duration-200'
+                  )}
+                >
+                  <Download size={14} />
+                  <span className="hidden sm:inline">다운로드</span>
+                  <span className="sm:hidden">저장</span>
+                  <span className="text-xs">({blogData.items.length}개)</span>
+                </button>
+              )}
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {allBlogs.map((blog, index) => {
                 const blogItem = blog.item;
                 const popularItem: PopularItem = {
                   title: blogItem.title,
                   link: blogItem.link,
-                  blogName: blog.blogId || '', // 블로그 ID를 블로그명으로 사용
+                  blogName: blog.blogId || '',
                   blogLink: blog.blogId
                     ? `https://blog.naver.com/${blog.blogId}`
                     : '',
@@ -211,7 +243,7 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
                     key={`blog-${blog.position}-${index}`}
                     item={popularItem}
                     position={blog.position}
-                    isMatched={blog.isMatched}
+                    isMatched={blog.isMatched || false}
                     blogId={blog.blogId}
                   />
                 );
