@@ -344,17 +344,14 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         )}
 
         {data && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-8">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
                 인기글 결과
-                <span className="text-lg font-normal text-gray-600 dark:text-gray-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
+                <span className="text-lg font-normal text-gray-600 dark:text-gray-400 bg-green-100 dark:bg-green-900/30 rounded-full">
                   {data.count}개
                 </span>
               </h2>
-              <span className="text-sm text-gray-500 dark:text-gray-400 break-all max-w-xs truncate">
-                {data.url}
-              </span>
             </div>
             <PopularResults />
           </div>
