@@ -48,42 +48,29 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
     return '';
   };
 
-  // 매칭된 블로그와 일반 블로그 분리
-  const { matchedBlogs, otherBlogs } = React.useMemo(() => {
-    if (!blogData?.items) return { matchedBlogs: [], otherBlogs: [] };
+  // 전체 블로그 리스트와 매칭 정보 생성
+  const { allBlogs, matchedCount } = React.useMemo(() => {
+    if (!blogData?.items) return { allBlogs: [], matchedCount: 0 };
 
     const allowedIds = new Set(BLOG_IDS.map((v) => v.toLowerCase()));
-    const matched: Array<{
-      id: string;
-      item: BlogItem;
-      position: number;
-    }> = [];
-    const others: Array<{
-      item: BlogItem;
-      position: number;
-      blogId?: string;
-    }> = [];
+    let matchedCount = 0;
 
-    for (let index = 0; index < blogData.items.length; index++) {
-      const item = blogData.items[index];
+    const allBlogs = blogData.items.slice(0, 20).map((item, index) => {
       const id = getBlogId(item.link);
+      const isMatched = id && allowedIds.has(id);
 
-      if (id && allowedIds.has(id)) {
-        matched.push({
-          id,
-          item,
-          position: index + 1,
-        });
-      } else {
-        others.push({
-          item,
-          position: index + 1,
-          blogId: id || undefined,
-        });
-      }
-    }
+      if (isMatched) matchedCount++;
 
-    return { matchedBlogs: matched, otherBlogs: others.slice(0, 12) };
+      return {
+        item,
+        position: index + 1,
+        blogId: id || undefined,
+        isMatched,
+        id: isMatched ? id : undefined,
+      };
+    });
+
+    return { allBlogs, matchedCount };
   }, [blogData]);
 
   const handleDownloadAll = async () => {
@@ -176,57 +163,24 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
           </div>
         )}
 
-        {/* 매칭된 블로그 섹션 */}
-        {matchedBlogs.length > 0 && (
-          <section className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-800 dark:to-green-900 shadow-lg">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  매칭된 블로그
-                </h3>
-                <span className="text-sm font-medium text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-2 rounded-full border border-green-200 dark:border-green-800">
-                  {matchedBlogs.length}개 발견
-                </span>
-              </div>
-            </div>
-            <div className="space-y-4">
-              {matchedBlogs.map((matched, index) => {
-                const blogItem = matched.item;
-
-                const popularItem: PopularItem = {
-                  title: blogItem.title,
-                  link: blogItem.link,
-                  blogName: blogItem.title, // 블로그 ID를 블로그명으로 사용
-                  blogLink: `https://blog.naver.com/${matched.id}`,
-                  group: '',
-                  description: blogItem.description,
-                } as PopularItem & { description: string };
-
-                return (
-                  <PopularItemCard
-                    key={`matched-${matched.position}-${index}`}
-                    item={popularItem}
-                    position={matched.position}
-                    isMatched={true}
-                    blogId={matched.id}
-                  />
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* 일반 블로그 섹션 */}
-        {otherBlogs.length > 0 && (
+        {/* 블로그 검색 결과 (매칭 하이라이트 포함) */}
+        {allBlogs.length > 0 && (
           <section className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-lg">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   블로그 검색 결과
                 </h3>
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-3 py-2 rounded-full border border-blue-200 dark:border-blue-800">
-                  "{blogData.keyword}" 총 {blogData.total}개
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-3 py-2 rounded-full border border-blue-200 dark:border-blue-800">
+                    "{blogData.keyword}" 총 {blogData.total}개
+                  </span>
+                  {matchedCount > 0 && (
+                    <span className="text-sm font-medium text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-2 rounded-full border border-green-200 dark:border-green-800">
+                      매칭 {matchedCount}개
+                    </span>
+                  )}
+                </div>
               </div>
               {/* 네이버에서 더보기 버튼 */}
               <button
@@ -239,7 +193,7 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
               </button>
             </div>
             <div className="space-y-4">
-              {otherBlogs.map((blog, index) => {
+              {allBlogs.map((blog, index) => {
                 const blogItem = blog.item;
                 const popularItem: PopularItem = {
                   title: blogItem.title,
@@ -254,10 +208,10 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
 
                 return (
                   <PopularItemCard
-                    key={`other-${blog.position}-${index}`}
+                    key={`blog-${blog.position}-${index}`}
                     item={popularItem}
                     position={blog.position}
-                    isMatched={false}
+                    isMatched={blog.isMatched}
                     blogId={blog.blogId}
                   />
                 );
