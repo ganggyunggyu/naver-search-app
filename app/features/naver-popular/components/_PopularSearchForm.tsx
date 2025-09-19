@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAtom } from 'jotai';
-import { X } from 'lucide-react';
+import { X, ExternalLink, Search, Edit3 } from 'lucide-react';
 import { cn, Chip, Button } from '@/shared';
 import { useToast } from '@/shared/ui/Toast';
 import { usePopularActions, useRecentSearch } from '../hooks';
@@ -205,6 +205,48 @@ export const PopularSearchForm: React.FC = () => {
             )}
           </div>
         </button>
+
+        {/* 네이버 다이렉트 버튼들 */}
+        {isAutoUrl && query.trim() && (
+          <div className={cn('flex gap-2 mt-4')}>
+            <button
+              type="button"
+              onClick={() => {
+                const searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(query.trim())}`;
+                window.open(searchUrl, '_blank', 'noopener,noreferrer');
+              }}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg',
+                'text-sm font-medium transition-all duration-200',
+                'bg-green-500 hover:bg-green-600 text-white',
+                'shadow-sm hover:shadow-md active:scale-[0.98]'
+              )}
+            >
+              <Search size={16} />
+              <span className="hidden sm:inline">네이버 통합검색</span>
+              <span className="sm:hidden">통합검색</span>
+              <ExternalLink size={12} className="opacity-70" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const blogUrl = `https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query=${encodeURIComponent(query.trim())}`;
+                window.open(blogUrl, '_blank', 'noopener,noreferrer');
+              }}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg',
+                'text-sm font-medium transition-all duration-200',
+                'bg-blue-500 hover:bg-blue-600 text-white',
+                'shadow-sm hover:shadow-md active:scale-[0.98]'
+              )}
+            >
+              <Edit3 size={16} />
+              <span className="hidden sm:inline">네이버 블로그</span>
+              <span className="sm:hidden">블로그</span>
+              <ExternalLink size={12} className="opacity-70" />
+            </button>
+          </div>
+        )}
       </form>
       {isAutoUrl && (
         <div
