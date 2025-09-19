@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, Download } from 'lucide-react';
 import { cn, Chip } from '@/shared';
-import { PopularItemCard } from './PopularItemCard';
+import { PopularItemCard } from './_PopularItemCard';
 import { BLOG_IDS } from '@/constants';
 import { useToast } from '@/shared/ui/Toast';
 import type { PopularItem } from '@/entities/naver/_types';
