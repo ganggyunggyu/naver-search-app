@@ -7,6 +7,7 @@ import { useToast } from '@/shared/ui/Toast';
 import { downloadAllContentToFile } from '@/features/naver-popular/lib';
 import { Download } from 'lucide-react';
 import { cn, Chip, Button } from '@/shared';
+import { BLOG_IDS } from '@/constants';
 
 const DEFAULT_GROUP = '비즈니스·경제 인기글';
 
@@ -15,138 +16,193 @@ export const PopularResults: React.FC = () => {
   const itemList = data?.items || [];
   const { show } = useToast();
 
-  const grouped = useMemo(() => {
+  // 블로그 ID 추출 함수 (BlogResultList와 동일)
+  const getBlogId = (url: string): string => {
+    try {
+      const u = new URL(url);
+      if (
+        u.hostname.includes('blog.naver.com') ||
+        u.hostname.includes('m.blog.naver.com')
+      ) {
+        const seg = u.pathname.replace(/^\//, '').split('/')[0];
+        return (seg || '').toLowerCase();
+      }
+    } catch {}
+    return '';
+  };
+
+  const { grouped, totalMatchedCount } = useMemo(() => {
     const map: Record<string, PopularItem[]> = {};
+    const allowedIds = new Set(BLOG_IDS.map((v) => v.toLowerCase()));
+    let totalMatchedCount = 0;
+
     for (const it of itemList || []) {
       const g = it.group || DEFAULT_GROUP;
       if (!map[g]) map[g] = [];
-      map[g].push(it);
+
+      // blogLink에서 블로그 ID 추출
+      let blogId = '';
+      let isMatched = false;
+
+      if (it.blogLink) {
+        blogId = getBlogId(it.blogLink);
+        isMatched = blogId && allowedIds.has(blogId);
+      }
+
+      // 매칭된 항목 카운트
+      if (isMatched) {
+        totalMatchedCount++;
+      }
+
+      // 아이템에 매칭 정보 추가
+      const itemWithMatchInfo = {
+        ...it,
+        blogId: blogId || undefined,
+        isMatched
+      };
+
+      map[g].push(itemWithMatchInfo);
     }
-    return Object.entries(map);
+
+    return {
+      grouped: Object.entries(map),
+      totalMatchedCount
+    };
   }, [itemList]);
 
   if (!itemList?.length) return null;
 
   return (
-    <div
-      className={cn(
-        'rounded-2xl border mb-12',
-        'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
-        'shadow-sm hover:shadow-md transition-shadow duration-200'
-      )}
-    >
-      <div
-        className={cn(
-          'flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-900'
-        )}
-      >
-        <h2
+    <React.Fragment>
+      <div className={cn('space-y-6')}>
+        {/* 전체 다운로드 버튼을 위한 별도 섹션 */}
+        <section
           className={cn(
-            'text-2xl font-bold text-black dark:text-white flex items-center gap-4'
+            'rounded-2xl border p-6',
+            'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
+            'shadow-sm hover:shadow-md transition-shadow duration-200'
           )}
         >
-          인기글 추출 결과
-          <div
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-full',
-              'bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800'
-            )}
-          >
-            <div className={cn('w-2 h-2 rounded-full bg-green-500')} />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {data?.count || itemList.length}개 추출
-            </span>
-          </div>
-        </h2>
-        {itemList.length > 0 && (
-          <div className={cn('flex justify-center mb-8')}>
-            <button
-              onClick={() =>
-                downloadAllContentToFile(itemList, (m, o) => show(m, o))
-              }
-              className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium',
-                'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300',
-                'hover:bg-gray-200 dark:hover:bg-gray-800',
-                'border border-gray-200 dark:border-gray-800',
-                'transition-colors duration-200'
-              )}
-            >
-              <Download size={14} />
-              <span className="hidden sm:inline">전체 다운로드</span>
-              <span className="sm:hidden">다운로드</span>
-              <span className="text-xs">({itemList.length}개)</span>
-            </button>
-          </div>
-        )}
-      </div>
-      <div className={cn('p-6')}>
-        <div className="space-y-8">
-          {/* 전체 다운로드 버튼 */}
-
-          {grouped.map(([group, list]) => (
-            <section
-              key={group}
-              className={cn(
-                'border rounded-2xl p-6',
-                'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
-                'shadow-sm hover:shadow-md transition-shadow duration-200'
-              )}
-            >
-              {/* 헤더 */}
-              <div
-                className={cn(
-                  'flex items-center justify-between mb-6 pb-4',
-                  'border-b border-gray-100 dark:border-gray-900'
-                )}
-              >
-                <div className="flex items-center gap-4">
-                  <h3 className="text-xl font-bold text-black dark:text-white">
-                    {group}
-                  </h3>
+          {/* 전체 헤더 - BlogResultList와 동일한 구조 */}
+          <div className={cn('mb-4')}>
+            <div className={cn('flex flex-col sm:flex-row sm:items-center justify-between gap-3')}>
+              <div className={cn('flex flex-col sm:flex-row sm:items-center gap-3')}>
+                <h2 className={cn('text-lg sm:text-xl font-bold text-black dark:text-white')}>
+                  인기글 추출 결과
+                </h2>
+                <div className={cn('flex items-center gap-2 flex-wrap')}>
                   <div
                     className={cn(
-                      'flex items-center gap-2 px-3 py-1.5 rounded-full',
-                      'bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800'
+                      'flex items-center gap-2 px-3 py-1.5 rounded-full w-fit',
+                      'bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800'
                     )}
                   >
-                    <div className={cn('w-2 h-2 rounded-full bg-green-500')} />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {list.length}개 발견
+                    <div className={cn('w-2 h-2 rounded-full bg-blue-500 animate-pulse')} />
+                    <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                      {data?.count || itemList.length}개 발견
                     </span>
                   </div>
+                  {totalMatchedCount > 0 && (
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 px-3 py-1.5 rounded-full w-fit',
+                        'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50',
+                        'border border-green-200 dark:border-green-800'
+                      )}
+                    >
+                      <div className={cn('w-2 h-2 rounded-full bg-green-500 animate-bounce')} />
+                      <span className="text-sm font-semibold text-green-700 dark:text-green-300">
+                        ✓ 매칭 {totalMatchedCount}개
+                      </span>
+                    </div>
+                  )}
                 </div>
+              </div>
 
-                {/* 섹션별 다운로드 버튼 */}
+              {/* 전체 다운로드 버튼 */}
+              {itemList.length > 0 && (
                 <button
                   onClick={() =>
-                    downloadAllContentToFile(list, (m, o) => show(m, o))
+                    downloadAllContentToFile(itemList, (m, o) => show(m, o))
                   }
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium',
-                    'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300',
-                    'hover:bg-gray-200 dark:hover:bg-gray-800',
-                    'border border-gray-200 dark:border-gray-800',
-                    'transition-colors duration-200'
+                    'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold',
+                    'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900',
+                    'text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700',
+                    'hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-700 dark:hover:to-gray-800',
+                    'shadow-sm hover:shadow-md transition-all duration-200 active:scale-95',
+                    'w-fit'
                   )}
                 >
                   <Download size={14} />
-                  <span className="hidden sm:inline">다운로드</span>
-                  <span className="sm:hidden">저장</span>
-                  <span className="text-xs">({list.length}개)</span>
+                  <span className="hidden sm:inline">전체 다운로드</span>
+                  <span className="sm:hidden">전체</span>
+                  <span className="text-xs opacity-70">({itemList.length})</span>
                 </button>
-              </div>
+              )}
+            </div>
+          </div>
 
-              {/* 아이템 리스트 */}
-              <div className="space-y-3">
-                {list.map((item, idx) => (
-                  <PopularItemCard key={`${group}-${idx}`} item={item} />
-                ))}
+          {/* 각 그룹별 섹션을 카드가 아닌 div로 변경 */}
+          <div className="space-y-8">
+            {grouped.map(([group, list]) => (
+              <div key={group} className={cn('space-y-3')}>
+                {/* 그룹 헤더 - 더 간소화 */}
+                <div className={cn('flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-gray-100 dark:border-gray-900')}>
+                  <div className={cn('flex flex-col sm:flex-row sm:items-center gap-2')}>
+                    <h3 className={cn('text-base font-bold text-black dark:text-white')}>
+                      {group}
+                    </h3>
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 px-2 py-1 rounded-full w-fit text-xs',
+                        'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50',
+                        'border border-green-200 dark:border-green-800'
+                      )}
+                    >
+                      <div className={cn('w-1.5 h-1.5 rounded-full bg-green-500')} />
+                      <span className="font-semibold text-green-700 dark:text-green-300">
+                        {list.length}개
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 그룹별 다운로드 버튼 - 더 작게 */}
+                  <button
+                    onClick={() =>
+                      downloadAllContentToFile(list, (m, o) => show(m, o))
+                    }
+                    className={cn(
+                      'flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium',
+                      'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400',
+                      'hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800',
+                      'transition-all duration-200 active:scale-95 w-fit'
+                    )}
+                  >
+                    <Download size={12} />
+                    <span>저장</span>
+                  </button>
+                </div>
+
+                {/* 아이템 리스트 */}
+                <div className="space-y-3">
+                  {list.map((item: any, idx) => {
+                    // 이미 매칭 정보가 포함된 아이템을 사용
+                    return (
+                      <PopularItemCard
+                        key={`${group}-${idx}`}
+                        item={item}
+                        isMatched={item.isMatched || false}
+                        blogId={item.blogId}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </section>
-          ))}
-        </div>
+            ))}
+          </div>
+        </section>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
