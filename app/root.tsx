@@ -11,6 +11,7 @@ import type { Route } from './+types/root';
 import './app.css';
 import { ToastProvider } from './shared/ui/Toast';
 import Header from './shared/ui/Header';
+import { BottomNavigation } from './shared/ui/BottomNavigation';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -29,15 +30,24 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   <html lang="en">
     <head>
       <meta charSet="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
       <Meta />
       <Links />
     </head>
     <body>
       <ToastProvider>
-        <Header />
-        <div className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
+        {/* 데스크톱에서만 기존 Header 표시 */}
+        <div className="hidden lg:block">
+          <Header />
+        </div>
+
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950 pb-20 lg:pb-0 lg:pt-14">
           {children}
+        </div>
+
+        {/* 모바일/태블릿에서만 하단 네비게이션 표시 */}
+        <div className="lg:hidden">
+          <BottomNavigation />
         </div>
       </ToastProvider>
       <ScrollRestoration />
