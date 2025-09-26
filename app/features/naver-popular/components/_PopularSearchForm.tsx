@@ -2,9 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAtom } from 'jotai';
 import { X, ExternalLink, Search, Edit3 } from 'lucide-react';
-import { cn, Chip, Button } from '@/shared';
-import { useToast } from '@/shared/ui/Toast';
-import { usePopularActions, useRecentSearch } from '../hooks';
+import { cn } from '@/shared';
+import { useRecentSearch } from '../hooks';
 import {
   popularQueryAtom,
   popularIsAutoUrlAtom,
@@ -17,14 +16,12 @@ export const PopularSearchForm: React.FC = () => {
   const [isAutoUrl, setIsAutoUrl] = useAtom(popularIsAutoUrlAtom);
   const [url, setUrl] = useAtom(popularUrlAtom);
   const [isLoading] = useAtom(popularIsLoadingAtom);
-  const { generateNaverUrl } = usePopularActions();
   const {
     recentSearchList,
     addRecentSearch,
     clearRecentSearch,
     removeRecentSearch,
   } = useRecentSearch();
-  const { show } = useToast();
   const navigate = useNavigate();
 
   // Hydration 오류 방지: 클라이언트에서만 렌더링
@@ -129,7 +126,7 @@ export const PopularSearchForm: React.FC = () => {
                 className={cn(
                   'w-full px-4 py-3 rounded-lg bg-white dark:bg-black',
                   'text-black dark:text-white placeholder:text-gray-500',
-                  'text-sm focus:outline-none'
+                  'text-base focus:outline-none'
                 )}
               />
             </div>
@@ -159,7 +156,7 @@ export const PopularSearchForm: React.FC = () => {
                 className={cn(
                   'w-full px-4 py-3 rounded-lg bg-white dark:bg-black',
                   'text-black dark:text-white placeholder:text-gray-500',
-                  'text-sm focus:outline-none'
+                  'text-base focus:outline-none'
                 )}
               />
             </div>
@@ -277,15 +274,14 @@ export const PopularSearchForm: React.FC = () => {
           {isClient && recentSearchList.length > 0 ? (
             <div
               className={cn(
-                'flex gap-2 overflow-x-auto py-1',
-                'scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent'
+                'flex gap-2 flex-wrap py-1'
               )}
             >
               {recentSearchList.map((q) => (
                 <div
                   key={q}
                   className={cn(
-                    'flex-shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium',
+                    'flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium',
                     'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300',
                     'border border-gray-200 dark:border-gray-800',
                     'transition-colors duration-200'

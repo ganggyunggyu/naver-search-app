@@ -265,24 +265,46 @@ export const PopularViewerModal: React.FC<Props> = ({
               </div>
 
               {analysis.topKeywords.length > 0 && (
-                <div>
-                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    주요 키워드 ({analysis.topKeywords.length}개)
+                <div className={cn("mt-6 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-800")}>
+                  <div className={cn("flex items-center gap-2 mb-4")}>
+                    <div className={cn("w-6 h-6 rounded-lg bg-blue-500 flex items-center justify-center")}>
+                      <span className="text-white text-xs font-bold">#</span>
+                    </div>
+                    <h4 className="text-sm font-bold text-blue-900 dark:text-blue-100">
+                      주요 키워드 분석
+                    </h4>
+                    <div className={cn("px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-xs font-medium text-blue-700 dark:text-blue-300")}>
+                      {analysis.topKeywords.length}개 발견
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                    {analysis.topKeywords.map((k) => (
+                  <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
+                    {analysis.topKeywords.map((k, index) => (
                       <span
                         key={k.word}
                         className={cn(
-                          "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs",
-                          "bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200",
-                          "border border-gray-200 dark:border-gray-800"
+                          "inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium",
+                          "bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100",
+                          "border-2 border-gray-200 dark:border-gray-700",
+                          "shadow-sm hover:shadow-md transition-all duration-200",
+                          "hover:scale-105 cursor-default",
+                          index < 5 && "ring-2 ring-yellow-300 dark:ring-yellow-600 ring-opacity-50"
                         )}
                       >
-                        {k.word}
-                        <span className="opacity-70 text-xs">{k.count}</span>
+                        <span className={cn("font-bold", index < 5 ? "text-yellow-700 dark:text-yellow-300" : "")}>{k.word}</span>
+                        <span className={cn(
+                          "px-2 py-0.5 rounded-full text-xs font-bold",
+                          index < 5
+                            ? "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                        )}>
+                          {k.count}
+                        </span>
                       </span>
                     ))}
+                  </div>
+                  <div className={cn("mt-3 text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1")}>
+                    <div className={cn("w-2 h-2 rounded-full bg-yellow-400")} />
+                    <span>상위 5개 키워드는 특별히 강조됩니다</span>
                   </div>
                 </div>
               )}
