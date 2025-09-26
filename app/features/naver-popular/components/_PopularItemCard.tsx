@@ -1,6 +1,6 @@
 import type { PopularItem } from '@/entities/naver/_types';
 import React from 'react';
-import { Download, Copy, FileText, Eye } from 'lucide-react';
+import { Download, Copy, FileText, Eye, Smartphone, Monitor } from 'lucide-react';
 import { Button, cn } from '@/shared';
 
 interface Props {
@@ -12,7 +12,13 @@ interface Props {
 }
 
 import { useToast } from '@/shared/ui/Toast';
-import { copyFullContentToClipboard, copyTitleToClipboard, downloadContentToFile } from '@/features/naver-popular/lib';
+import {
+  copyFullContentToClipboard,
+  copyTitleToClipboard,
+  downloadContentToFile,
+  copyMobileLinkToClipboard,
+  copyDesktopLinkToClipboard
+} from '@/features/naver-popular/lib';
 import { useSetAtom } from 'jotai';
 import { useViewerActions, viewerItemAtom } from '@/features';
 
@@ -125,62 +131,104 @@ export const PopularItemCard: React.FC<Props> = ({
         )}
 
         {/* 모바일 앱스러운 액션 버튼들 */}
-        <div className={cn("flex items-center gap-2")}>
+        <div className={cn("space-y-3")}>
+          {/* 메인 액션 버튼 */}
           <button
             onClick={() => {
               setViewerItem(item);
               openViewer(item.link);
             }}
             className={cn(
-              "flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl",
+              "w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl",
               "bg-black dark:bg-white text-white dark:text-black font-semibold text-sm",
               "hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-200",
               "shadow-sm hover:shadow-md active:scale-95"
             )}
           >
             <Eye size={16} />
-            <span className="hidden sm:inline">자세히 보기</span>
-            <span className="sm:hidden">보기</span>
+            <span>자세히 보기</span>
           </button>
 
-          <button
-            onClick={() =>
-              copyFullContentToClipboard(item.link, (m, o) => show(m, o))
-            }
-            className={cn(
-              "p-3 rounded-xl border-2 border-gray-200 dark:border-gray-700",
-              "bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800",
-              "transition-all duration-200 active:scale-95"
-            )}
-          >
-            <FileText size={16} className="text-gray-600 dark:text-gray-400" />
-          </button>
+          {/* 첫 번째 줄: 콘텐츠 관련 액션 */}
+          <div className={cn("flex items-center gap-2")}>
+            <button
+              onClick={() =>
+                copyFullContentToClipboard(item.link, (m, o) => show(m, o))
+              }
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl",
+                "border-2 border-gray-200 dark:border-gray-700",
+                "bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800",
+                "transition-all duration-200 active:scale-95"
+              )}
+            >
+              <FileText size={14} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">본문</span>
+            </button>
 
-          <button
-            onClick={() =>
-              copyTitleToClipboard(item.title, (m, o) => show(m, o))
-            }
-            className={cn(
-              "p-3 rounded-xl border-2 border-gray-200 dark:border-gray-700",
-              "bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800",
-              "transition-all duration-200 active:scale-95"
-            )}
-          >
-            <Copy size={16} className="text-gray-600 dark:text-gray-400" />
-          </button>
+            <button
+              onClick={() =>
+                copyTitleToClipboard(item.title, (m, o) => show(m, o))
+              }
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl",
+                "border-2 border-gray-200 dark:border-gray-700",
+                "bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800",
+                "transition-all duration-200 active:scale-95"
+              )}
+            >
+              <Copy size={14} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">제목</span>
+            </button>
 
-          <button
-            onClick={() =>
-              downloadContentToFile(item.link, item.title, (m, o) => show(m, o))
-            }
-            className={cn(
-              "p-3 rounded-xl border-2 border-gray-200 dark:border-gray-700",
-              "bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800",
-              "transition-all duration-200 active:scale-95"
-            )}
-          >
-            <Download size={16} className="text-gray-600 dark:text-gray-400" />
-          </button>
+            <button
+              onClick={() =>
+                downloadContentToFile(item.link, item.title, (m, o) => show(m, o))
+              }
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl",
+                "border-2 border-gray-200 dark:border-gray-700",
+                "bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800",
+                "transition-all duration-200 active:scale-95"
+              )}
+            >
+              <Download size={14} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">저장</span>
+            </button>
+          </div>
+
+          {/* 두 번째 줄: 링크 복사 액션 */}
+          <div className={cn("flex items-center gap-2")}>
+            <button
+              onClick={() =>
+                copyMobileLinkToClipboard(item.link, (m, o) => show(m, o))
+              }
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl",
+                "border-2 border-blue-200 dark:border-blue-800",
+                "bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/50",
+                "transition-all duration-200 active:scale-95"
+              )}
+            >
+              <Smartphone size={14} className="text-blue-600 dark:text-blue-400" />
+              <span className="text-xs font-medium text-blue-600 dark:text-blue-400">모바일링크</span>
+            </button>
+
+            <button
+              onClick={() =>
+                copyDesktopLinkToClipboard(item.link, (m, o) => show(m, o))
+              }
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl",
+                "border-2 border-purple-200 dark:border-purple-800",
+                "bg-purple-50 dark:bg-purple-950/50 hover:bg-purple-100 dark:hover:bg-purple-900/50",
+                "transition-all duration-200 active:scale-95"
+              )}
+            >
+              <Monitor size={14} className="text-purple-600 dark:text-purple-400" />
+              <span className="text-xs font-medium text-purple-600 dark:text-purple-400">데스크탑링크</span>
+            </button>
+          </div>
         </div>
 
         {/* 하단 URL - 더 깔끔하게 */}
