@@ -343,5 +343,58 @@ export const downloadAllContentToZip = async (
   }
 };
 
+// 네이버 블로그 링크 변환 유틸리티
+export const convertToMobileLink = (link: string): string => {
+  // 네이버 블로그 데스크탑 → 모바일 변환
+  if (link.includes('blog.naver.com') && !link.includes('m.blog.naver.com')) {
+    return link.replace('://blog.naver.com', '://m.blog.naver.com');
+  }
+
+  return link; // 네이버 블로그가 아니거나 이미 모바일인 경우 원본 반환
+};
+
+export const convertToDesktopLink = (link: string): string => {
+  // 네이버 블로그 모바일 → 데스크탑 변환
+  if (link.includes('m.blog.naver.com')) {
+    return link.replace('://m.blog.naver.com', '://blog.naver.com');
+  }
+
+  return link; // 네이버 블로그가 아니거나 이미 데스크탑인 경우 원본 반환
+};
+
+// 모바일 링크 복사
+export const copyMobileLinkToClipboard = async (
+  link: string,
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
+) => {
+  try {
+    const mobileLink = convertToMobileLink(link);
+    await navigator.clipboard.writeText(mobileLink);
+    show('모바일 링크가 복사되었습니다!', { type: 'success' });
+  } catch {
+    show('모바일 링크 복사 실패', { type: 'error' });
+  }
+};
+
+// 데스크탑 링크 복사
+export const copyDesktopLinkToClipboard = async (
+  link: string,
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
+) => {
+  try {
+    const desktopLink = convertToDesktopLink(link);
+    await navigator.clipboard.writeText(desktopLink);
+    show('데스크탑 링크가 복사되었습니다!', { type: 'success' });
+  } catch {
+    show('데스크탑 링크 복사 실패', { type: 'error' });
+  }
+};
+
 // 하위 호환성을 위한 별칭
 export const downloadAllContentToFile = downloadAllContentToZip;
