@@ -4,9 +4,9 @@ import { PopularItemCard } from './_PopularItemCard';
 import { useAtom } from 'jotai';
 import { popularDataAtom } from '@/features/naver-popular/store';
 import { useToast } from '@/shared/ui/Toast';
-import { downloadAllContentToFile } from '@/features/naver-popular/lib';
-import { Download } from 'lucide-react';
-import { cn, Chip, Button } from '@/shared';
+import { copyTitleToClipboard, downloadAllContentToFile } from '@/features/naver-popular/lib';
+import { Download, Copy } from 'lucide-react';
+import { cn } from '@/shared';
 import { BLOG_IDS } from '@/constants';
 
 const DEFAULT_GROUP = '비즈니스·경제 인기글';
@@ -58,7 +58,7 @@ export const PopularResults: React.FC = () => {
       const itemWithMatchInfo = {
         ...it,
         blogId: blogId || undefined,
-        isMatched
+        isMatched,
       };
 
       map[g].push(itemWithMatchInfo);
@@ -66,7 +66,7 @@ export const PopularResults: React.FC = () => {
 
     return {
       grouped: Object.entries(map),
-      totalMatchedCount
+      totalMatchedCount,
     };
   }, [itemList]);
 
@@ -85,9 +85,21 @@ export const PopularResults: React.FC = () => {
         >
           {/* 전체 헤더 - BlogResultList와 동일한 구조 */}
           <div className={cn('mb-4')}>
-            <div className={cn('flex flex-col sm:flex-row sm:items-center justify-between gap-3')}>
-              <div className={cn('flex flex-col sm:flex-row sm:items-center gap-3')}>
-                <h2 className={cn('text-lg sm:text-xl font-bold text-black dark:text-white')}>
+            <div
+              className={cn(
+                'flex flex-col sm:flex-row sm:items-center justify-between gap-3'
+              )}
+            >
+              <div
+                className={cn(
+                  'flex flex-col sm:flex-row sm:items-center gap-3'
+                )}
+              >
+                <h2
+                  className={cn(
+                    'text-lg sm:text-xl font-bold text-black dark:text-white'
+                  )}
+                >
                   인기글 추출 결과
                 </h2>
                 <div className={cn('flex items-center gap-2 flex-wrap')}>
@@ -97,7 +109,11 @@ export const PopularResults: React.FC = () => {
                       'bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800'
                     )}
                   >
-                    <div className={cn('w-2 h-2 rounded-full bg-blue-500 animate-pulse')} />
+                    <div
+                      className={cn(
+                        'w-2 h-2 rounded-full bg-blue-500 animate-pulse'
+                      )}
+                    />
                     <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
                       {data?.count || itemList.length}개 발견
                     </span>
@@ -110,7 +126,11 @@ export const PopularResults: React.FC = () => {
                         'border border-green-200 dark:border-green-800'
                       )}
                     >
-                      <div className={cn('w-2 h-2 rounded-full bg-green-500 animate-bounce')} />
+                      <div
+                        className={cn(
+                          'w-2 h-2 rounded-full bg-green-500 animate-bounce'
+                        )}
+                      />
                       <span className="text-sm font-semibold text-green-700 dark:text-green-300">
                         ✓ 매칭 {totalMatchedCount}개
                       </span>
@@ -137,7 +157,9 @@ export const PopularResults: React.FC = () => {
                   <Download size={14} />
                   <span className="hidden sm:inline">전체 다운로드</span>
                   <span className="sm:hidden">전체</span>
-                  <span className="text-xs opacity-70">({itemList.length})</span>
+                  <span className="text-xs opacity-70">
+                    ({itemList.length})
+                  </span>
                 </button>
               )}
             </div>
@@ -148,11 +170,37 @@ export const PopularResults: React.FC = () => {
             {grouped.map(([group, list]) => (
               <div key={group} className={cn('space-y-3')}>
                 {/* 그룹 헤더 - 더 간소화 */}
-                <div className={cn('flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-gray-100 dark:border-gray-900')}>
-                  <div className={cn('flex flex-col sm:flex-row sm:items-center gap-2')}>
-                    <h3 className={cn('text-base font-bold text-black dark:text-white')}>
-                      {group}
-                    </h3>
+                <div
+                  className={cn(
+                    'flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-gray-100 dark:border-gray-900'
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'flex flex-col sm:flex-row sm:items-center gap-2'
+                    )}
+                  >
+                    <div className={cn('flex items-center gap-2')}>
+                      <h3
+                        className={cn(
+                          'flex-1 text-base font-bold text-black dark:text-white'
+                        )}
+                      >
+                        {group}
+                      </h3>
+                      <button
+                        type="button"
+                        aria-label="그룹 제목 복사"
+                        onClick={() => copyTitleToClipboard(group, (m, o) => show(m, o))}
+                        className={cn(
+                          'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border transition-all',
+                          'border-gray-200 bg-white text-gray-500 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600',
+                          'shadow-sm dark:border-gray-700 dark:bg-black dark:text-gray-400 dark:hover:border-blue-400 dark:hover:bg-blue-950/40 dark:hover:text-blue-400'
+                        )}
+                      >
+                        <Copy size={14} />
+                      </button>
+                    </div>
                     <div
                       className={cn(
                         'flex items-center gap-2 px-2 py-1 rounded-full w-fit text-xs',
@@ -160,7 +208,9 @@ export const PopularResults: React.FC = () => {
                         'border border-green-200 dark:border-green-800'
                       )}
                     >
-                      <div className={cn('w-1.5 h-1.5 rounded-full bg-green-500')} />
+                      <div
+                        className={cn('w-1.5 h-1.5 rounded-full bg-green-500')}
+                      />
                       <span className="font-semibold text-green-700 dark:text-green-300">
                         {list.length}개
                       </span>
@@ -188,10 +238,12 @@ export const PopularResults: React.FC = () => {
                 <div className="space-y-3">
                   {list.map((item: any, idx) => {
                     // 이미 매칭 정보가 포함된 아이템을 사용
+                    // position은 각 그룹별로 1부터 시작
                     return (
                       <PopularItemCard
                         key={`${group}-${idx}`}
                         item={item}
+                        position={idx + 1}
                         isMatched={item.isMatched || false}
                         blogId={item.blogId}
                       />
