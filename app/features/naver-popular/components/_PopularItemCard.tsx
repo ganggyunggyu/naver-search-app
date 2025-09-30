@@ -1,7 +1,7 @@
 import type { PopularItem } from '@/entities/naver/_types';
 import React from 'react';
 import { Download, Copy, FileText, Eye, Smartphone, Monitor } from 'lucide-react';
-import { Button, cn } from '@/shared';
+import { cn } from '@/shared';
 
 interface Props {
   item: PopularItem;
@@ -58,13 +58,23 @@ export const PopularItemCard: React.FC<Props> = ({
         <div className={cn("flex items-center justify-between mb-4")}>
           <div className={cn("flex items-center gap-3")}>
             {position && (
-              <div className={cn(
-                "w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold shadow-sm",
-                isMatched
-                  ? "bg-green-500 text-white"
-                  : "bg-gradient-to-br from-blue-500 to-purple-500 text-white"
-              )}>
-                {position}
+              <div className={cn("flex items-center gap-2")}>
+                <div className={cn(
+                  "w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold shadow-sm",
+                  isMatched
+                    ? "bg-green-500 text-white"
+                    : "bg-gradient-to-br from-blue-500 to-purple-500 text-white"
+                )}>
+                  {position}
+                </div>
+                <span className={cn(
+                  "text-xs font-medium",
+                  isMatched
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-gray-600 dark:text-gray-400"
+                )}>
+                  상단 {position}번째
+                </span>
               </div>
             )}
             {blogId && (
@@ -89,18 +99,34 @@ export const PopularItemCard: React.FC<Props> = ({
           )}
         </div>
 
+
+
         {/* 제목 - 앱스러운 스타일 */}
-        <div className={cn("mb-4")}>
-          <h3
-            onClick={() => window.open(displayLink, '_blank', 'noopener,noreferrer')}
-            className={cn(
-              "text-base font-bold leading-snug text-black dark:text-white",
-              "cursor-pointer line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400",
-              "transition-colors duration-200"
-            )}
-          >
-            {item.title}
-          </h3>
+        <div className={cn('mb-4')}>
+          <div className={cn('flex items-start gap-2')}>
+            <h3
+              onClick={() => window.open(displayLink, '_blank', 'noopener,noreferrer')}
+              className={cn(
+                'flex-1 text-base font-bold leading-snug text-black dark:text-white',
+                'cursor-pointer line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400',
+                'transition-colors duration-200'
+              )}
+            >
+              {item.title}
+            </h3>
+            <button
+              type="button"
+              aria-label="제목 복사"
+              onClick={() => copyTitleToClipboard(item.title, (m, o) => show(m, o))}
+              className={cn(
+                'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border transition-all',
+                'border-gray-200 bg-white text-gray-500 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600',
+                'shadow-sm dark:border-gray-700 dark:bg-black dark:text-gray-400 dark:hover:border-blue-400 dark:hover:bg-blue-950/40 dark:hover:text-blue-400'
+              )}
+            >
+              <Copy size={16} />
+            </button>
+          </div>
 
           {/* 블로그명 */}
           {item.blogName && item.blogLink && (
