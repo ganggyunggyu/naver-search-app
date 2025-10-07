@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { Home, Search, FileText, Settings, Plus } from 'lucide-react';
+import { Search, FileText } from 'lucide-react';
 import { cn } from '@/shared';
 
 interface NavItem {
