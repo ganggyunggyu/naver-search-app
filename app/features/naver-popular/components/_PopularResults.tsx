@@ -236,19 +236,22 @@ export const PopularResults: React.FC = () => {
 
                 {/* 아이템 리스트 */}
                 <div className="space-y-3">
-                  {list.map((item: any, idx) => {
-                    // 이미 매칭 정보가 포함된 아이템을 사용
-                    // position은 각 그룹별로 1부터 시작
-                    return (
-                      <PopularItemCard
-                        key={`${group}-${idx}`}
-                        item={item}
-                        position={idx + 1}
-                        isMatched={item.isMatched || false}
-                        blogId={item.blogId}
-                      />
-                    );
-                  })}
+                  {list
+                    .filter((item: any) => {
+                      const link = item.blogLink || item.link || '';
+                      return !link.includes('cafe.naver.com');
+                    })
+                    .map((item: any, idx) => {
+                      return (
+                        <PopularItemCard
+                          key={`${group}-${idx}`}
+                          item={item}
+                          position={idx + 1}
+                          isMatched={item.isMatched || false}
+                          blogId={item.blogId}
+                        />
+                      );
+                    })}
                 </div>
               </div>
             ))}
