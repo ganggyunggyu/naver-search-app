@@ -88,22 +88,53 @@ const readBlock = ($: CheerioAPI, root: any, items: PopularItem[]) => {
   });
 };
 
+/**
+ * 네이버 검색 결과에서 인기글 섹션을 파싱하는 함수
+ *
+ * 네이버 HTML 구조 (2025년 10월 기준):
+ * ```
+ * <div class="fds-ugc-single-intention-item-list">  // 인기글 리스트 컨테이너
+ *   <div class="w0FkNRfc2K6rffX0LJFd">              // 각 인기글 아이템
+ *     <div class="sds-comps-profile">                // 프로필 섹션
+ *       <a href="...">                               // 블로그 링크
+ *         <span class="sds-comps-profile-info-title-text">블로그명</span>
+ *       </a>
+ *     </div>
+ *     <div class="Amt3vrw2_QBkqaI0FchU">            // 콘텐츠 섹션
+ *       <a href="..." class="Pcw4FFPrGxhURyUmBGxh"> // 제목 링크
+ *         <span class="sds-comps-text-type-headline1 sds-comps-text-weight-sm">제목</span>
+ *       </a>
+ *       <div class="XEJeYBY31zkS37HszIeB">          // 미리보기 섹션
+ *         <span class="sds-comps-text-type-body1">본문 미리보기...</span>
+ *       </div>
+ *       <img src="...">                             // 썸네일 이미지
+ *     </div>
+ *   </div>
+ * </div>
+ * ```
+ *
+ * @param $ - Cheerio API 인스턴스
+ * @param items - 파싱된 인기글 아이템을 저장할 배열
+ */
 const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
+  // 인기글 리스트 컨테이너 찾기 (.fds-ugc-single-intention-item-list)
   const $popularSections = $('.fds-ugc-single-intention-item-list');
 
   $popularSections.each((_i: number, section: any) => {
     const $section = $(section);
 
-    // 헤더 찾기를 더 포괄적으로 개선
+    // 카테고리명 찾기 (예: "건강·의학 인기글", "IT·컴퓨터 인기글")
     let categoryName = '';
 
-    // 방법 1: 상위에서 헤더 찾기
+    // 방법 1: 상위 컨테이너에서 헤더 찾기
+    // 대부분의 경우 상위 .sds-comps-vertical-layout에 헤더가 있음
     const $headerInParent = $section.closest('.sds-comps-vertical-layout').find('.sds-comps-text-type-headline1').first();
     if ($headerInParent.length && $headerInParent.text().trim()) {
       categoryName = $headerInParent.text().trim();
     }
 
     // 방법 2: 형제 요소에서 헤더 찾기
+    // 상위에서 못 찾으면 부모의 다른 자식 요소 탐색
     if (!categoryName) {
       const $headerInSibling = $section.parent().find('.sds-comps-text-type-headline1').first();
       if ($headerInSibling.length && $headerInSibling.text().trim()) {
@@ -111,7 +142,8 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
       }
     }
 
-    // 방법 3: 전체에서 "인기글" 포함하는 헤더 찾기
+    // 방법 3: 전체에서 "인기글" 키워드 포함하는 헤더 찾기
+    // Fallback: 구조가 예상과 다를 경우 전체 span 탐색
     if (!categoryName) {
       $('span').each((_j: number, span: any) => {
         const spanText = $(span).text().trim();
@@ -122,32 +154,42 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
       });
     }
 
-    // 기본값 설정
+    // 기본값 설정: 카테고리명을 찾지 못한 경우
     if (!categoryName) {
       categoryName = '인기글';
     }
 
-    console.log('🔍 Found category:', categoryName); // 디버깅용
+    console.log('🔍 Found category:', categoryName);
 
-    const $popularItems = $section.find('.JTS3NufK1HH_Obhpw1_U .IMrIrgDRabSqMWVS0TSe');
+    // 각 인기글 아이템 찾기 (.w0FkNRfc2K6rffX0LJFd)
+    // 이 클래스는 네이버의 새로운 인기글 아이템 컨테이너 (2025년 10월 업데이트)
+    const $popularItems = $section.find('.w0FkNRfc2K6rffX0LJFd');
 
     $popularItems.each((_j: number, item: any) => {
       const $item = $(item);
 
-      const $titleLink = $item.find('.OwwmICzrKXneAIOVrlrA').first();
-      const title = $item.find('.sds-comps-text-type-headline1').text().trim();
+      // 제목 링크 추출
+      // .Pcw4FFPrGxhURyUmBGxh: 제목을 감싸는 링크 엘리먼트
+      const $titleLink = $item.find('.Pcw4FFPrGxhURyUmBGxh').first();
+      const title = $item.find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm').text().trim();
       const postHref = $titleLink.attr('href')?.trim() || '';
 
-      const $preview = $item.find('.sds-comps-text-type-body1').first();
+      // 본문 미리보기 추출
+      // .XEJeYBY31zkS37HszIeB: 미리보기 텍스트 컨테이너
+      const $preview = $item.find('.XEJeYBY31zkS37HszIeB .sds-comps-text-type-body1').first();
       const snippet = $preview.text().trim();
 
+      // 블로그 정보 추출
+      // .sds-comps-profile-info-title-text: 블로그명과 링크를 포함하는 프로필 영역
       const $sourceLink = $item.find('.sds-comps-profile-info-title-text a').first();
       const blogName = $sourceLink.text().trim();
       const blogHref = $sourceLink.attr('href')?.trim() || '';
 
+      // 썸네일 이미지 추출
       const $image = $item.find('.sds-comps-image img').first();
       const image = $image.attr('src')?.trim() || '';
 
+      // 유효한 데이터만 추가 (제목과 링크는 필수)
       if (postHref && title) {
         const popularItem = {
           title,

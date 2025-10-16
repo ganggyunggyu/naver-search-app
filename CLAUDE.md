@@ -110,10 +110,10 @@ npm run start
 
 ### 검색 API
 - `GET /api/search` - 블로그 검색
-- `GET /api/news` - 뉴스 검색  
+- `GET /api/news` - 뉴스 검색
 - `GET /api/content` - 콘텐츠 검색
-- `GET /api/naver-search` - 네이버 통합 검색
-- `GET /api/naver-popular` - 인기검색어
+- `GET /api/naver-search` - 네이버 통합 검색 (HTML 파싱)
+- `GET /api/naver-popular` - 인기검색어 (HTML 파싱)
 
 ### 페이지 라우트
 - `/` - 네이버 인기검색어 (홈)
@@ -123,6 +123,109 @@ npm run start
 - `/doc-compare` - 문서 비교
 - `/:keyword` - 다이나믹 키워드 검색
 - `/url/:encoded` - 다이나믹 URL 검색
+
+## 🎯 네이버 인기글 파싱 구조
+
+### HTML 구조 변경 히스토리
+
+네이버는 검색 결과 HTML을 주기적으로 변경합니다. 변경 이력:
+
+**2025년 10월 16일 업데이트:**
+- **변경 이유**: 네이버의 인기글 섹션 HTML 클래스명 변경
+- **주요 변경 사항**:
+  - 인기글 컨테이너: `.fds-ugc-single-intention-item-list` (신규)
+  - 아이템 컨테이너: `.w0FkNRfc2K6rffX0LJFd` (신규)
+  - 제목 링크: `.Pcw4FFPrGxhURyUmBGxh` (신규)
+  - 미리보기: `.XEJeYBY31zkS37HszIeB` (신규)
+
+### 현재 사용 중인 셀렉터 (2025-10-16 기준)
+
+```typescript
+// app/shared/utils/_popular.ts - readPopularSection()
+
+// 인기글 섹션 찾기
+$('.fds-ugc-single-intention-item-list')
+
+// 각 인기글 아이템
+.find('.w0FkNRfc2K6rffX0LJFd')
+
+// 제목 & 링크
+.find('.Pcw4FFPrGxhURyUmBGxh')  // 제목 링크
+.find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm')  // 제목 텍스트
+
+// 본문 미리보기
+.find('.XEJeYBY31zkS37HszIeB .sds-comps-text-type-body1')
+
+// 블로그 정보
+.find('.sds-comps-profile-info-title-text a')
+
+// 썸네일
+.find('.sds-comps-image img')
+```
+
+### Fallback 셀렉터 전략
+
+HTML 구조 변경에 대응하기 위한 Fallback 목록:
+
+```typescript
+// app/constants/_selectors.ts
+export const SEARCH_PARTIAL_SELECTORS = [
+  '.fds-comps-text',                      // 기본 텍스트 컴포넌트
+  '.fds-ugc-single-intention-item-list',  // 인기글 컨테이너 (현재)
+  '.sds-comps-text-type-headline1',       // 헤드라인 텍스트
+];
+```
+
+### 파싱 로직 위치
+
+- **메인 로직**: `app/shared/utils/_popular.ts`
+  - `readPopularSection()`: 인기글 섹션 파싱 (주요 함수)
+  - `readBlock()`: 레거시 블록 파싱 (하위 호환)
+  - `extractPopularItems()`: 최종 export 함수
+
+- **셀렉터 상수**: `app/constants/_selectors.ts`
+  - `KEYWORD_HEADER_SELECTOR`: 카테고리 헤더 선택자
+  - `SEARCH_PARTIAL_SELECTORS`: Fallback 선택자 목록
+
+- **HTML 유틸리티**: `app/shared/utils/html.ts`
+  - `loadHtml()`: Cheerio 로더
+  - `extractTextsBySelector()`: 텍스트 추출 헬퍼
+  - `buildClassSelector()`: 클래스 선택자 빌더
+
+### 구조 변경 시 대응 방법
+
+네이버 HTML 구조가 변경되어 파싱이 안 될 경우:
+
+1. **브라우저에서 HTML 구조 확인**
+   - 개발자 도구로 인기글 섹션 검사
+   - 새로운 클래스명 확인
+
+2. **셀렉터 업데이트**
+   ```typescript
+   // app/shared/utils/_popular.ts - readPopularSection()
+   const $popularItems = $section.find('.새로운클래스명');
+   ```
+
+3. **Fallback 셀렉터 추가**
+   ```typescript
+   // app/constants/_selectors.ts
+   export const SEARCH_PARTIAL_SELECTORS = [
+     '.기존클래스',
+     '.새로운클래스',  // 추가
+   ];
+   ```
+
+4. **테스트 확인**
+   ```bash
+   # 개발 서버에서 실제 검색 결과로 테스트
+   npm run dev
+   # http://localhost:4001 접속 후 검색
+   ```
+
+5. **문서 업데이트**
+   - `CLAUDE.md`: 변경 이력 기록
+   - `README.md`: 셀렉터 테이블 업데이트
+   - 코드 주석: 날짜와 변경 사유 명시
 
 ## ⚠️ 주의사항
 
