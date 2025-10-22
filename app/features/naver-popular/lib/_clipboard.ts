@@ -396,5 +396,38 @@ export const copyDesktopLinkToClipboard = async (
   }
 };
 
+// 수정 링크 변환 (블로그 링크 → 수정 링크)
+export const convertToEditLink = (link: string): string => {
+  // 네이버 블로그 링크 패턴: blog.naver.com/{blogId}/{logNo}
+  const match = link.match(/blog\.naver\.com\/([^/?]+)\/(\d+)/);
+
+  if (match) {
+    const [, blogId, logNo] = match;
+    const baseUrl = link.includes('m.blog.naver.com')
+      ? 'https://m.blog.naver.com'
+      : 'https://blog.naver.com';
+    return `${baseUrl}/${blogId}?Redirect=Update&logNo=${logNo}`;
+  }
+
+  return link;
+};
+
+// 수정 링크 복사
+export const copyEditLinkToClipboard = async (
+  link: string,
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
+) => {
+  try {
+    const editLink = convertToEditLink(link);
+    await navigator.clipboard.writeText(editLink);
+    show('수정 링크가 복사되었습니다!', { type: 'success' });
+  } catch {
+    show('수정 링크 복사 실패', { type: 'error' });
+  }
+};
+
 // 하위 호환성을 위한 별칭
 export const downloadAllContentToFile = downloadAllContentToZip;

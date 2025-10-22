@@ -1,6 +1,6 @@
 import type { PopularItem } from '@/entities/naver/_types';
 import React from 'react';
-import { Download, Copy, FileText, Eye, Smartphone, Monitor } from 'lucide-react';
+import { Download, Copy, FileText, Eye, Smartphone, Monitor, Edit } from 'lucide-react';
 import { cn } from '@/shared';
 
 interface Props {
@@ -17,7 +17,8 @@ import {
   copyTitleToClipboard,
   downloadContentToFile,
   copyMobileLinkToClipboard,
-  copyDesktopLinkToClipboard
+  copyDesktopLinkToClipboard,
+  copyEditLinkToClipboard
 } from '@/features/naver-popular/lib';
 import { useSetAtom } from 'jotai';
 import { useViewerActions, viewerItemAtom } from '@/features';
@@ -114,6 +115,18 @@ export const PopularItemCard: React.FC<Props> = ({
             >
               {item.title}
             </h3>
+            <button
+              type="button"
+              aria-label="수정 링크 복사"
+              onClick={() => copyEditLinkToClipboard(item.link, (m, o) => show(m, o))}
+              className={cn(
+                'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border transition-all',
+                'border-gray-200 bg-white text-gray-500 hover:border-orange-500 hover:bg-orange-50 hover:text-orange-600',
+                'shadow-sm dark:border-gray-700 dark:bg-black dark:text-gray-400 dark:hover:border-orange-400 dark:hover:bg-orange-950/40 dark:hover:text-orange-400'
+              )}
+            >
+              <Edit size={16} />
+            </button>
             <button
               type="button"
               aria-label="제목 복사"
