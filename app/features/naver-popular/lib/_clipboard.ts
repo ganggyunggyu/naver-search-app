@@ -398,15 +398,13 @@ export const copyDesktopLinkToClipboard = async (
 
 // 수정 링크 변환 (블로그 링크 → 수정 링크)
 export const convertToEditLink = (link: string): string => {
-  // 네이버 블로그 링크 패턴: blog.naver.com/{blogId}/{logNo}
-  const match = link.match(/blog\.naver\.com\/([^/?]+)\/(\d+)/);
+  // 네이버 블로그 링크 패턴: blog.naver.com/{blogId}/{logNo} 또는 m.blog.naver.com/{blogId}/{logNo}
+  const match = link.match(/(?:m\.)?blog\.naver\.com\/([^/?]+)\/(\d+)/);
 
   if (match) {
     const [, blogId, logNo] = match;
-    const baseUrl = link.includes('m.blog.naver.com')
-      ? 'https://m.blog.naver.com'
-      : 'https://blog.naver.com';
-    return `${baseUrl}/${blogId}?Redirect=Update&logNo=${logNo}`;
+    // 수정 링크는 항상 데스크톱 버전으로
+    return `https://blog.naver.com/${blogId}?Redirect=Update&logNo=${logNo}`;
   }
 
   return link;
