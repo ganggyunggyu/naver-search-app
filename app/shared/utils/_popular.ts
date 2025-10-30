@@ -91,26 +91,26 @@ const readBlock = ($: CheerioAPI, root: any, items: PopularItem[]) => {
 /**
  * 네이버 검색 결과에서 인기글 섹션을 파싱하는 함수
  *
- * 네이버 HTML 구조 (2025년 10월 23일 업데이트):
+ * 네이버 HTML 구조 (2025년 10월 30일 업데이트):
  * ```
  * <div class="fds-ugc-single-intention-item-list">  // 인기글 리스트 컨테이너
- *   <div class="lxVS6I_uL9__3D4ychJJ">               // 아이템 그룹 컨테이너
- *     <div class="Orf2UUyw2B80LaIjeSZl">             // 각 인기글 아이템
- *       <div class="sds-comps-profile">              // 프로필 섹션
- *         <a href="...">                             // 블로그 링크
+ *   <div class="Cp6RskavnKnCD7vKgZWE">              // 각 인기글 아이템 컨테이너
+ *     <div class="IoSVvu2hEbI_In6t6FAw">            // 아이템 래퍼
+ *       <div class="sds-comps-profile">             // 프로필 섹션
+ *         <a href="...">                            // 블로그 링크
  *           <span class="sds-comps-profile-info-title-text">블로그명</span>
  *         </a>
  *       </div>
- *       <div class="zeMWp8C6a_DeT_275kLw">          // 콘텐츠 섹션
- *         <a href="..." class="M9lOyC5Ckpmk7fKVCMeD"> // 제목 링크
+ *       <div class="A2pe2BCxvujhj1oKmKEH">         // 콘텐츠 섹션
+ *         <a href="..." class="pHHExKwXvRWn4fm5O0Hr"> // 제목 링크
  *           <span class="sds-comps-text-type-headline1 sds-comps-text-weight-sm">제목</span>
  *         </a>
- *         <div class="Gsr9GMz4_ylENzcIlD8u">        // 미리보기 섹션
- *           <a href="..." class="FPXivxJt5AqSLccij6Pm">
+ *         <div class="VHxB0L4JBo0FexJwnuu6">       // 미리보기 섹션
+ *           <a href="..." class="o__ULFnWbikGgXSp9OOr">
  *             <span class="sds-comps-text-type-body1">본문 미리보기...</span>
  *           </a>
  *         </div>
- *         <img src="...">                           // 썸네일 이미지
+ *         <img src="...">                          // 썸네일 이미지
  *       </div>
  *     </div>
  *   </div>
@@ -165,22 +165,22 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
 
     console.log('🔍 Found category:', categoryName);
 
-    // 각 인기글 아이템 찾기 (.Orf2UUyw2B80LaIjeSZl)
-    // 이 클래스는 네이버의 새로운 인기글 아이템 컨테이너 (2025년 10월 23일 업데이트)
-    const $popularItems = $section.find('.Orf2UUyw2B80LaIjeSZl');
+    // 각 인기글 아이템 찾기 (.Cp6RskavnKnCD7vKgZWE)
+    // 이 클래스는 네이버의 새로운 인기글 아이템 컨테이너 (2025년 10월 30일 업데이트)
+    const $popularItems = $section.find('.Cp6RskavnKnCD7vKgZWE');
 
     $popularItems.each((_j: number, item: any) => {
       const $item = $(item);
 
       // 제목 링크 추출
-      // .M9lOyC5Ckpmk7fKVCMeD: 제목을 감싸는 링크 엘리먼트
-      const $titleLink = $item.find('.M9lOyC5Ckpmk7fKVCMeD').first();
+      // .pHHExKwXvRWn4fm5O0Hr: 제목을 감싸는 링크 엘리먼트
+      const $titleLink = $item.find('.pHHExKwXvRWn4fm5O0Hr').first();
       const title = $item.find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm').text().trim();
       const postHref = $titleLink.attr('href')?.trim() || '';
 
       // 본문 미리보기 추출
-      // .FPXivxJt5AqSLccij6Pm: 미리보기 링크 컨테이너
-      const $preview = $item.find('.FPXivxJt5AqSLccij6Pm .sds-comps-text-type-body1').first();
+      // .o__ULFnWbikGgXSp9OOr: 미리보기 링크 컨테이너
+      const $preview = $item.find('.o__ULFnWbikGgXSp9OOr .sds-comps-text-type-body1').first();
       const snippet = $preview.text().trim();
 
       // 블로그 정보 추출
@@ -193,8 +193,13 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
       const $image = $item.find('.sds-comps-image img').first();
       const image = $image.attr('src')?.trim() || '';
 
-      // 유효한 데이터만 추가 (제목과 링크는 필수)
-      if (postHref && title) {
+      // 유효한 데이터만 추가 (제목과 링크는 필수, 카페/광고 링크는 제외)
+      if (
+        postHref &&
+        title &&
+        !postHref.includes('cafe.naver.com') &&
+        !postHref.includes('ader.naver.com')
+      ) {
         const popularItem = {
           title,
           link: postHref,
