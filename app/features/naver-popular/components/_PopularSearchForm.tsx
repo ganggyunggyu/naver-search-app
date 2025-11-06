@@ -24,12 +24,44 @@ export const PopularSearchForm: React.FC = () => {
   } = useRecentSearch();
   const navigate = useNavigate();
 
-  // Hydration 오류 방지: 클라이언트에서만 렌더링
   const [isClient, setIsClient] = React.useState(false);
+  const [showAutocomplete, setShowAutocomplete] = React.useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = React.useState(-1);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const filteredSuggestions = React.useMemo(() => {
+    if (!query.trim()) return [];
+    return recentSearchList.filter((item) =>
+      item.query.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [query, recentSearchList]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showAutocomplete || filteredSuggestions.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) =>
+        prev < filteredSuggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : -1));
+    } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
+      e.preventDefault();
+      const selected = filteredSuggestions[selectedSuggestionIndex];
+      setQuery(selected.query);
+      setShowAutocomplete(false);
+      setSelectedSuggestionIndex(-1);
+    } else if (e.key === 'Escape') {
+      setShowAutocomplete(false);
+      setSelectedSuggestionIndex(-1);
+    }
+  };
 
   return (
     <div
@@ -110,25 +142,72 @@ export const PopularSearchForm: React.FC = () => {
             >
               검색어
             </label>
-            <div
-              className={cn(
-                'relative rounded-lg border transition-all duration-200',
-                'border-gray-300 dark:border-gray-700',
-                'focus-within:border-black dark:focus-within:border-white',
-                'focus-within:ring-1 focus-within:ring-black dark:focus-within:ring-white'
-              )}
-            >
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="예: 라미네이트"
+            <div className="relative">
+              <div
                 className={cn(
-                  'w-full px-4 py-3 rounded-lg bg-white dark:bg-black',
-                  'text-black dark:text-white placeholder:text-gray-500',
-                  'text-base focus:outline-none'
+                  'relative rounded-lg border transition-all duration-200',
+                  'border-gray-300 dark:border-gray-700',
+                  'focus-within:border-black dark:focus-within:border-white',
+                  'focus-within:ring-1 focus-within:ring-black dark:focus-within:ring-white'
                 )}
-              />
+              >
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setShowAutocomplete(true);
+                    setSelectedSuggestionIndex(-1);
+                  }}
+                  onFocus={() => setShowAutocomplete(true)}
+                  onBlur={() => {
+                    setTimeout(() => setShowAutocomplete(false), 200);
+                  }}
+                  onKeyDown={handleKeyDown}
+                  placeholder="예: 라미네이트"
+                  className={cn(
+                    'w-full px-4 py-3 rounded-lg bg-white dark:bg-black',
+                    'text-black dark:text-white placeholder:text-gray-500',
+                    'text-base focus:outline-none'
+                  )}
+                  autoComplete="off"
+                />
+              </div>
+
+              {isClient &&
+                showAutocomplete &&
+                filteredSuggestions.length > 0 && (
+                  <div
+                    className={cn(
+                      'absolute z-50 w-full mt-2 py-1 rounded-lg',
+                      'bg-white dark:bg-black',
+                      'border border-gray-200 dark:border-gray-800',
+                      'shadow-lg max-h-64 overflow-y-auto'
+                    )}
+                  >
+                    {filteredSuggestions.map((item, index) => (
+                      <button
+                        key={item.query}
+                        type="button"
+                        onClick={() => {
+                          setQuery(item.query);
+                          setShowAutocomplete(false);
+                          setSelectedSuggestionIndex(-1);
+                        }}
+                        className={cn(
+                          'w-full px-4 py-2 text-sm text-left transition-colors',
+                          'text-gray-900 dark:text-gray-100',
+                          index === selectedSuggestionIndex
+                            ? 'bg-gray-100 dark:bg-gray-900'
+                            : 'hover:bg-gray-50 dark:hover:bg-gray-900/50'
+                        )}
+                      >
+                        {item.query}
+                      </button>
+                    ))}
+                  </div>
+                )}
             </div>
           </div>
         ) : (
@@ -272,41 +351,39 @@ export const PopularSearchForm: React.FC = () => {
           </div>
 
           {isClient && recentSearchList.length > 0 ? (
-            <div
-              className={cn(
-                'flex gap-2 flex-wrap py-1'
-              )}
-            >
-              {recentSearchList.map((q) => (
+            <div className={cn('flex gap-2 flex-wrap py-1')}>
+              {recentSearchList.map((item) => (
                 <div
-                  key={q}
+                  key={item.query}
                   className={cn(
-                    'flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium',
-                    'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300',
-                    'border border-gray-200 dark:border-gray-800',
-                    'transition-colors duration-200'
+                    'group flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium',
+                    'border transition-all duration-200',
+                    item.hasExposure === true
+                      ? 'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800'
+                      : item.hasExposure === false
+                        ? 'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800'
+                        : 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800'
                   )}
                 >
                   <button
-                    onClick={() => navigate(`/${encodeURIComponent(q)}`)}
+                    onClick={() => navigate(`/${encodeURIComponent(item.query)}`)}
                     className={cn(
-                      'hover:text-black dark:hover:text-white transition-colors'
+                      'hover:opacity-70 transition-opacity'
                     )}
                   >
-                    {q}
+                    {item.query}
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      removeRecentSearch(q);
+                      removeRecentSearch(item.query);
                     }}
                     className={cn(
                       'ml-1 w-3 h-3 flex items-center justify-center rounded-full',
-                      'hover:bg-gray-200 dark:hover:bg-gray-800',
-                      'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300',
-                      'transition-colors'
+                      'hover:bg-black/10 dark:hover:bg-white/10',
+                      'opacity-0 group-hover:opacity-100 transition-opacity'
                     )}
-                    aria-label={`${q} 검색어 삭제`}
+                    aria-label={`${item.query} 검색어 삭제`}
                   >
                     <X size={10} />
                   </button>

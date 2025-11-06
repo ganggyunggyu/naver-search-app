@@ -46,7 +46,7 @@ export const PopularResults: React.FC = () => {
 
       if (it.blogLink) {
         blogId = getBlogId(it.blogLink);
-        isMatched = blogId && allowedIds.has(blogId);
+        isMatched = Boolean(blogId && allowedIds.has(blogId));
       }
 
       // 매칭된 항목 카운트

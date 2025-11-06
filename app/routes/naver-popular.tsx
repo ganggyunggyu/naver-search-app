@@ -36,6 +36,7 @@ import {
   copyFullContentToClipboard,
 } from '@/features/naver-popular/lib';
 import { MainHeader } from '@/features/naver-popular/components/_MainHeader';
+import { useRecentSearch } from '@/features/naver-popular/hooks';
 
 export const meta = (_: Route.MetaArgs) => [
   { title: 'Naver 인기글 추출' },
@@ -71,6 +72,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   const setError = useSetAtom(popularErrorAtom);
   const setData = useSetAtom(popularDataAtom);
   const setBlogSearchData = useSetAtom(blogSearchDataAtom);
+  const { updateRecentSearchExposure } = useRecentSearch();
 
   useEffect(() => {
     if (data) show(`인기글 ${data.count}개 추출 완료`, { type: 'success' });
@@ -167,6 +169,16 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
 
     return Array.from(list);
   })();
+
+  useEffect(() => {
+    const q = (loaderData as any)?.q as string | undefined;
+    const query = (q || '').trim();
+
+    if (!query || !data) return;
+
+    const hasExposure = matchedIdList.length > 0;
+    updateRecentSearchExposure(query, hasExposure);
+  }, [data, matchedIdList.length, loaderData, updateRecentSearchExposure]);
 
   return (
     <div

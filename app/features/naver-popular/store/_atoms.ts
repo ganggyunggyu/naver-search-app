@@ -5,6 +5,7 @@ import type {
   BlogCrawlResponse,
 } from '@/entities/naver/_types';
 import type { PopularViewerItem } from '../components/_PopularViewerModal';
+import type { RecentSearch } from '../types';
 
 export const popularQueryAtom = atom<string>('');
 export const popularIsAutoUrlAtom = atom<boolean>(true);
@@ -20,8 +21,8 @@ export const viewerOpenAtom = atom<boolean>(false);
 export const viewerLoadingAtom = atom<boolean>(false);
 export const viewerItemAtom = atom<PopularViewerItem | null>(null);
 
-export const RECENT_SEARCH_STORAGE_KEY = 'naver_recent_search_list_v2';
-export const recentSearchListAtom = atomWithStorage<string[]>(
+export const RECENT_SEARCH_STORAGE_KEY = 'naver_recent_search_list_v3';
+export const recentSearchListAtom = atomWithStorage<RecentSearch[]>(
   RECENT_SEARCH_STORAGE_KEY,
   [],
   undefined,
