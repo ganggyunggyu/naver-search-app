@@ -91,22 +91,22 @@ const readBlock = ($: CheerioAPI, root: any, items: PopularItem[]) => {
 /**
  * 네이버 검색 결과에서 인기글 섹션을 파싱하는 함수
  *
- * 네이버 HTML 구조 (2025년 10월 30일 업데이트):
+ * 네이버 HTML 구조 (2025년 11월 6일 업데이트):
  * ```
  * <div class="fds-ugc-single-intention-item-list">  // 인기글 리스트 컨테이너
- *   <div class="Cp6RskavnKnCD7vKgZWE">              // 각 인기글 아이템 컨테이너
- *     <div class="IoSVvu2hEbI_In6t6FAw">            // 아이템 래퍼
+ *   <div class="NtKCZYlcjvHdeUoASy2I">              // 각 인기글 아이템 컨테이너
+ *     <div class="aHkd4NTJtmGIDIV39f05">            // 아이템 래퍼
  *       <div class="sds-comps-profile">             // 프로필 섹션
  *         <a href="...">                            // 블로그 링크
  *           <span class="sds-comps-profile-info-title-text">블로그명</span>
  *         </a>
  *       </div>
- *       <div class="A2pe2BCxvujhj1oKmKEH">         // 콘텐츠 섹션
- *         <a href="..." class="pHHExKwXvRWn4fm5O0Hr"> // 제목 링크
+ *       <div class="TB7kNW8DmeLDKZyEA8t1">         // 콘텐츠 섹션
+ *         <a href="..." class="z1n21OFoYx6_tGcWKL_x"> // 제목 링크
  *           <span class="sds-comps-text-type-headline1 sds-comps-text-weight-sm">제목</span>
  *         </a>
- *         <div class="VHxB0L4JBo0FexJwnuu6">       // 미리보기 섹션
- *           <a href="..." class="o__ULFnWbikGgXSp9OOr">
+ *         <div class="SmWZLIw6L2_IfCQ2ljbA">       // 미리보기 섹션
+ *           <a href="..." class="d69hemU4DtemeWuXiq5g">
  *             <span class="sds-comps-text-type-body1">본문 미리보기...</span>
  *           </a>
  *         </div>
@@ -165,22 +165,22 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
 
     console.log('🔍 Found category:', categoryName);
 
-    // 각 인기글 아이템 찾기 (.Cp6RskavnKnCD7vKgZWE)
-    // 이 클래스는 네이버의 새로운 인기글 아이템 컨테이너 (2025년 10월 30일 업데이트)
-    const $popularItems = $section.find('.Cp6RskavnKnCD7vKgZWE');
+    // 각 인기글 아이템 찾기 (.NtKCZYlcjvHdeUoASy2I)
+    // 이 클래스는 네이버의 새로운 인기글 아이템 컨테이너 (2025년 11월 6일 업데이트)
+    const $popularItems = $section.find('.NtKCZYlcjvHdeUoASy2I');
 
     $popularItems.each((_j: number, item: any) => {
       const $item = $(item);
 
       // 제목 링크 추출
-      // .pHHExKwXvRWn4fm5O0Hr: 제목을 감싸는 링크 엘리먼트
-      const $titleLink = $item.find('.pHHExKwXvRWn4fm5O0Hr').first();
+      // .z1n21OFoYx6_tGcWKL_x: 제목을 감싸는 링크 엘리먼트
+      const $titleLink = $item.find('.z1n21OFoYx6_tGcWKL_x').first();
       const title = $item.find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm').text().trim();
       const postHref = $titleLink.attr('href')?.trim() || '';
 
       // 본문 미리보기 추출
-      // .o__ULFnWbikGgXSp9OOr: 미리보기 링크 컨테이너
-      const $preview = $item.find('.o__ULFnWbikGgXSp9OOr .sds-comps-text-type-body1').first();
+      // .d69hemU4DtemeWuXiq5g: 미리보기 링크 컨테이너
+      const $preview = $item.find('.d69hemU4DtemeWuXiq5g .sds-comps-text-type-body1').first();
       const snippet = $preview.text().trim();
 
       // 블로그 정보 추출
