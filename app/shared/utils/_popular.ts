@@ -132,7 +132,10 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
 
     // 방법 1: 상위 컨테이너에서 헤더 찾기
     // 대부분의 경우 상위 .sds-comps-vertical-layout에 헤더가 있음
-    const $headerInParent = $section.closest('.sds-comps-vertical-layout').find('.sds-comps-text-type-headline1').first();
+    const $headerInParent = $section
+      .closest('.sds-comps-vertical-layout')
+      .find('.sds-comps-text-type-headline1')
+      .first();
     if ($headerInParent.length && $headerInParent.text().trim()) {
       categoryName = $headerInParent.text().trim();
     }
@@ -140,7 +143,10 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
     // 방법 2: 형제 요소에서 헤더 찾기
     // 상위에서 못 찾으면 부모의 다른 자식 요소 탐색
     if (!categoryName) {
-      const $headerInSibling = $section.parent().find('.sds-comps-text-type-headline1').first();
+      const $headerInSibling = $section
+        .parent()
+        .find('.sds-comps-text-type-headline1')
+        .first();
       if ($headerInSibling.length && $headerInSibling.text().trim()) {
         categoryName = $headerInSibling.text().trim();
       }
@@ -159,11 +165,12 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
     }
 
     // 기본값 설정: 카테고리명을 찾지 못한 경우
+
     if (!categoryName) {
       categoryName = '인기글';
     }
 
-    console.log('🔍 Found category:', categoryName);
+    console.log('인기글:', categoryName);
 
     // 각 인기글 아이템 찾기 (.NtKCZYlcjvHdeUoASy2I)
     // 이 클래스는 네이버의 새로운 인기글 아이템 컨테이너 (2025년 11월 6일 업데이트)
@@ -175,17 +182,24 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
       // 제목 링크 추출
       // .z1n21OFoYx6_tGcWKL_x: 제목을 감싸는 링크 엘리먼트
       const $titleLink = $item.find('.z1n21OFoYx6_tGcWKL_x').first();
-      const title = $item.find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm').text().trim();
+      const title = $item
+        .find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm')
+        .text()
+        .trim();
       const postHref = $titleLink.attr('href')?.trim() || '';
 
       // 본문 미리보기 추출
       // .d69hemU4DtemeWuXiq5g: 미리보기 링크 컨테이너
-      const $preview = $item.find('.d69hemU4DtemeWuXiq5g .sds-comps-text-type-body1').first();
+      const $preview = $item
+        .find('.d69hemU4DtemeWuXiq5g .sds-comps-text-type-body1')
+        .first();
       const snippet = $preview.text().trim();
 
       // 블로그 정보 추출
       // .sds-comps-profile-info-title-text: 블로그명과 링크를 포함하는 프로필 영역
-      const $sourceLink = $item.find('.sds-comps-profile-info-title-text a').first();
+      const $sourceLink = $item
+        .find('.sds-comps-profile-info-title-text a')
+        .first();
       const blogName = $sourceLink.text().trim();
       const blogHref = $sourceLink.attr('href')?.trim() || '';
 
@@ -221,9 +235,9 @@ export const extractPopularItems = (html: string): PopularItem[] => {
   const $ = loadHtml(html);
   const items: PopularItem[] = [];
 
-  readBlock($, $('body'), items);
-
   readPopularSection($, items);
+
+  readBlock($, $('body'), items);
 
   const unique = new Map<string, PopularItem>();
   for (const it of items) if (!unique.has(it.link)) unique.set(it.link, it);
