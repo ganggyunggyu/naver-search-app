@@ -1,4 +1,4 @@
-import { fetchNaverOpenApi, jsonError } from '@/shared';
+import { extractPopularItems, fetchNaverOpenApi, jsonError } from '@/shared';
 import type { Route } from './+types/api.search';
 
 interface NaverBlogItem {
@@ -22,7 +22,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const query = url.searchParams.get('q');
   const display = url.searchParams.get('display') || '10';
   const start = url.searchParams.get('start') || '1';
-  const sort = url.searchParams.get('sort') || 'sim'; // sim(정확도순), date(날짜순)
+  const sort = url.searchParams.get('sort') || 'sim';
 
   if (!query) return jsonError('검색어가 필요합니다.', 400);
 
@@ -31,7 +31,6 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       'https://openapi.naver.com/v1/search/blog.json',
       { query: encodeURIComponent(query), display, start, sort }
     );
-
     return Response.json({
       total: data.total,
       start: data.start,
