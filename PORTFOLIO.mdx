@@ -1,0 +1,460 @@
+---
+title: "네이버 검색 인기글 분석 엔진"
+description: "네이버 검색 결과 HTML 파싱 및 인기글/스블 자동 구분, 원고 분석 시스템"
+tags: ["React", "TypeScript", "React Router", "Web Scraping", "Cheerio", "Jotai"]
+period: "2024.09 - 2024.11"
+role: "Full-stack Developer"
+---
+
+# 네이버 검색 인기글 분석 엔진
+
+## 프로젝트 개요
+
+네이버 검색 결과 HTML을 파싱하여 인기글과 스블(스마트블로그)을 자동으로 구분하고, 블로그 노출 현황을 추적하는 웹 애플리케이션입니다. 네이버가 주기적으로 변경하는 HTML 구조에 대응할 수 있도록 설계되었으며, 원고 분석 기능을 통해 SEO 최적화를 지원합니다.
+
+### 해결한 문제
+
+- **수동 노출 확인의 비효율성**: 검색어마다 수동으로 노출 여부를 확인하던 작업을 자동화
+- **인기글/스블 구분의 어려움**: 시각적으로만 구분 가능하던 것을 알고리즘으로 자동 분류
+- **HTML 구조 변경 대응**: 네이버의 HTML 클래스명 변경 시 빠른 업데이트 가능
+
+---
+
+## 기술 스택
+
+### Frontend
+
+- **React 19** - 컴포넌트 기반 UI 구성
+- **React Router v7** - Remix 스타일 파일 기반 라우팅 및 SSR
+- **TypeScript** - 타입 안정성 보장 (strict mode)
+- **Jotai** - Atomic 상태 관리
+- **TailwindCSS v4** - 유틸리티 기반 스타일링
+- **Lucide React** - 아이콘 라이브러리
+
+### Backend & Parsing
+
+- **Cheerio** - 서버사이드 HTML 파싱 (jQuery-like API)
+- **Node.js** - 런타임 환경
+- **Naver Search API** - 네이버 공식 검색 API 연동
+
+### Build & Dev Tools
+
+- **Vite** - 빌드 도구
+- **TSConfig Paths** - 절대 경로 import
+
+---
+
+## 핵심 기능
+
+### 1. HTML 파싱 및 데이터 추출
+
+네이버 검색 결과 HTML에서 인기글 섹션의 데이터를 추출합니다.
+
+```typescript
+// 추출 결과 예시
+interface PopularItem {
+  title: string;        // 게시글 제목
+  link: string;         // 게시글 URL
+  group: string;        // 카테고리/섹션명
+  blogName: string;     // 블로그명
+  blogLink: string;     // 블로그 URL
+  snippet: string;      // 본문 미리보기
+  image: string;        // 썸네일 이미지
+}
+```
+
+**구현 방식:**
+- Cheerio를 사용한 DOM 탐색
+- CSS 셀렉터 기반 데이터 추출
+- 섹션별 순회를 통한 정확한 그룹 할당
+
+### 2. 인기글/스블 자동 구분 알고리즘
+
+검색 결과가 단일 주제(인기글)인지 복수 주제(스블)인지를 자동으로 판별합니다.
+
+**알고리즘:**
+
+```typescript
+const uniqueGroups = new Set(items.map(item => item.group));
+
+const type = uniqueGroups.size === 1 ? '인기글' : '스블';
+```
+
+**분류 로직:**
+- 고유 그룹 개수가 1개: 모든 아이템이 동일 주제 → 인기글
+- 고유 그룹 개수가 2개 이상: 서로 다른 주제 → 스블
+
+**검증 결과:**
+
+| 검색어 | 아이템 수 | 고유 그룹 수 | 분류 결과 |
+|--------|----------|-------------|----------|
+| 알파CD | 4 | 1 | 인기글 |
+| 김포공항주차대행 | 8 | 3 | 스블 |
+| 위고비 | 7 | 3 | 스블 |
+
+### 3. 원고 분석 시스템
+
+블로그 글의 통계 정보와 키워드를 분석합니다.
+
+**제공 지표:**
+- 문자수 (공백 포함/제외)
+- 단어수 (띄어쓰기 기준)
+- 예상 읽기 시간 (500자/분 기준)
+- 키워드 빈도 분석 (불용어 제외)
+
+**API 엔드포인트:**
+
+```typescript
+// POST /api/analyze-manuscript
+{
+  "content": "원고 내용...",
+  "include": "검색어"  // optional
+}
+
+// Response
+{
+  "status": 200,
+  "data": {
+    "charCount": 1234,
+    "charCountNoSpace": 1000,
+    "wordCount": 250,
+    "readingTimeMin": 2.5,
+    "topKeywords": [
+      { "word": "위고비", "count": 12 },
+      { "word": "후기", "count": 6 }
+    ]
+  }
+}
+```
+
+### 4. 블로그 노출 추적
+
+특정 블로그 ID 목록과 매칭하여 노출 여부를 추적합니다.
+
+```typescript
+interface ExposureResult {
+  query: string;           // 검색어
+  blogId: string;          // 블로그 ID
+  blogName: string;        // 블로그명
+  exposureType: string;    // '인기글' | '스블'
+  topicName: string;       // 스블인 경우 인기 주제명
+  position: number;        // 노출 순위
+  postTitle: string;       // 게시글 제목
+  postLink: string;        // 게시글 링크
+}
+```
+
+---
+
+## 기술적 구현 상세
+
+### HTML 구조 변경 대응 전략
+
+네이버는 검색 결과 HTML을 주기적으로 변경합니다. 이에 대응하기 위한 구조:
+
+**1. 버전별 셀렉터 관리**
+
+```typescript
+// 2025-11-06 현재 사용 중인 셀렉터
+const CURRENT_SELECTORS = {
+  container: '.fds-ugc-single-intention-item-list',
+  item: '.NtKCZYlcjvHdeUoASy2I',
+  titleLink: '.z1n21OFoYx6_tGcWKL_x',
+  title: '.sds-comps-text-type-headline1.sds-comps-text-weight-sm',
+  preview: '.d69hemU4DtemeWuXiq5g .sds-comps-text-type-body1',
+  blogInfo: '.sds-comps-profile-info-title-text a',
+  image: '.sds-comps-image img'
+};
+```
+
+**2. Fallback 전략**
+
+카테고리명 추출 시 3단계 Fallback 적용:
+
+```typescript
+// 방법 1: 상위 컨테이너에서 헤더 찾기
+const $headerInParent = $section
+  .closest('.sds-comps-vertical-layout')
+  .find('.sds-comps-text-type-headline1')
+  .first();
+
+// 방법 2: 형제 요소에서 헤더 찾기
+if (!categoryName) {
+  const $headerInSibling = $section
+    .parent()
+    .find('.sds-comps-text-type-headline1')
+    .first();
+}
+
+// 방법 3: 전체에서 "인기글" 키워드 포함 검색
+if (!categoryName) {
+  $('span').each((_, span) => {
+    const text = $(span).text().trim();
+    if (text.includes('인기글') && text.length > 3) {
+      categoryName = text;
+      return false;
+    }
+  });
+}
+```
+
+**3. 변경 이력 문서화**
+
+- 2025-10-16: `.w0FkNRfc2K6rffX0LJFd` → `.NtKCZYlcjvHdeUoASy2I`
+- 2025-10-30: 셀렉터 업데이트
+- 2025-11-06: 현재 셀렉터로 안정화
+
+### 파싱 버그 해결 과정
+
+**문제 상황:**
+
+초기 구현에서 스블의 인기 주제를 제대로 구분하지 못하는 버그가 발생했습니다.
+
+**원인 분석:**
+
+```typescript
+// 문제가 있던 코드
+$popularItems.each((_, item) => {
+  const groupLabel = findGroupLabelNear($, $item);  // 각 아이템마다 호출
+  items.push({ group: groupLabel });
+});
+```
+
+같은 섹션 내 아이템들이 각각 다른 `group` 값을 갖게 되어 고유 그룹 개수가 부정확했습니다.
+
+**해결 방법:**
+
+```typescript
+// 개선된 코드
+$popularSections.each((_, section) => {
+  let categoryName = extractCategoryName($section);  // 섹션당 1번만 추출
+
+  $popularItems.each((_, item) => {
+    items.push({ group: categoryName });  // 동일한 값 할당
+  });
+});
+```
+
+섹션 레벨에서 카테고리명을 한 번만 추출하여 모든 아이템에 동일한 값을 할당하도록 변경했습니다.
+
+**추가 개선:**
+
+파싱 함수 호출 순서를 변경하여 정확한 데이터가 우선순위를 갖도록 했습니다.
+
+```typescript
+// Before
+readBlock($, $('body'), items);      // 레거시 방식
+readPopularSection($, items);         // 정확한 방식
+
+// After
+readPopularSection($, items);         // 정확한 방식 우선
+readBlock($, $('body'), items);      // Fallback
+```
+
+중복 제거 로직이 먼저 추가된 값을 유지하므로, 정확한 파싱 결과가 먼저 들어가도록 순서를 조정했습니다.
+
+### 키워드 분석 로직 개선
+
+**개선 전 문제점:**
+
+단어수 계산 시 불용어를 제외한 단어만 카운트하여 실제 단어 수와 불일치했습니다.
+
+```typescript
+// 개선 전
+const tokens = text.split(/\s+/)
+  .filter(t => t.length >= 2 && !STOPWORDS.has(t));
+const wordCount = tokens.length;  // 불용어 제외된 수
+```
+
+**개선 후:**
+
+모든 단어를 카운트하되, 키워드 표시는 불용어를 제외하도록 분리했습니다.
+
+```typescript
+// 개선 후
+const allWords = text
+  .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+  .split(/\s+/)
+  .filter(t => t.length > 0);
+
+const wordCount = allWords.length;  // 전체 단어 수
+
+const freq = new Map<string, number>();
+for (const word of allWords) {
+  freq.set(word, (freq.get(word) || 0) + 1);
+}
+
+// 표시용 키워드는 불용어 제외
+const topKeywords = Array.from(freq.entries())
+  .filter(([word]) => word.length >= 2 && !STOPWORDS.has(word))
+  .sort((a, b) => b[1] - a[1])
+  .map(([word, count]) => ({ word, count }));
+```
+
+---
+
+## 아키텍처
+
+### 프로젝트 구조 (FSD)
+
+```
+app/
+├── components/        # 공통 컴포넌트
+├── constants/         # 상수 (셀렉터, 블로그 ID 목록)
+├── entities/          # 도메인 엔티티 (naver, blog)
+├── features/          # 기능별 모듈
+│   ├── naver-popular/ # 인기글 파싱 기능
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── lib/
+│   │   └── store/    # Jotai atoms
+│   ├── search/       # 검색 기능
+│   └── doc/          # 문서 분석/비교
+├── routes/           # 페이지 & API 라우트
+│   ├── api.*.ts      # API 엔드포인트
+│   └── *.tsx         # 페이지 컴포넌트
+├── shared/           # 공유 유틸리티
+│   ├── utils/        # 헬퍼 함수
+│   └── ui/           # UI 컴포넌트
+└── utils/            # 전역 유틸리티
+```
+
+### API 엔드포인트
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/naver-popular?q={query}` | 인기글 파싱 |
+| GET | `/api/search?q={query}` | 네이버 블로그 검색 |
+| POST | `/api/analyze-manuscript` | 원고 분석 |
+| GET | `/api/content?url={url}` | 블로그 콘텐츠 크롤링 |
+
+---
+
+## 구현 성과
+
+### 기능 검증
+
+**파싱 정확도:**
+- 테스트 케이스 3개 (위고비, 김포공항주차대행, 알파CD) 모두 정확한 분류 확인
+- 섹션별 그룹 할당 오류 해결 완료
+
+**코드 품질:**
+- TypeScript strict mode 적용, 타입 에러 0건
+- 함수형 프로그래밍 원칙 적용 (순수 함수, 불변성)
+
+### 개발 생산성
+
+**문서화:**
+- 944줄 분량의 기술 문서 작성 (NAVER_POPULAR_PARSING_GUIDE.md)
+- 크론 봇 구현 명세서 작성 (CRON_BOT_SPEC.md)
+- 버그 분석 문서 작성 (DEBUG.md)
+
+**자동화:**
+- 슬래시 커맨드를 통한 셀렉터 업데이트 프로세스 구축
+- Git 커밋 자동화 (/commit 커맨드)
+
+---
+
+## 기술 선택 근거
+
+### React Router v7
+
+**선택 이유:**
+- SSR 기본 지원으로 초기 로딩 성능 향상
+- 파일 기반 라우팅으로 API 엔드포인트 관리 용이
+- Remix의 장점을 가져오면서 React Router의 익숙함 유지
+
+**활용:**
+- `loader` 함수로 서버사이드 데이터 페칭
+- API Routes로 RESTful 엔드포인트 구성
+
+### Jotai
+
+**선택 이유:**
+- Atomic 패턴으로 컴포넌트별 독립적 상태 관리
+- Redux보다 작은 번들 사이즈 (약 3KB)
+- TypeScript 타입 추론 우수
+
+**활용:**
+- 검색어, 검색 결과 리스트 등 글로벌 상태 관리
+- 파생 상태로 필터링 로직 최적화
+
+### Cheerio
+
+**선택 이유:**
+- 서버사이드 HTML 파싱에 최적화
+- JSDOM 대비 약 10배 빠른 성능
+- jQuery-like API로 낮은 러닝 커브
+
+**활용:**
+- 네이버 검색 결과 HTML 파싱
+- CSS 셀렉터 기반 데이터 추출
+- 메모리 효율적 처리 (브라우저 없이 파싱)
+
+---
+
+## 학습 및 성장
+
+### 웹 크롤링
+
+- HTML 구조 변경에 강건한 셀렉터 설계 방법
+- Fallback 전략을 통한 안정성 확보
+- Cheerio를 활용한 효율적인 서버사이드 파싱
+
+### 알고리즘 설계
+
+- Section-level과 Item-level 데이터 추출의 차이 이해
+- Set을 활용한 고유 값 카운팅 알고리즘
+- 중복 제거 시 우선순위 관리의 중요성
+
+### 아키텍처 설계
+
+- FSD (Feature-Sliced Design) 구조의 실제 적용
+- API Routes 설계 패턴
+- SSR과 CSR의 적절한 조합
+
+### 문제 해결 과정
+
+- 버그 원인을 체계적으로 분석하고 문서화
+- 테스트 케이스를 통한 검증
+- Git 커밋 메시지를 통한 변경 이력 관리
+
+---
+
+## 향후 개선 계획
+
+### 기능 확장
+- 크론 봇 실제 구현 및 스케줄링
+- 대시보드 UI 개선 (차트 시각화)
+- 이메일 알림 기능 추가
+
+### 기술 개선
+- 에러 핸들링 강화 (Sentry 연동)
+- 테스트 코드 작성 (Jest, React Testing Library)
+- 성능 모니터링 (Lighthouse CI)
+
+### 확장성
+- 다른 검색 엔진 지원 (구글, 다음)
+- API Rate Limiting 적용
+- 캐싱 전략 도입 (Redis)
+
+---
+
+## 프로젝트 문서
+
+- [NAVER_POPULAR_PARSING_GUIDE.md](./NAVER_POPULAR_PARSING_GUIDE.md) - 종합 기술 문서 (944줄)
+- [CRON_BOT_SPEC.md](./CRON_BOT_SPEC.md) - 크론 봇 구현 명세서
+- [DEBUG.md](./DEBUG.md) - 파싱 버그 분석 문서
+- [PARSING_LOGIC_SUMMARY.md](./PARSING_LOGIC_SUMMARY.md) - 파싱 로직 요약
+
+---
+
+## 기술 스택 요약
+
+**Frontend:** React 19, React Router v7, TypeScript, Jotai, TailwindCSS v4
+
+**Backend:** Node.js, Cheerio
+
+**Build Tools:** Vite, TSConfig Paths
+
+**Architecture:** FSD, SSR, API Routes

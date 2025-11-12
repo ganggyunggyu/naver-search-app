@@ -20,15 +20,22 @@ export const analyzeManuscript = (
   const charCount = text.length;
   const charCountNoSpace = text.replace(/\s+/g, '').length;
 
-  const tokens = text
+  const allWords = text
     .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .split(/\s+/)
     .map((t) => t.trim())
-    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+    .filter((t) => t.length > 0);
 
-  const wordCount = tokens.length;
+  const wordCount = allWords.length;
+
+  const tokens = allWords.filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+
   const freq = new Map<string, number>();
-  for (const t of tokens) freq.set(t, (freq.get(t) || 0) + 1);
+  for (const t of allWords) {
+    if (t.length >= 1) {
+      freq.set(t, (freq.get(t) || 0) + 1);
+    }
+  }
 
   const entries: Array<[string, number]> = Array.from(freq.entries());
   const q = (include || '').trim();
@@ -46,6 +53,7 @@ export const analyzeManuscript = (
   }
 
   let topKeywords = entries
+    .filter(([word]) => word.length >= 2 && !STOPWORDS.has(word))
     .sort((a, b) => b[1] - a[1])
     .map(([word, count]) => ({ word, count }));
 
