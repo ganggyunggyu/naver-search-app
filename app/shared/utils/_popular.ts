@@ -3,6 +3,23 @@ import { loadHtml } from './html';
 import { KEYWORD_HEADER_SELECTOR } from '@/constants';
 import type { PopularItem } from '@/entities/naver/_types';
 
+interface PopularSelectorConfig {
+  container: string;
+  item: string;
+  titleLink: string;
+  preview: string;
+}
+
+/**
+ * AUTO-GENERATED: updated by /naver-popular-update command.
+ */
+export const NAVER_POPULAR_SELECTOR_CONFIG: PopularSelectorConfig = {
+  container: '.fds-ugc-single-intention-item-list',
+  item: '.different-item-class',
+  titleLink: '.different-title-class',
+  preview: '.different-preview-class .sds-comps-text-type-body1',
+} as const;
+
 const findGroupLabelNear = ($: CheerioAPI, $node: any): string => {
   let $current: any = $node;
   for (let level = 0; level < 6; level++) {
@@ -122,7 +139,10 @@ const readBlock = ($: CheerioAPI, root: any, items: PopularItem[]) => {
  */
 const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
   // 인기글 리스트 컨테이너 찾기 (.fds-ugc-single-intention-item-list)
-  const $popularSections = $('.fds-ugc-single-intention-item-list');
+  const { container, item, titleLink, preview } =
+    NAVER_POPULAR_SELECTOR_CONFIG;
+
+  const $popularSections = $(container);
 
   $popularSections.each((_i: number, section: any) => {
     const $section = $(section);
@@ -170,30 +190,27 @@ const readPopularSection = ($: CheerioAPI, items: PopularItem[]) => {
       categoryName = '인기글';
     }
 
-    console.log('인기글:', categoryName);
-
-    // 각 인기글 아이템 찾기 (.NtKCZYlcjvHdeUoASy2I)
-    // 이 클래스는 네이버의 새로운 인기글 아이템 컨테이너 (2025년 11월 6일 업데이트)
-    const $popularItems = $section.find('.NtKCZYlcjvHdeUoASy2I');
+    const $popularItems = $section.find(item);
 
     $popularItems.each((_j: number, item: any) => {
       const $item = $(item);
 
-      // 제목 링크 추출
-      // .z1n21OFoYx6_tGcWKL_x: 제목을 감싸는 링크 엘리먼트
-      const $titleLink = $item.find('.z1n21OFoYx6_tGcWKL_x').first();
-      const title = $item
-        .find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm')
-        .text()
-        .trim();
-      const postHref = $titleLink.attr('href')?.trim() || '';
+      const $titleLinkNode = $item.find(titleLink).first();
+      const titleText = $titleLinkNode.text().trim();
+      const postHref = $titleLinkNode.attr('href')?.trim() || '';
 
-      // 본문 미리보기 추출
-      // .d69hemU4DtemeWuXiq5g: 미리보기 링크 컨테이너
-      const $preview = $item
-        .find('.d69hemU4DtemeWuXiq5g .sds-comps-text-type-body1')
-        .first();
-      const snippet = $preview.text().trim();
+      const title =
+        titleText ||
+        $item
+          .find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm')
+          .first()
+          .text()
+          .trim();
+
+      const snippetText = $item.find(preview).first().text().trim();
+      const snippet =
+        snippetText ||
+        $item.find('.sds-comps-text-type-body1').first().text().trim();
 
       // 블로그 정보 추출
       // .sds-comps-profile-info-title-text: 블로그명과 링크를 포함하는 프로필 영역
