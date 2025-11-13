@@ -5,14 +5,16 @@ import {
   buildNaverSearchUrl,
   jsonError,
   extractPopularItems,
+  matchBlogs,
 } from '@/shared';
-import { crawlNaverBlogSearch } from '@/entities/naver';
+import { crawlNaverBlogSearch } from '@/entities';
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
   const targetUrl = url.searchParams.get('url');
   const q = url.searchParams.get('q');
   const includeBlog = url.searchParams.get('blog') === 'true';
+  const checkExposure = url.searchParams.get('exposure') === 'true';
 
   const finalUrl = targetUrl || (q ? buildNaverSearchUrl(q) : null);
 
@@ -28,6 +30,12 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       items,
       status: 200,
     };
+
+    if (checkExposure && q) {
+      const exposures = matchBlogs(q, items);
+      result.exposures = exposures;
+      result.exposureCount = exposures.length;
+    }
 
     if (includeBlog && q) {
       try {
