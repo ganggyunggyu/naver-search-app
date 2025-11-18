@@ -70,4 +70,7 @@ export const BLOG_IDS = [
   'tpeany',
   'jkr1231',
   'jambbojy',
+  'sssunz',
+  'sos0134',
+  's901019s',
 ];
