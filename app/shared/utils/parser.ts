@@ -45,14 +45,17 @@ export const extractPopularItems = (html: string): PopularItem[] => {
           ?.trim() || '';
 
       const $postTitle = $block.find(SELECTORS.postTitle).first();
+      const $titleWrap = $block.find(SELECTORS.postTitleWrap).first();
       const title = $postTitle.text().trim();
 
       let postHref = '';
-      if ($postTitle.is('a')) {
-        postHref = $postTitle.attr('href')?.trim() || '';
-      } else {
-        const $titleWrap = $block.find(SELECTORS.postTitleWrap).first();
+      // title-wrap을 우선적으로 확인 (패턴 2)
+      if ($titleWrap.length > 0 && $titleWrap.is('a')) {
         postHref = $titleWrap.attr('href')?.trim() || '';
+      }
+      // title이 직접 링크인 경우 (패턴 1)
+      else if ($postTitle.is('a')) {
+        postHref = $postTitle.attr('href')?.trim() || '';
       }
 
       if (
