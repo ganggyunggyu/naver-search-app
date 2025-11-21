@@ -60,8 +60,7 @@ export const extractPopularItems = (html: string): PopularItem[] => {
         postHref.includes('naver.com') &&
         !postHref.includes('cafe.naver.com') &&
         !postHref.includes('ader.naver.com') &&
-        title &&
-        blogName
+        title
       ) {
         items.push({
           title,
@@ -71,7 +70,7 @@ export const extractPopularItems = (html: string): PopularItem[] => {
           badge: '',
           group: topicName,
           blogLink: blogHref,
-          blogName,
+          blogName: blogName || '',
         });
       }
     });
