@@ -68,7 +68,8 @@ export const crawlNaverBlogSearch = async (
             // 광고 링크 필터링 (ader.naver.com 제외)
             const fullLink = link.startsWith('http')
               ? link
-              : `https://m.search.naver.com${link}`;
+              : `https://m.search.naver.com${link}` ||
+                `https://search.naver.com${link}`;
 
             // 유효한 블로그 포스트 링크인지 확인 (포스트 ID 있는지 체크)
             const isValidBlogPost = () => {
