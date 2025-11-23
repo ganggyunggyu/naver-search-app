@@ -13,4 +13,3 @@ export const buildNaverSearchUrl = (query: string): string =>
   `https://search.naver.com/search.naver?where=nexearch&sm=top_sly.hst&fbm=0&acr=1&ie=utf8&query=${encodeURIComponent(
     query
   )}`;
-
