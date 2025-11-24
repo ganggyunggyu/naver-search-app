@@ -43,7 +43,6 @@ export const BLOG_IDS = [
   'taraswati',
   'vividoasis',
   'gray00jy',
-  'skidrow5246',
   'kainn',
   'yaves0218',
   'idoenzang',
