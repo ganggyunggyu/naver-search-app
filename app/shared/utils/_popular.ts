@@ -10,7 +10,7 @@ interface PopularSelectorConfig {
 }
 export const NAVER_POPULAR_SELECTOR_CONFIG: PopularSelectorConfig = {
   container: '.fds-ugc-single-intention-item-list',
-  item: '.xYjt3uiECoJ0o6Pj0xOU',
-  titleLink: '.CC5p8OBUeZzCymeWTg7v',
-  preview: '.vhAXtgPpcvABjkgTaDZ0 .sds-comps-text-type-body1',
+  item: '.oIxNPKojSTvxvkjdwXVC',
+  titleLink: '.yUgjyAT8hsQKswX75JB4',
+  preview: '.q_Caq4prL1xTKuKsMjDN .sds-comps-text-type-body1',
 } as const;

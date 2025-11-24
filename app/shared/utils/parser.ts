@@ -11,10 +11,10 @@ const SELECTORS = {
   postTitleWrap: '.fds-comps-right-image-text-title-wrap',
 
   singleIntentionList: '.fds-ugc-single-intention-item-list',
-  intentionItem: '.SWL8nKfffCq2H9T2jdUw',
-  intentionTitle: 'a.fender-ui_228e3bd1.VL4Ep4IHjrVh0IEZTTPu',
+  intentionItem: '.oIxNPKojSTvxvkjdwXVC',
+  intentionTitle: 'a.yUgjyAT8hsQKswX75JB4',
   intentionHeadline: '.sds-comps-text.sds-comps-text-type-headline1',
-  intentionPreview: '.E5JhvfR_oBJq4gsT_dch .sds-comps-text-type-body1',
+  intentionPreview: '.q_Caq4prL1xTKuKsMjDN .sds-comps-text-type-body1',
   intentionProfile: '.sds-comps-profile-info-title-text a',
   intentionImage: '.sds-comps-image img',
 } as const;
