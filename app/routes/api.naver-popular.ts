@@ -1,11 +1,9 @@
 import type { Route } from './+types/api.naver-popular';
 import {
-  fetchHtml,
-  NAVER_DESKTOP_HEADERS,
   buildNaverSearchUrl,
   jsonError,
-  extractPopularItems,
   matchBlogs,
+  fetchAndParsePopular,
 } from '@/shared';
 import { crawlNaverBlogSearch } from '@/entities';
 
@@ -21,8 +19,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   if (!finalUrl) return jsonError('URL 또는 q(검색어)가 필요합니다.', 400);
 
   try {
-    const html = await fetchHtml(finalUrl, NAVER_DESKTOP_HEADERS);
-    const items = extractPopularItems(html);
+    const items = await fetchAndParsePopular(finalUrl);
 
     const result: any = {
       url: finalUrl,

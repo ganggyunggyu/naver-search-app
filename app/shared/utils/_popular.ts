@@ -1,6 +1,11 @@
-import { extractPopularItems as parsePopularItems } from './parser';
+import {
+  extractPopularItems as parsePopularItems,
+  fetchAndParsePopular,
+  searchPopularItems,
+} from './parser';
 
 export { parsePopularItems as extractPopularItems };
+export { fetchAndParsePopular, searchPopularItems };
 
 interface PopularSelectorConfig {
   container: string;

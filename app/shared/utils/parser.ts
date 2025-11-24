@@ -1,5 +1,26 @@
 import { loadHtml } from './html';
+import { fetchHtml } from './_http';
+import { NAVER_DESKTOP_HEADERS } from '@/constants';
 import type { PopularItem } from '@/entities';
+
+// ─────────────────────────────────────────────────────────────
+// Link Utils
+// ─────────────────────────────────────────────────────────────
+export const normalizeLink = (href?: string, cru?: string): string => {
+  if (cru && cru.startsWith('http')) return cru;
+  if (!href) return '';
+  try {
+    const uParam = new URLSearchParams(href.split('?')[1] || '').get('u');
+    if (uParam) return decodeURIComponent(uParam);
+  } catch {}
+  if (href.startsWith('/')) return `https://search.naver.com${href}`;
+  return href;
+};
+
+export const buildNaverSearchUrl = (query: string): string =>
+  `https://m.search.naver.com/search.naver?where=nexearch&sm=top_sly.hst&fbm=0&acr=1&ie=utf8&query=${encodeURIComponent(
+    query
+  )}`;
 
 const SELECTORS = {
   collectionRoot: '.fds-collection-root',
@@ -145,4 +166,24 @@ export const extractPopularItems = (html: string): PopularItem[] => {
   }
 
   return Array.from(unique.values());
+};
+
+/**
+ * URL로 HTML fetch 후 인기글 파싱
+ */
+export const fetchAndParsePopular = async (
+  url: string
+): Promise<PopularItem[]> => {
+  const html = await fetchHtml(url, NAVER_DESKTOP_HEADERS);
+  return extractPopularItems(html);
+};
+
+/**
+ * 키워드로 네이버 검색 후 인기글 파싱
+ */
+export const searchPopularItems = async (
+  keyword: string
+): Promise<PopularItem[]> => {
+  const url = buildNaverSearchUrl(keyword);
+  return fetchAndParsePopular(url);
 };
