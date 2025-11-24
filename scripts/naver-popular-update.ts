@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import type { Cheerio, CheerioAPI } from 'cheerio';
 import { load as loadHtml } from 'cheerio';
+import type { Element } from 'domhandler';
 
 type SelectorConfig = {
   container: string;
@@ -203,14 +204,14 @@ const main = async () => {
   );
 
   // Find an item element - first look for items with data-template-id="ugcItem"
-  let $item = $container.find('[data-template-id="ugcItem"]').first();
+  let $item: Cheerio<Element> = $container.find('[data-template-id="ugcItem"]').first() as Cheerio<Element>;
   if (!$item.length) {
     // If not found, look for the common item wrapper class from the current HTML
-    $item = $container.find('.xYjt3uiECoJ0o6Pj0xOU').first();
+    $item = $container.find('.xYjt3uiECoJ0o6Pj0xOU').first() as Cheerio<Element>;
   }
   if (!$item.length) {
     // Fallback to any direct child that looks like an item
-    $item = $container.children().first();
+    $item = $container.children().first() as Cheerio<Element>;
   }
   if (!$item.length) {
     throw new Error('Could not find any popular item elements in the container');
@@ -224,11 +225,11 @@ const main = async () => {
   let $titleLink = $item.find('.CC5p8OBUeZzCymeWTg7v').first();
   if (!$titleLink.length) {
     // Look for links with headline text inside
-    $titleLink = $item.find('a span.sds-comps-text-type-headline1').closest('a').first();
+    $titleLink = $item.find('a span.sds-comps-text-type-headline1').closest('a').first() as Cheerio<Element>;
   }
   if (!$titleLink.length) {
     // Fallback to any headline text inside an anchor
-    $titleLink = $item.find('a').find('span.sds-comps-text-type-headline1').closest('a').first();
+    $titleLink = $item.find('a').find('span.sds-comps-text-type-headline1').closest('a').first() as Cheerio<Element>;
   }
   if (!$titleLink.length) {
     throw new Error('Could not find title link elements in the item');
@@ -242,11 +243,11 @@ const main = async () => {
   let $preview = $item.find('.vhAXtgPpcvABjkgTaDZ0').first();
   if (!$preview.length) {
     // Look for preview elements with body text inside
-    $preview = $item.find('a span.sds-comps-text-type-body1').closest('a').first();
+    $preview = $item.find('a span.sds-comps-text-type-body1').closest('a').first() as Cheerio<Element>;
   }
   if (!$preview.length) {
     // Fallback to any body text inside an anchor
-    $preview = $item.find('span.sds-comps-text-type-body1').first().closest('a');
+    $preview = $item.find('span.sds-comps-text-type-body1').first().closest('a') as Cheerio<Element>;
   }
   if (!$preview.length) {
     throw new Error('Could not find preview elements in the item');
