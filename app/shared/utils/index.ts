@@ -5,7 +5,6 @@ export * from './parser';
 export * from './_response';
 export * from './_images';
 export * from './_text';
-export * from './_popular';
 export * from './_content';
 export * from './_naverSearch';
 export * from './_manuscript';
