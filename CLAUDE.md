@@ -130,37 +130,47 @@ npm run start
 
 네이버는 검색 결과 HTML을 주기적으로 변경합니다. 변경 이력:
 
+**2025년 11월 24일 확인:**
+- **상태**: 셀렉터 정상 동작 확인
+- **현재 셀렉터**:
+  - 인기글 컨테이너: `.fds-ugc-single-intention-item-list`
+  - 아이템 컨테이너: `.oIxNPKojSTvxvkjdwXVC`
+  - 제목 링크: `a.yUgjyAT8hsQKswX75JB4`
+  - 미리보기: `.q_Caq4prL1xTKuKsMjDN .sds-comps-text-type-body1`
+
 **2025년 10월 16일 업데이트:**
 - **변경 이유**: 네이버의 인기글 섹션 HTML 클래스명 변경
 - **주요 변경 사항**:
   - 인기글 컨테이너: `.fds-ugc-single-intention-item-list` (신규)
-  - 아이템 컨테이너: `.w0FkNRfc2K6rffX0LJFd` (신규)
-  - 제목 링크: `.Pcw4FFPrGxhURyUmBGxh` (신규)
-  - 미리보기: `.XEJeYBY31zkS37HszIeB` (신규)
+  - 아이템 컨테이너: `.w0FkNRfc2K6rffX0LJFd` → `.oIxNPKojSTvxvkjdwXVC`
+  - 제목 링크: `.Pcw4FFPrGxhURyUmBGxh` → `.yUgjyAT8hsQKswX75JB4`
+  - 미리보기: `.XEJeYBY31zkS37HszIeB` → `.q_Caq4prL1xTKuKsMjDN`
 
-### 현재 사용 중인 셀렉터 (2025-10-16 기준)
+### 현재 사용 중인 셀렉터 (2025-11-24 기준)
 
 ```typescript
-// app/shared/utils/_popular.ts - readPopularSection()
+// app/shared/utils/parser/selectors/index.ts - DEFAULT_SELECTORS
 
 // 인기글 섹션 찾기
-$('.fds-ugc-single-intention-item-list')
+singleIntentionList: '.fds-ugc-single-intention-item-list'
 
 // 각 인기글 아이템
-.find('.w0FkNRfc2K6rffX0LJFd')
+intentionItem: '.oIxNPKojSTvxvkjdwXVC'
 
-// 제목 & 링크
-.find('.Pcw4FFPrGxhURyUmBGxh')  // 제목 링크
-.find('.sds-comps-text-type-headline1.sds-comps-text-weight-sm')  // 제목 텍스트
+// 제목 링크
+intentionTitle: 'a.yUgjyAT8hsQKswX75JB4'
+
+// 제목 텍스트
+intentionHeadline: '.sds-comps-text.sds-comps-text-type-headline1'
 
 // 본문 미리보기
-.find('.XEJeYBY31zkS37HszIeB .sds-comps-text-type-body1')
+intentionPreview: '.q_Caq4prL1xTKuKsMjDN .sds-comps-text-type-body1'
 
 // 블로그 정보
-.find('.sds-comps-profile-info-title-text a')
+intentionProfile: '.sds-comps-profile-info-title-text a'
 
 // 썸네일
-.find('.sds-comps-image img')
+intentionImage: '.sds-comps-image img'
 ```
 
 ### Fallback 셀렉터 전략
@@ -178,18 +188,22 @@ export const SEARCH_PARTIAL_SELECTORS = [
 
 ### 파싱 로직 위치
 
-- **메인 로직**: `app/shared/utils/_popular.ts`
-  - `readPopularSection()`: 인기글 섹션 파싱 (주요 함수)
-  - `readBlock()`: 레거시 블록 파싱 (하위 호환)
-  - `extractPopularItems()`: 최종 export 함수
+- **메인 로직**: `app/shared/utils/parser/popular-parser/index.ts`
+  - `extractPopularItems()`: 인기글 추출 함수
+  - `fetchAndParsePopular()`: HTML fetch + 파싱
+  - `searchPopularItems()`: 키워드 검색 + 파싱
+
+- **셀렉터 설정**: `app/shared/utils/parser/selectors/index.ts`
+  - `PopularSelectorConfig`: 셀렉터 인터페이스
+  - `DEFAULT_SELECTORS`: 기본 셀렉터 설정
+  - `updateSelectors()`: 셀렉터 업데이트 함수
 
 - **셀렉터 상수**: `app/constants/_selectors.ts`
   - `KEYWORD_HEADER_SELECTOR`: 카테고리 헤더 선택자
   - `SEARCH_PARTIAL_SELECTORS`: Fallback 선택자 목록
 
-- **HTML 유틸리티**: `app/shared/utils/html.ts`
+- **HTML 유틸리티**: `app/shared/utils/html/`
   - `loadHtml()`: Cheerio 로더
-  - `extractTextsBySelector()`: 텍스트 추출 헬퍼
   - `buildClassSelector()`: 클래스 선택자 빌더
 
 ### 구조 변경 시 대응 방법
