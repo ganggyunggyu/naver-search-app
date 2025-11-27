@@ -11,6 +11,10 @@ import {
 } from '../store';
 import type { PopularResponse } from '@/entities/naver/_types';
 
+interface PopularResponseWithError extends PopularResponse {
+  error?: string;
+}
+
 export const usePopularActions = () => {
   const [query] = useAtom(popularQueryAtom);
   const setQuery = useSetAtom(popularQueryAtom);
@@ -20,12 +24,6 @@ export const usePopularActions = () => {
   const setError = useSetAtom(popularErrorAtom);
   const setData = useSetAtom(popularDataAtom);
   const { addRecentSearch } = useRecentSearch();
-
-  const generateNaverUrl = useCallback(
-    (q: string) =>
-      `https://search.naver.com/search.naver?where=nexearch&sm=top_sly.hst&fbm=0&acr=1&ie=utf8&query=${encodeURIComponent(q)}`,
-    []
-  );
 
   const fetchPopular = useCallback(
     async (e?: React.FormEvent) => {
@@ -39,8 +37,8 @@ export const usePopularActions = () => {
           ? `/api/naver-popular?q=${encodeURIComponent(query.trim())}`
           : `/api/naver-popular?url=${encodeURIComponent(url.trim())}`;
         const res = await fetch(endpoint);
-        const json: PopularResponse = await res.json();
-        if ((json as any).error) setError((json as any).error);
+        const json: PopularResponseWithError = await res.json();
+        if (json.error) setError(json.error);
         else setData(json);
       } catch {
         setError('요청 중 오류가 발생했습니다.');
@@ -48,7 +46,7 @@ export const usePopularActions = () => {
         setIsLoading(false);
       }
     },
-    [isAutoUrl, query, url, setIsLoading, setError, setData]
+    [isAutoUrl, query, url, setIsLoading, setError, setData, addRecentSearch]
   );
 
   const searchWithQuery = useCallback(
@@ -65,8 +63,8 @@ export const usePopularActions = () => {
           ? `/api/naver-popular?q=${encodeURIComponent(qq)}`
           : `/api/naver-popular?url=${encodeURIComponent(url.trim())}`;
         const res = await fetch(endpoint);
-        const json: PopularResponse = await res.json();
-        if ((json as any).error) setError((json as any).error);
+        const json: PopularResponseWithError = await res.json();
+        if (json.error) setError(json.error);
         else setData(json);
       } catch {
         setError('요청 중 오류가 발생했습니다.');
@@ -77,5 +75,5 @@ export const usePopularActions = () => {
     [setQuery, isAutoUrl, url, setIsLoading, setError, setData, addRecentSearch]
   );
 
-  return { fetchPopular, generateNaverUrl, searchWithQuery };
+  return { fetchPopular, searchWithQuery };
 };

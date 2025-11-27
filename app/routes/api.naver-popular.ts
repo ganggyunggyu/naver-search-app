@@ -6,6 +6,22 @@ import {
   fetchAndParsePopular,
 } from '@/shared';
 import { crawlNaverBlogSearch } from '@/entities';
+import type {
+  PopularItem,
+  BlogCrawlResponse,
+} from '@/entities/naver/_types';
+import type { ExposureResult } from '@/shared/utils/_exposure';
+
+interface PopularApiResult {
+  url: string;
+  count: number;
+  items: PopularItem[];
+  status: number;
+  exposures?: ExposureResult[];
+  exposureCount?: number;
+  blog?: BlogCrawlResponse;
+  blogError?: string;
+}
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const url = new URL(request.url);
@@ -21,7 +37,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   try {
     const items = await fetchAndParsePopular(finalUrl);
 
-    const result: any = {
+    const result: PopularApiResult = {
       url: finalUrl,
       count: items.length,
       items,

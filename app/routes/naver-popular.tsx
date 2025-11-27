@@ -48,10 +48,9 @@ export const meta = (_: Route.MetaArgs) => [
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const url = new URL(request.url);
-
-  const keyword = (((params as any) || {}).keyword || '').trim();
-  const q = keyword || (url.searchParams.get('q') || '').trim();
-  const directUrl = (url.searchParams.get('url') || '').trim();
+  const keyword = ((params as { keyword?: string })?.keyword ?? '').trim();
+  const q = keyword || (url.searchParams.get('q') ?? '').trim();
+  const directUrl = (url.searchParams.get('url') ?? '').trim();
   return { q, url: directUrl };
 };
 
