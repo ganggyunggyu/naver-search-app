@@ -9,3 +9,4 @@ export * from './_content';
 export * from './_naverSearch';
 export * from './_manuscript';
 export * from './_exposure';
+export * from './_blog';
