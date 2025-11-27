@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAtom } from 'jotai';
-import { X, ExternalLink, Search, Edit3 } from 'lucide-react';
+import { ExternalLink, Search, Edit3, X } from 'lucide-react';
 import { cn } from '@/shared';
 import { useRecentSearch } from '../hooks';
 import {
@@ -10,6 +10,7 @@ import {
   popularUrlAtom,
   popularIsLoadingAtom,
 } from '../store';
+import { RecentSearchSection } from './_RecentSearchSection';
 
 export const PopularSearchForm: React.FC = () => {
   const [query, setQuery] = useAtom(popularQueryAtom);
@@ -352,137 +353,24 @@ export const PopularSearchForm: React.FC = () => {
 
           {isClient && recentSearchList.length > 0 ? (
             <div className={cn('space-y-4')}>
-              {/* 미노출 섹션 */}
-              {recentSearchList.filter((item) => item.hasExposure === false).length > 0 && (
-                <div>
-                  <div className={cn('text-xs text-red-600 dark:text-red-400 mb-2 font-medium')}>
-                    미노출 ({recentSearchList.filter((item) => item.hasExposure === false).length})
-                  </div>
-                  <div className={cn('flex gap-2 flex-wrap')}>
-                    {recentSearchList
-                      .filter((item) => item.hasExposure === false)
-                      .map((item) => (
-                        <div
-                          key={item.query}
-                          className={cn(
-                            'group flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium',
-                            'border transition-all duration-200',
-                            'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800'
-                          )}
-                        >
-                          <button
-                            onClick={() => navigate(`/${encodeURIComponent(item.query)}`)}
-                            className={cn('hover:opacity-70 transition-opacity')}
-                          >
-                            {item.query}
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeRecentSearch(item.query);
-                            }}
-                            className={cn(
-                              'ml-1 w-3 h-3 flex items-center justify-center rounded-full',
-                              'hover:bg-black/10 dark:hover:bg-white/10',
-                              'opacity-0 group-hover:opacity-100 transition-opacity'
-                            )}
-                            aria-label={`${item.query} 검색어 삭제`}
-                          >
-                            <X size={10} />
-                          </button>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 노출 섹션 */}
-              {recentSearchList.filter((item) => item.hasExposure === true).length > 0 && (
-                <div>
-                  <div className={cn('text-xs text-green-600 dark:text-green-400 mb-2 font-medium')}>
-                    노출 ({recentSearchList.filter((item) => item.hasExposure === true).length})
-                  </div>
-                  <div className={cn('flex gap-2 flex-wrap')}>
-                    {recentSearchList
-                      .filter((item) => item.hasExposure === true)
-                      .map((item) => (
-                        <div
-                          key={item.query}
-                          className={cn(
-                            'group flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium',
-                            'border transition-all duration-200',
-                            'bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800'
-                          )}
-                        >
-                          <button
-                            onClick={() => navigate(`/${encodeURIComponent(item.query)}`)}
-                            className={cn('hover:opacity-70 transition-opacity')}
-                          >
-                            {item.query}
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeRecentSearch(item.query);
-                            }}
-                            className={cn(
-                              'ml-1 w-3 h-3 flex items-center justify-center rounded-full',
-                              'hover:bg-black/10 dark:hover:bg-white/10',
-                              'opacity-0 group-hover:opacity-100 transition-opacity'
-                            )}
-                            aria-label={`${item.query} 검색어 삭제`}
-                          >
-                            <X size={10} />
-                          </button>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 미확인 섹션 */}
-              {recentSearchList.filter((item) => item.hasExposure === undefined).length > 0 && (
-                <div>
-                  <div className={cn('text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium')}>
-                    미확인 ({recentSearchList.filter((item) => item.hasExposure === undefined).length})
-                  </div>
-                  <div className={cn('flex gap-2 flex-wrap')}>
-                    {recentSearchList
-                      .filter((item) => item.hasExposure === undefined)
-                      .map((item) => (
-                        <div
-                          key={item.query}
-                          className={cn(
-                            'group flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium',
-                            'border transition-all duration-200',
-                            'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800'
-                          )}
-                        >
-                          <button
-                            onClick={() => navigate(`/${encodeURIComponent(item.query)}`)}
-                            className={cn('hover:opacity-70 transition-opacity')}
-                          >
-                            {item.query}
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeRecentSearch(item.query);
-                            }}
-                            className={cn(
-                              'ml-1 w-3 h-3 flex items-center justify-center rounded-full',
-                              'hover:bg-black/10 dark:hover:bg-white/10',
-                              'opacity-0 group-hover:opacity-100 transition-opacity'
-                            )}
-                            aria-label={`${item.query} 검색어 삭제`}
-                          >
-                            <X size={10} />
-                          </button>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              )}
+              <RecentSearchSection
+                title="미노출"
+                items={recentSearchList.filter((item) => item.hasExposure === false)}
+                status="notExposed"
+                onRemove={removeRecentSearch}
+              />
+              <RecentSearchSection
+                title="노출"
+                items={recentSearchList.filter((item) => item.hasExposure === true)}
+                status="exposed"
+                onRemove={removeRecentSearch}
+              />
+              <RecentSearchSection
+                title="미확인"
+                items={recentSearchList.filter((item) => item.hasExposure === undefined)}
+                status="unchecked"
+                onRemove={removeRecentSearch}
+              />
             </div>
           ) : isClient ? (
             <div
