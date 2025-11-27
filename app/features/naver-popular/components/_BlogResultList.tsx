@@ -2,7 +2,8 @@ import React from 'react';
 import { Search, Download } from 'lucide-react';
 import { cn, Chip } from '@/shared';
 import { PopularItemCard } from './_PopularItemCard';
-import { BLOG_IDS } from '@/constants';
+import { BLOG_ID_SET } from '@/constants';
+import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
 import { useToast } from '@/shared/ui/Toast';
 import type { PopularItem } from '@/entities/naver/_types';
 
@@ -33,31 +34,14 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
 }) => {
   const { show } = useToast();
 
-  // 블로그 ID 추출 함수
-  const getBlogId = (url: string): string => {
-    try {
-      const u = new URL(url);
-      if (
-        u.hostname.includes('blog.naver.com') ||
-        u.hostname.includes('m.blog.naver.com')
-      ) {
-        const seg = u.pathname.replace(/^\//, '').split('/')[0];
-        return (seg || '').toLowerCase();
-      }
-    } catch {}
-    return '';
-  };
-
-  // 전체 블로그 리스트와 매칭 정보 생성
   const { allBlogs, matchedCount } = React.useMemo(() => {
     if (!blogData?.items) return { allBlogs: [], matchedCount: 0 };
 
-    const allowedIds = new Set(BLOG_IDS.map((v) => v.toLowerCase()));
     let matchedCount = 0;
 
     const allBlogs = blogData.items.slice(0, 20).map((item, index) => {
-      const id = getBlogId(item.link);
-      const isMatched = id && allowedIds.has(id);
+      const id = extractBlogIdFromUrl(item.link);
+      const isMatched = id && BLOG_ID_SET.has(id);
 
       if (isMatched) matchedCount++;
 

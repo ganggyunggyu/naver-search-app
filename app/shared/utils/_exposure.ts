@@ -1,5 +1,6 @@
 import type { PopularItem } from '@/entities/naver/_types';
-import { BLOG_IDS } from '@/constants';
+import { BLOG_IDS, BLOG_ID_SET } from '@/constants';
+import { extractBlogIdFromUrl } from './_blog';
 
 export interface ExposureResult {
   query: string;
@@ -19,29 +20,11 @@ export interface ExposureCheckResult {
   exposureType: '인기글' | '스블';
 }
 
-const extractBlogId = (blogLink: string): string | null => {
-  if (!blogLink) return null;
-
-  const urlPatterns = [
-    /blog\.naver\.com\/([^/?&#]+)/,
-    /in\.naver\.com\/([^/?&#]+)/,
-    /m\.blog\.naver\.com\/([^/?&#]+)/,
-  ];
-
-  for (const pattern of urlPatterns) {
-    const match = blogLink.match(pattern);
-    if (match?.[1]) return match[1].toLowerCase();
-  }
-
-  return null;
-};
-
 export const matchBlogs = (
   query: string,
   items: PopularItem[]
 ): ExposureCheckResult => {
   const exposed: ExposureResult[] = [];
-  const allowedIds = new Set(BLOG_IDS.map((id) => id.toLowerCase()));
   const exposedIds = new Set<string>();
 
   const uniqueGroups = new Set(items.map((item) => item.group));
@@ -49,9 +32,9 @@ export const matchBlogs = (
   const exposureType = isPopular ? '인기글' : '스블';
 
   items.forEach((item, index) => {
-    const blogId = extractBlogId(item.blogLink ?? '');
+    const blogId = extractBlogIdFromUrl(item.blogLink ?? '');
 
-    if (blogId && allowedIds.has(blogId)) {
+    if (blogId && BLOG_ID_SET.has(blogId)) {
       exposedIds.add(blogId);
 
       exposed.push({

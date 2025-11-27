@@ -30,7 +30,8 @@ import {
   PopularViewerModal,
   type PopularViewerItem,
 } from '@/features/naver-popular/components/_PopularViewerModal';
-import { BLOG_IDS } from '@/constants';
+import { BLOG_IDS, BLOG_ID_SET } from '@/constants';
+import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
 import {
   copyPreviewToClipboard,
   copyFullContentToClipboard,
@@ -134,30 +135,16 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     setData,
   ]);
 
-  const getBlogId = (url: string): string => {
-    try {
-      const u = new URL(url);
-      if (
-        u.hostname.includes('blog.naver.com') ||
-        u.hostname.includes('m.blog.naver.com')
-      ) {
-        const seg = u.pathname.replace(/^\//, '').split('/')[0];
-        return (seg || '').toLowerCase();
-      }
-    } catch {}
-    return '';
-  };
   type MatchItem = {
     id: string;
     item: PopularItem;
   };
   const matchedIdList = (() => {
     const list = new Set<MatchItem>();
-    const allow = new Set(BLOG_IDS.map((v) => v.toLowerCase()));
     const items = data?.items || [];
     for (const it of items) {
-      const id = getBlogId(it.link);
-      if (id && allow.has(id)) {
+      const id = extractBlogIdFromUrl(it.link);
+      if (id && BLOG_ID_SET.has(id)) {
         const matchedItem: MatchItem = {
           id,
           item: it,
@@ -331,35 +318,23 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
                   </div>
                 </div>
                 {(() => {
-                  const allowedIds = new Set(
-                    BLOG_IDS.map((v) => v.toLowerCase())
-                  );
                   const matchedBlogs = new Map(); // blogId -> { count, keyword, positions }
 
                   blogSearchData.items.forEach((item, index) => {
-                    try {
-                      const u = new URL(item.link);
-                      if (
-                        u.hostname.includes('blog.naver.com') ||
-                        u.hostname.includes('m.blog.naver.com')
-                      ) {
-                        const seg = u.pathname.replace(/^\//, '').split('/')[0];
-                        const id = (seg || '').toLowerCase();
-                        if (id && allowedIds.has(id)) {
-                          if (!matchedBlogs.has(id)) {
-                            matchedBlogs.set(id, {
-                              count: 0,
-                              keyword: blogSearchData.keyword,
-                              blogName: item?.blogName || '', // 실제로는 블로그명을 가져와야 하지만 일단 ID 사용
-                              positions: [],
-                            });
-                          }
-                          const current = matchedBlogs.get(id);
-                          current.count++;
-                          current.positions.push(index + 1); // 1부터 시작하는 순위
-                        }
+                    const id = extractBlogIdFromUrl(item.link);
+                    if (id && BLOG_ID_SET.has(id)) {
+                      if (!matchedBlogs.has(id)) {
+                        matchedBlogs.set(id, {
+                          count: 0,
+                          keyword: blogSearchData.keyword,
+                          blogName: item?.blogName || '',
+                          positions: [],
+                        });
                       }
-                    } catch {}
+                      const current = matchedBlogs.get(id);
+                      current.count++;
+                      current.positions.push(index + 1);
+                    }
                   });
 
                   const matchedBlogArray = Array.from(matchedBlogs.entries());

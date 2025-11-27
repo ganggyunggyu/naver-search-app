@@ -1,6 +1,16 @@
 import { fetchHtml, NAVER_MOBILE_HEADERS } from '@/shared/utils/_http';
 import { loadHtml } from '@/shared/utils/html';
+import {
+  extractBlogIdFromUrl,
+  isValidNaverBlogPost,
+} from '@/shared/utils/_blog';
 import type { BlogCrawlItem, BlogCrawlResponse } from './_types';
+
+const BLOG_SEARCH_CONFIG = {
+  MAX_DISPLAY: 500,
+  MIN_TITLE_LENGTH: 10,
+  MAX_DESC_LENGTH: 200,
+} as const;
 
 const BLOG_SELECTORS = [
   '.lst_total .bx',
@@ -18,33 +28,6 @@ const BLOG_INFO_SELECTORS = '.name, .sub_txt, .source, .blog_name';
 const stripHtmlTags = (text: string): string =>
   text.replace(/<\/?[^>]+(>|$)/g, '');
 
-const isNaverBlogHost = (hostname: string): boolean =>
-  hostname.includes('blog.naver.com') || hostname.includes('m.blog.naver.com');
-
-const isValidNaverBlogPost = (link: string): boolean => {
-  try {
-    const url = new URL(link);
-    if (isNaverBlogHost(url.hostname)) {
-      const pathParts = url.pathname.replace(/^\//, '').split('/');
-      return pathParts.length >= 2 && !!pathParts[0] && !!pathParts[1];
-    }
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const getBlogIdFromLink = (link: string): string => {
-  try {
-    const url = new URL(link);
-    if (isNaverBlogHost(url.hostname)) {
-      const pathParts = url.pathname.replace(/^\//, '').split('/');
-      return pathParts[0] || '';
-    }
-  } catch {}
-  return '';
-};
-
 const isAdLink = (link: string): boolean => link.includes('ader.naver.com');
 
 const buildFullLink = (link: string): string =>
@@ -53,7 +36,7 @@ const buildFullLink = (link: string): string =>
 export const crawlNaverBlogSearch = async (
   keyword: string
 ): Promise<BlogCrawlResponse> => {
-  const searchUrl = `https://m.search.naver.com/search.naver?ssc=tab.m_blog.all&sm=mtb_jum&query=${encodeURIComponent(keyword)}&start=1&display=500&sort=sim`;
+  const searchUrl = `https://m.search.naver.com/search.naver?ssc=tab.m_blog.all&sm=mtb_jum&query=${encodeURIComponent(keyword)}&start=1&display=${BLOG_SEARCH_CONFIG.MAX_DISPLAY}&sort=sim`;
 
   try {
     const html = await fetchHtml(searchUrl, NAVER_MOBILE_HEADERS);
@@ -109,7 +92,7 @@ export const crawlNaverBlogSearch = async (
         const title = $el.text().trim();
         const link = $el.attr('href') || '';
 
-        if (title.length <= 10 || !link) return;
+        if (title.length <= BLOG_SEARCH_CONFIG.MIN_TITLE_LENGTH || !link) return;
 
         const fullLink = buildFullLink(link);
 
@@ -121,7 +104,7 @@ export const crawlNaverBlogSearch = async (
           .not($el)
           .text()
           .trim()
-          .slice(0, 200);
+          .slice(0, BLOG_SEARCH_CONFIG.MAX_DESC_LENGTH);
 
         items.push({
           title: stripHtmlTags(title),
@@ -140,7 +123,7 @@ export const crawlNaverBlogSearch = async (
     let lastBlogId = '';
 
     for (const item of uniqueItems) {
-      const currentBlogId = getBlogIdFromLink(item.link);
+      const currentBlogId = extractBlogIdFromUrl(item.link);
 
       if (currentBlogId && currentBlogId === lastBlogId) {
         continue;

@@ -7,7 +7,8 @@ import { useToast } from '@/shared/ui/Toast';
 import { copyTitleToClipboard, downloadAllContentToFile } from '@/features/naver-popular/lib';
 import { Download, Copy } from 'lucide-react';
 import { cn } from '@/shared';
-import { BLOG_IDS } from '@/constants';
+import { BLOG_ID_SET } from '@/constants';
+import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
 
 const DEFAULT_GROUP = '비즈니스·경제 인기글';
 
@@ -16,37 +17,20 @@ export const PopularResults: React.FC = () => {
   const itemList = data?.items || [];
   const { show } = useToast();
 
-  // 블로그 ID 추출 함수 (BlogResultList와 동일)
-  const getBlogId = (url: string): string => {
-    try {
-      const u = new URL(url);
-      if (
-        u.hostname.includes('blog.naver.com') ||
-        u.hostname.includes('m.blog.naver.com')
-      ) {
-        const seg = u.pathname.replace(/^\//, '').split('/')[0];
-        return (seg || '').toLowerCase();
-      }
-    } catch {}
-    return '';
-  };
-
   const { grouped, totalMatchedCount } = useMemo(() => {
     const map: Record<string, PopularItem[]> = {};
-    const allowedIds = new Set(BLOG_IDS.map((v) => v.toLowerCase()));
     let totalMatchedCount = 0;
 
     for (const it of itemList || []) {
       const g = it.group || DEFAULT_GROUP;
       if (!map[g]) map[g] = [];
 
-      // blogLink에서 블로그 ID 추출
       let blogId = '';
       let isMatched = false;
 
       if (it.blogLink) {
-        blogId = getBlogId(it.blogLink);
-        isMatched = Boolean(blogId && allowedIds.has(blogId));
+        blogId = extractBlogIdFromUrl(it.blogLink);
+        isMatched = Boolean(blogId && BLOG_ID_SET.has(blogId));
       }
 
       // 매칭된 항목 카운트
