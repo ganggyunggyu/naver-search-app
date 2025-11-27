@@ -4,11 +4,11 @@ import { BLOG_IDS } from '@/constants';
 export interface ExposureResult {
   query: string;
   blogId: string;
-  blogName: string;
+  blogName?: string;
   postTitle: string;
   postLink: string;
   exposureType: '인기글' | '스블';
-  topicName: string;
+  topicName?: string;
   position: number;
 }
 
@@ -56,11 +56,11 @@ export const matchBlogs = (
   console.log('\n노출 확인 중...\n');
 
   items.forEach((item, index) => {
-    const blogId = extractBlogId(item.blogLink);
+    const blogId = extractBlogId(item.blogLink ?? '');
 
     if (blogId && allowedIds.has(blogId)) {
       const exposureType = isPopular ? '인기글' : '스블';
-      const topicName = isPopular ? '' : item.group;
+      const topicName = isPopular ? undefined : item.group;
 
       results.push({
         query,

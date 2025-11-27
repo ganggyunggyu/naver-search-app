@@ -78,10 +78,9 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   }, [data, show]);
 
   useEffect(() => {
-    const q = (loaderData as any)?.q as string | undefined;
-    const u = (loaderData as any)?.url as string | undefined;
-    const qq = (q || '').trim();
-    const uu = (u || '').trim();
+    const { q, url: u } = loaderData ?? { q: '', url: '' };
+    const qq = (q ?? '').trim();
+    const uu = (u ?? '').trim();
 
     if (!qq && !uu) return;
 
@@ -107,10 +106,11 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         setData(null);
         // setBlogSearchData(null); // 블로그 데이터는 초기화하지 않음 (별도 API)
         const res = await fetch(endpoint);
-        const json = await res.json();
+        const json: { error?: string; blog?: typeof blogSearchData } & typeof data =
+          await res.json();
 
-        if ((json as any)?.error) {
-          setError(String((json as any).error));
+        if (json.error) {
+          setError(json.error);
         } else {
           setData(json);
           // 블로그 데이터가 있으면 저장
@@ -170,8 +170,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   })();
 
   useEffect(() => {
-    const q = (loaderData as any)?.q as string | undefined;
-    const query = (q || '').trim();
+    const query = (loaderData?.q ?? '').trim();
 
     if (!query || !data) return;
 
