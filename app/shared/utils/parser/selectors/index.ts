@@ -27,11 +27,11 @@ export const DEFAULT_SELECTORS: PopularSelectorConfig = {
   postTitle: '.fds-comps-right-image-text-title',
   postTitleWrap: '.fds-comps-right-image-text-title-wrap',
 
-  singleIntentionList: '.fds-ugc-single-intention-item-list',
-  intentionItem: '.GFvctBasQYtp2OAMdUEM',
-  intentionTitle: 'a.bptVF1SgHzUVp98UnCKw',
-  intentionHeadline: '.sds-comps-text.sds-comps-text-type-headline1',
-  intentionPreview: '.h3XrZxqRzGHyvRlMguhI .sds-comps-text-type-body1',
+  singleIntentionList: '.fds-ugc-single-intention-item-list, .fds-ugc-single-intention-item-list-rra',
+  intentionItem: '[data-template-id="ugcItem"]',
+  intentionTitle: 'a[data-heatmap-target=".link"]',
+  intentionHeadline: '.sds-comps-text-type-headline1',
+  intentionPreview: '.sds-comps-text-type-body1',
   intentionProfile: '.sds-comps-profile-info-title-text a',
   intentionImage: '.sds-comps-image img',
 } as const;
