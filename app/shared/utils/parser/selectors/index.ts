@@ -28,10 +28,10 @@ export const DEFAULT_SELECTORS: PopularSelectorConfig = {
   postTitleWrap: '.fds-comps-right-image-text-title-wrap',
 
   singleIntentionList: '.fds-ugc-single-intention-item-list',
-  intentionItem: '.oWHHk1HHIrHanKxMvtns',
-  intentionTitle: 'a.ymg0wZtJenuG6Ys1cudZ',
+  intentionItem: '.GFvctBasQYtp2OAMdUEM',
+  intentionTitle: 'a.bptVF1SgHzUVp98UnCKw',
   intentionHeadline: '.sds-comps-text.sds-comps-text-type-headline1',
-  intentionPreview: '.ocn9FIOIZPp_jNVUverI .sds-comps-text-type-body1',
+  intentionPreview: '.h3XrZxqRzGHyvRlMguhI .sds-comps-text-type-body1',
   intentionProfile: '.sds-comps-profile-info-title-text a',
   intentionImage: '.sds-comps-image img',
 } as const;
