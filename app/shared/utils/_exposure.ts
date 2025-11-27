@@ -12,6 +12,13 @@ export interface ExposureResult {
   position: number;
 }
 
+export interface ExposureCheckResult {
+  query: string;
+  exposed: ExposureResult[];
+  notExposed: string[];
+  exposureType: '인기글' | '스블';
+}
+
 const extractBlogId = (blogLink: string): string | null => {
   if (!blogLink) return null;
 
@@ -32,66 +39,74 @@ const extractBlogId = (blogLink: string): string | null => {
 export const matchBlogs = (
   query: string,
   items: PopularItem[]
-): ExposureResult[] => {
-  const results: ExposureResult[] = [];
+): ExposureCheckResult => {
+  const exposed: ExposureResult[] = [];
   const allowedIds = new Set(BLOG_IDS.map((id) => id.toLowerCase()));
+  const exposedIds = new Set<string>();
 
   const uniqueGroups = new Set(items.map((item) => item.group));
   const isPopular = uniqueGroups.size === 1;
-
-  console.log(`\n${'='.repeat(60)}`);
-  console.log(`검색어: ${query}`);
-  console.log(`${'='.repeat(60)}`);
-  console.log(`총 ${items.length}개 아이템, 고유 group ${uniqueGroups.size}개`);
-  console.log(`구분: ${isPopular ? '인기글' : '스블 (스마트블로그)'}`);
-
-  if (!isPopular) {
-    console.log('\n인기 주제들:');
-    Array.from(uniqueGroups).forEach((group, idx) => {
-      const count = items.filter((item) => item.group === group).length;
-      console.log(`  ${idx + 1}. ${group} (${count}개)`);
-    });
-  }
-
-  console.log('\n노출 확인 중...\n');
+  const exposureType = isPopular ? '인기글' : '스블';
 
   items.forEach((item, index) => {
     const blogId = extractBlogId(item.blogLink ?? '');
 
     if (blogId && allowedIds.has(blogId)) {
-      const exposureType = isPopular ? '인기글' : '스블';
-      const topicName = isPopular ? undefined : item.group;
+      exposedIds.add(blogId);
 
-      results.push({
+      exposed.push({
         query,
         blogId,
         blogName: item.blogName,
         postTitle: item.title,
         postLink: item.link,
         exposureType,
-        topicName,
+        topicName: isPopular ? undefined : item.group,
         position: index + 1,
       });
-
-      console.log(`✅ 노출 발견!`);
-      console.log(`  블로그 ID: ${blogId}`);
-      console.log(`  블로그명: ${item.blogName}`);
-      console.log(`  타입: ${exposureType}`);
-      if (topicName) console.log(`  주제: ${topicName}`);
-      console.log(`  순위: ${index + 1}위`);
-      console.log(`  제목: ${item.title}`);
-      console.log(`  링크: ${item.link.substring(0, 80)}...`);
-      console.log('');
     }
   });
 
-  if (results.length === 0) {
-    console.log('❌ 노출 없음');
+  const notExposed = BLOG_IDS.filter(
+    (id) => !exposedIds.has(id.toLowerCase())
+  );
+
+  return {
+    query,
+    exposed,
+    notExposed,
+    exposureType,
+  };
+};
+
+export const printExposureResult = (result: ExposureCheckResult): void => {
+  const { query, exposed, notExposed, exposureType } = result;
+
+  console.log(`\n${'='.repeat(60)}`);
+  console.log(`검색어: ${query}`);
+  console.log(`타입: ${exposureType}`);
+  console.log(`${'='.repeat(60)}`);
+
+  console.log(`\n📍 미노출 (${notExposed.length}개)`);
+  console.log(`${'─'.repeat(40)}`);
+  if (notExposed.length === 0) {
+    console.log('  ✅ 모든 블로그 노출됨!');
   } else {
-    console.log(`\n총 ${results.length}개 노출 발견`);
+    notExposed.forEach((blogId, idx) => {
+      console.log(`  ${idx + 1}. ${blogId}`);
+    });
   }
 
-  console.log('='.repeat(60));
+  console.log(`\n📍 노출 (${exposed.length}개)`);
+  console.log(`${'─'.repeat(40)}`);
+  if (exposed.length === 0) {
+    console.log('  ❌ 노출된 블로그 없음');
+  } else {
+    exposed.forEach((item, idx) => {
+      console.log(`  ${idx + 1}. ${item.blogId} (${item.position}위)`);
+      console.log(`     └─ ${item.postTitle.slice(0, 40)}...`);
+    });
+  }
 
-  return results;
+  console.log(`\n${'='.repeat(60)}\n`);
 };

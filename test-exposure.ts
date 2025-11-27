@@ -5,6 +5,7 @@ import {
   extractPopularItems,
   matchBlogs,
 } from './app/shared';
+import { printExposureResult } from './app/shared/utils/_exposure';
 
 async function testExposure(query: string) {
   console.log(`\n\n${'#'.repeat(70)}`);
@@ -16,23 +17,13 @@ async function testExposure(query: string) {
     const html = await fetchHtml(url, NAVER_DESKTOP_HEADERS);
     const items = extractPopularItems(html);
 
-    const exposures = matchBlogs(query, items);
+    const result = matchBlogs(query, items);
 
-    console.log('\n\n📊 최종 결과:');
-    console.log(`총 ${exposures.length}개 노출 발견\n`);
+    printExposureResult(result);
 
-    if (exposures.length > 0) {
-      exposures.forEach((exp, idx) => {
-        console.log(`[${idx + 1}]`);
-        console.log(`  블로그 ID: ${exp.blogId}`);
-        console.log(`  블로그명: ${exp.blogName}`);
-        console.log(`  타입: ${exp.exposureType}`);
-        if (exp.topicName) console.log(`  주제: ${exp.topicName}`);
-        console.log(`  순위: ${exp.position}위`);
-        console.log(`  제목: ${exp.postTitle}`);
-        console.log('');
-      });
-    }
+    console.log('\n📊 요약:');
+    console.log(`  노출: ${result.exposed.length}개`);
+    console.log(`  미노출: ${result.notExposed.length}개`);
   } catch (err) {
     console.error('에러 발생:', err);
   }

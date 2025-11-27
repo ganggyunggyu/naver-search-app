@@ -10,15 +10,14 @@ import type {
   PopularItem,
   BlogCrawlResponse,
 } from '@/entities/naver/_types';
-import type { ExposureResult } from '@/shared/utils/_exposure';
+import type { ExposureCheckResult } from '@/shared/utils/_exposure';
 
 interface PopularApiResult {
   url: string;
   count: number;
   items: PopularItem[];
   status: number;
-  exposures?: ExposureResult[];
-  exposureCount?: number;
+  exposure?: ExposureCheckResult;
   blog?: BlogCrawlResponse;
   blogError?: string;
 }
@@ -45,9 +44,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     };
 
     if (checkExposure && q) {
-      const exposures = matchBlogs(q, items);
-      result.exposures = exposures;
-      result.exposureCount = exposures.length;
+      result.exposure = matchBlogs(q, items);
     }
 
     if (includeBlog && q) {
