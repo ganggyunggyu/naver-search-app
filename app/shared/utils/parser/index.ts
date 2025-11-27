@@ -7,7 +7,9 @@ export const normalizeLink = (href?: string, cru?: string): string => {
   try {
     const uParam = new URLSearchParams(href.split('?')[1] || '').get('u');
     if (uParam) return decodeURIComponent(uParam);
-  } catch {}
+  } catch {
+    // URL 파싱 실패 시 무시하고 fallback 로직 진행
+  }
   if (href.startsWith('/')) return `https://search.naver.com${href}`;
   return href;
 };
