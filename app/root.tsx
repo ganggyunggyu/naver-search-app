@@ -26,27 +26,30 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+export const Layout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
   <html lang="en">
     <head>
       <meta charSet="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, user-scalable=no"
+      />
       <Meta />
       <Links />
     </head>
     <body>
       <ToastProvider>
         {/* 데스크톱에서만 기존 Header 표시 */}
-        <div className="hidden lg:block">
+        <div>
           <Header />
         </div>
 
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950 pb-20 lg:pb-0 lg:pt-14">
-          {children}
-        </div>
+        <div>{children}</div>
 
         {/* 모바일/태블릿에서만 하단 네비게이션 표시 */}
-        <div className="lg:hidden">
+        <div>
           <BottomNavigation />
         </div>
       </ToastProvider>
@@ -60,7 +63,9 @@ const App: React.FC = () => <Outlet />;
 
 export default App;
 
-export const ErrorBoundary: React.FC<Route.ErrorBoundaryProps> = ({ error }) => {
+export const ErrorBoundary: React.FC<Route.ErrorBoundaryProps> = ({
+  error,
+}) => {
   let message = 'Oops!';
   let details = 'An unexpected error occurred.';
   let stack: string | undefined;
