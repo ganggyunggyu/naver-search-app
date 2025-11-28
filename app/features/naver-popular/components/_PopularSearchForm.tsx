@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAtom } from 'jotai';
-import { ExternalLink, Search, Edit3, X } from 'lucide-react';
-import { cn } from '@/shared';
+import { ExternalLink, Search, Edit3, Loader2 } from 'lucide-react';
 import { useRecentSearch } from '../hooks';
 import {
   popularQueryAtom,
@@ -65,40 +64,25 @@ export const PopularSearchForm: React.FC = () => {
   };
 
   return (
-    <div
-      className={cn(
-        'bg-white dark:bg-black rounded-2xl border',
-        'border-gray-200 dark:border-gray-800',
-        'p-6 mb-12 shadow-sm hover:shadow-md transition-shadow duration-200'
-      )}
-    >
-      {/* 헤더 */}
-      <div className={cn('mb-6')}>
-        <h2 className={cn('text-xl font-bold text-black dark:text-white mb-2')}>
+    <div className="p-4 sm:p-6 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
           검색 설정
         </h2>
-        <p className={cn('text-sm text-gray-600 dark:text-gray-400')}>
+        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
           검색어를 입력하거나 직접 네이버 URL을 붙여넣으세요
         </p>
       </div>
 
-      {/* 탭 버튼 */}
-      <div
-        className={cn(
-          'flex gap-1 mb-6 p-1 rounded-lg',
-          'bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800'
-        )}
-      >
+      <div className="flex gap-2 p-1 rounded-lg bg-[var(--color-bg-tertiary)] mb-4">
         <button
           type="button"
           onClick={() => setIsAutoUrl(true)}
-          className={cn(
-            'flex-1 px-4 py-2.5 rounded-md font-medium transition-all duration-200',
-            'text-sm',
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
             isAutoUrl
-              ? 'bg-white dark:bg-black text-black dark:text-white shadow-sm border border-gray-200 dark:border-gray-800'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-          )}
+              ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm'
+              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+          }`}
         >
           <span className="hidden sm:inline">검색어 자동생성</span>
           <span className="sm:hidden">자동생성</span>
@@ -106,18 +90,17 @@ export const PopularSearchForm: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAutoUrl(false)}
-          className={cn(
-            'flex-1 px-4 py-2.5 rounded-md font-medium transition-all duration-200',
-            'text-sm',
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
             !isAutoUrl
-              ? 'bg-white dark:bg-black text-black dark:text-white shadow-sm border border-gray-200 dark:border-gray-800'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-          )}
+              ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm'
+              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+          }`}
         >
           <span className="hidden sm:inline">직접 URL 입력</span>
           <span className="sm:hidden">URL 입력</span>
         </button>
       </div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -132,146 +115,83 @@ export const PopularSearchForm: React.FC = () => {
             navigate(`/url/${encodeURIComponent(u)}`);
           }
         }}
-        className={cn('space-y-3 sm:space-y-4')}
       >
         {isAutoUrl ? (
-          <div>
-            <label
-              className={cn(
-                'block text-sm font-medium text-black dark:text-white mb-3'
-              )}
-            >
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1.5">
               검색어
             </label>
             <div className="relative">
-              <div
-                className={cn(
-                  'relative rounded-lg border transition-all duration-200',
-                  'border-gray-300 dark:border-gray-700',
-                  'focus-within:border-black dark:focus-within:border-white',
-                  'focus-within:ring-1 focus-within:ring-black dark:focus-within:ring-white'
-                )}
-              >
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={(e) => {
-                    setQuery(e.target.value);
-                    setShowAutocomplete(true);
-                    setSelectedSuggestionIndex(-1);
-                  }}
-                  onFocus={() => setShowAutocomplete(true)}
-                  onBlur={() => {
-                    setTimeout(() => setShowAutocomplete(false), 200);
-                  }}
-                  onKeyDown={handleKeyDown}
-                  placeholder="예: 라미네이트"
-                  className={cn(
-                    'w-full px-4 py-3 rounded-lg bg-white dark:bg-black',
-                    'text-black dark:text-white placeholder:text-gray-500',
-                    'text-base focus:outline-none'
-                  )}
-                  autoComplete="off"
-                />
-              </div>
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setShowAutocomplete(true);
+                  setSelectedSuggestionIndex(-1);
+                }}
+                onFocus={() => setShowAutocomplete(true)}
+                onBlur={() => {
+                  setTimeout(() => setShowAutocomplete(false), 200);
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder="예: 라미네이트"
+                autoComplete="off"
+                className="w-full px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-focus)] transition-all"
+              />
 
-              {isClient &&
-                showAutocomplete &&
-                filteredSuggestions.length > 0 && (
-                  <div
-                    className={cn(
-                      'absolute z-50 w-full mt-2 py-1 rounded-lg',
-                      'bg-white dark:bg-black',
-                      'border border-gray-200 dark:border-gray-800',
-                      'shadow-lg max-h-64 overflow-y-auto'
-                    )}
-                  >
-                    {filteredSuggestions.map((item, index) => (
-                      <button
-                        key={item.query}
-                        type="button"
-                        onClick={() => {
-                          setQuery(item.query);
-                          setShowAutocomplete(false);
-                          setSelectedSuggestionIndex(-1);
-                        }}
-                        className={cn(
-                          'w-full px-4 py-2 text-sm text-left transition-colors',
-                          'text-gray-900 dark:text-gray-100',
-                          index === selectedSuggestionIndex
-                            ? 'bg-gray-100 dark:bg-gray-900'
-                            : 'hover:bg-gray-50 dark:hover:bg-gray-900/50'
-                        )}
-                      >
-                        {item.query}
-                      </button>
-                    ))}
-                  </div>
-                )}
+              {isClient && showAutocomplete && filteredSuggestions.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 py-1 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-lg">
+                  {filteredSuggestions.map((item, index) => (
+                    <button
+                      key={item.query}
+                      type="button"
+                      onClick={() => {
+                        setQuery(item.query);
+                        setShowAutocomplete(false);
+                        setSelectedSuggestionIndex(-1);
+                      }}
+                      className={`w-full px-4 py-2 text-left text-sm transition-colors ${
+                        index === selectedSuggestionIndex
+                          ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]'
+                          : 'text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]'
+                      }`}
+                    >
+                      {item.query}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ) : (
-          <div>
-            <label
-              className={cn(
-                'block text-sm font-medium text-black dark:text-white mb-3'
-              )}
-            >
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1.5">
               네이버 검색 URL
             </label>
-            <div
-              className={cn(
-                'relative rounded-lg border transition-all duration-200',
-                'border-gray-300 dark:border-gray-700',
-                'focus-within:border-black dark:focus-within:border-white',
-                'focus-within:ring-1 focus-within:ring-black dark:focus-within:ring-white'
-              )}
-            >
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://search.naver.com/search.naver?..."
-                className={cn(
-                  'w-full px-4 py-3 rounded-lg bg-white dark:bg-black',
-                  'text-black dark:text-white placeholder:text-gray-500',
-                  'text-base focus:outline-none'
-                )}
-              />
-            </div>
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://search.naver.com/search.naver?..."
+              className="w-full px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-focus)] transition-all"
+            />
           </div>
         )}
 
         <button
           type="submit"
           disabled={isLoading || (isAutoUrl ? !query.trim() : !url.trim())}
-          className={cn(
-            'w-full px-6 py-4 rounded-lg font-medium transition-all duration-200',
-            'text-sm relative overflow-hidden',
-            'bg-black dark:bg-white text-white dark:text-black',
-            'hover:bg-gray-800 dark:hover:bg-gray-200',
-            'disabled:bg-gray-300 dark:disabled:bg-gray-700',
-            'disabled:text-gray-500 dark:disabled:text-gray-400',
-            'disabled:cursor-not-allowed',
-            'active:scale-[0.98] shadow-sm hover:shadow-md'
-          )}
+          className="w-full py-3 px-4 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
         >
-          <div className={cn('flex items-center justify-center gap-2')}>
-            {isLoading && (
-              <div
-                className={cn(
-                  'w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin'
-                )}
-              />
-            )}
+          <span className="inline-flex items-center justify-center gap-2">
+            {isLoading && <Loader2 size={18} className="animate-spin" />}
             {isLoading ? (
               '분석 중...'
             ) : isAutoUrl ? (
               <React.Fragment>
-                <span className="hidden sm:inline">
-                  인기글 + 블로그 검색 시작
-                </span>
+                <span className="hidden sm:inline">인기글 + 블로그 검색 시작</span>
                 <span className="sm:hidden">검색 시작</span>
               </React.Fragment>
             ) : (
@@ -280,29 +200,23 @@ export const PopularSearchForm: React.FC = () => {
                 <span className="sm:hidden">추출하기</span>
               </React.Fragment>
             )}
-          </div>
+          </span>
         </button>
 
-        {/* 네이버 다이렉트 버튼들 */}
         {isAutoUrl && query.trim() && (
-          <div className={cn('flex gap-2 mt-4')}>
+          <div className="flex gap-2 mt-3">
             <button
               type="button"
               onClick={() => {
                 const searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(query.trim())}`;
                 window.open(searchUrl, '_blank', 'noopener,noreferrer');
               }}
-              className={cn(
-                'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg',
-                'text-sm font-medium transition-all duration-200',
-                'bg-green-500 hover:bg-green-600 text-white',
-                'shadow-sm hover:shadow-md active:scale-[0.98]'
-              )}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
             >
-              <Search size={16} />
+              <Search size={14} />
               <span className="hidden sm:inline">네이버 통합검색</span>
               <span className="sm:hidden">통합검색</span>
-              <ExternalLink size={12} className="opacity-70" />
+              <ExternalLink size={10} />
             </button>
             <button
               type="button"
@@ -310,41 +224,28 @@ export const PopularSearchForm: React.FC = () => {
                 const blogUrl = `https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query=${encodeURIComponent(query.trim())}`;
                 window.open(blogUrl, '_blank', 'noopener,noreferrer');
               }}
-              className={cn(
-                'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg',
-                'text-sm font-medium transition-all duration-200',
-                'bg-blue-500 hover:bg-blue-600 text-white',
-                'shadow-sm hover:shadow-md active:scale-[0.98]'
-              )}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
             >
-              <Edit3 size={16} />
+              <Edit3 size={14} />
               <span className="hidden sm:inline">네이버 블로그</span>
               <span className="sm:hidden">블로그</span>
-              <ExternalLink size={12} className="opacity-70" />
+              <ExternalLink size={10} />
             </button>
           </div>
         )}
       </form>
+
       {isAutoUrl && (
-        <div
-          className={cn(
-            'mt-6 pt-6 border-t border-gray-200 dark:border-gray-800'
-          )}
-        >
-          <div className={cn('flex items-center justify-between mb-4')}>
-            <h3
-              className={cn('text-sm font-medium text-black dark:text-white')}
-            >
+        <div className="mt-6 pt-5 border-t border-[var(--color-border)]">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
               최근 검색어
             </h3>
             {isClient && recentSearchList.length > 0 && (
               <button
                 type="button"
                 onClick={clearRecentSearch}
-                className={cn(
-                  'text-xs text-gray-500 hover:text-black dark:hover:text-white',
-                  'transition-colors font-medium'
-                )}
+                className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-error)] transition-colors"
               >
                 전체 삭제
               </button>
@@ -352,7 +253,7 @@ export const PopularSearchForm: React.FC = () => {
           </div>
 
           {isClient && recentSearchList.length > 0 ? (
-            <div className={cn('space-y-4')}>
+            <div className="flex flex-col gap-3">
               <RecentSearchSection
                 title="미노출"
                 items={recentSearchList.filter((item) => item.hasExposure === false)}
@@ -373,13 +274,9 @@ export const PopularSearchForm: React.FC = () => {
               />
             </div>
           ) : isClient ? (
-            <div
-              className={cn(
-                'text-center py-4 text-sm text-gray-500 dark:text-gray-400'
-              )}
-            >
+            <p className="text-sm text-[var(--color-text-tertiary)] text-center py-4">
               아직 검색 기록이 없습니다
-            </div>
+            </p>
           ) : null}
         </div>
       )}

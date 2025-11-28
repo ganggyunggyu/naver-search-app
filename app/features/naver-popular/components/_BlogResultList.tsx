@@ -1,6 +1,5 @@
 import React from 'react';
 import { Search, Download } from 'lucide-react';
-import { cn, Chip } from '@/shared';
 import { PopularItemCard } from './_PopularItemCard';
 import { BLOG_ID_SET } from '@/constants';
 import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
@@ -24,13 +23,11 @@ interface BlogCrawlResponse {
 interface BlogResultListProps {
   blogData: BlogCrawlResponse | null;
   isLoading?: boolean;
-  className?: string;
 }
 
 export const BlogResultList: React.FC<BlogResultListProps> = ({
   blogData,
   isLoading = false,
-  className,
 }) => {
   const { show } = useToast();
 
@@ -84,32 +81,17 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
 
   if (isLoading) {
     return (
-      <div className={cn('space-y-6', className)}>
-        <div
-          className={cn(
-            'rounded-2xl border p-6 animate-pulse',
-            'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
-            'shadow-sm'
-          )}
-        >
-          <div className={cn('flex items-center justify-between mb-6')}>
-            <div
-              className={cn('h-8 w-48 bg-gray-100 dark:bg-gray-900 rounded-lg')}
-            />
-            <div
-              className={cn(
-                'h-10 w-32 bg-gray-100 dark:bg-gray-900 rounded-lg'
-              )}
-            />
+      <div className="p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+        <div className="animate-pulse">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-5 w-32 rounded bg-[var(--color-bg-tertiary)]" />
+            <div className="h-4 w-20 rounded bg-[var(--color-bg-tertiary)]" />
           </div>
-          <div className="space-y-4">
+          <div className="flex flex-col gap-3">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className={cn(
-                  'h-32 bg-gray-50 dark:bg-gray-950 rounded-xl border',
-                  'border-gray-100 dark:border-gray-900'
-                )}
+                className="h-24 rounded-lg bg-[var(--color-bg-tertiary)]"
               />
             ))}
           </div>
@@ -120,25 +102,14 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
 
   if (!blogData || !blogData.items?.length) {
     return (
-      <div
-        className={cn(
-          'rounded-2xl border p-12 text-center',
-          'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
-          'shadow-sm',
-          className
-        )}
-      >
-        <div
-          className={cn(
-            'w-16 h-16 mx-auto mb-4 rounded-full bg-gray-50 dark:bg-gray-950 flex items-center justify-center'
-          )}
-        >
-          <Search size={24} className="text-gray-400 dark:text-gray-600" />
+      <div className="p-8 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)] text-center">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-tertiary)] mb-3">
+          <Search size={24} />
         </div>
-        <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+        <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-1">
           블로그 검색 결과가 없습니다
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-[var(--color-text-secondary)]">
           다른 키워드로 검색해보세요
         </p>
       </div>
@@ -146,102 +117,71 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
   }
 
   return (
-    <React.Fragment>
-      <div className={cn('space-y-8', className)}>
-        {/* 블로그 검색 결과 */}
-        {allBlogs.length > 0 && (
-          <section
-            className={cn(
-              'rounded-2xl border p-6',
-              'bg-white dark:bg-black border-gray-200 dark:border-gray-800',
-              'shadow-sm hover:shadow-md transition-shadow duration-200'
-            )}
-          >
-            {/* 블로그 섹션 헤더 - 모바일 친화적 */}
-            <div className={cn('mb-4')}>
-              <div className={cn('flex flex-col sm:flex-row sm:items-center justify-between gap-3')}>
-                <div className={cn('flex flex-col sm:flex-row sm:items-center gap-3')}>
-                  <h3 className={cn('text-lg sm:text-xl font-bold text-black dark:text-white')}>
-                    블로그 검색 결과
-                  </h3>
-                  <div className={cn('flex items-center gap-2 flex-wrap')}>
-                    <div
-                      className={cn(
-                        'flex items-center gap-2 px-3 py-1.5 rounded-full w-fit',
-                        'bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800'
-                      )}
-                    >
-                      <div className={cn('w-2 h-2 rounded-full bg-blue-500 animate-pulse')} />
-                      <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                        {blogData.total}개 발견
-                      </span>
-                    </div>
-                    {matchedCount > 0 && (
-                      <div
-                        className={cn(
-                          'flex items-center gap-2 px-3 py-1.5 rounded-full w-fit',
-                          'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50',
-                          'border border-green-200 dark:border-green-800'
-                        )}
-                      >
-                        <div className={cn('w-2 h-2 rounded-full bg-green-500 animate-bounce')} />
-                        <span className="text-sm font-semibold text-green-700 dark:text-green-300">
-                          ✓ 매칭 {matchedCount}개
-                        </span>
-                      </div>
-                    )}
-                  </div>
+    <div className="p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+      {allBlogs.length > 0 && (
+        <section>
+          <header className="mb-4">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <h3 className="text-base font-semibold text-[var(--color-text-primary)]">
+                  블로그 검색 결과
+                </h3>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
+                    {blogData.total}개 발견
+                  </span>
+                  {matchedCount > 0 && (
+                    <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-success)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-success)]" />
+                      ✓ 매칭 {matchedCount}개
+                    </span>
+                  )}
                 </div>
-
-                {/* 다운로드 버튼 */}
-                {blogData.items.length > 0 && (
-                  <button
-                    onClick={handleDownloadAll}
-                    className={cn(
-                      'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold',
-                      'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900',
-                      'text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700',
-                      'hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-700 dark:hover:to-gray-800',
-                      'shadow-sm hover:shadow-md transition-all duration-200 active:scale-95',
-                      'w-fit'
-                    )}
-                  >
-                    <Download size={14} />
-                    <span className="hidden sm:inline">다운로드</span>
-                    <span className="sm:hidden">저장</span>
-                    <span className="text-xs opacity-70">({blogData.items.length})</span>
-                  </button>
-                )}
               </div>
-            </div>
-            <div className="space-y-3">
-              {allBlogs.map((blog, index) => {
-                const blogItem = blog.item;
-                const popularItem: PopularItem = {
-                  title: blogItem.title,
-                  link: blogItem.link,
-                  blogName: blog.blogId || '',
-                  blogLink: blog.blogId
-                    ? `https://blog.naver.com/${blog.blogId}`
-                    : '',
-                  group: '',
-                  description: blogItem.description,
-                } as PopularItem & { description: string };
 
-                return (
-                  <PopularItemCard
-                    key={`blog-${blog.position}-${index}`}
-                    item={popularItem}
-                    position={blog.position}
-                    isMatched={blog.isMatched || false}
-                    blogId={blog.blogId}
-                  />
-                );
-              })}
+              {blogData.items.length > 0 && (
+                <button
+                  onClick={handleDownloadAll}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--color-border)] text-xs font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
+                >
+                  <Download size={14} />
+                  <span className="hidden sm:inline">다운로드</span>
+                  <span className="sm:hidden">저장</span>
+                  <span className="text-[var(--color-text-tertiary)]">
+                    ({blogData.items.length})
+                  </span>
+                </button>
+              )}
             </div>
-          </section>
-        )}
-      </div>
-    </React.Fragment>
+          </header>
+          <div className="flex flex-col gap-3">
+            {allBlogs.map((blog, index) => {
+              const blogItem = blog.item;
+              const popularItem: PopularItem = {
+                title: blogItem.title,
+                link: blogItem.link,
+                blogName: blog.blogId || '',
+                blogLink: blog.blogId
+                  ? `https://blog.naver.com/${blog.blogId}`
+                  : '',
+                group: '',
+                description: blogItem.description,
+              } as PopularItem & { description: string };
+
+              return (
+                <PopularItemCard
+                  key={`blog-${blog.position}-${index}`}
+                  item={popularItem}
+                  position={blog.position}
+                  isMatched={blog.isMatched || false}
+                  blogId={blog.blogId}
+                />
+              );
+            })}
+          </div>
+        </section>
+      )}
+    </div>
   );
 };

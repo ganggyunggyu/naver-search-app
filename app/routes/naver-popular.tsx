@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import type { Route } from './+types/naver-popular';
 import { useToast } from '@/shared/ui/Toast';
-import { cn } from '@/shared';
 import type { PopularItem } from '@/entities/naver/_types';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import {
   popularDataAtom,
   popularErrorAtom,
@@ -11,10 +10,6 @@ import {
   viewerLoadingAtom,
   viewerItemAtom,
   blogSearchDataAtom,
-} from '@/features/naver-popular/store';
-import { usePopularActions } from '@/features/naver-popular/hooks';
-import { useSetAtom } from 'jotai';
-import {
   popularIsAutoUrlAtom,
   popularQueryAtom,
   popularUrlAtom,
@@ -25,19 +20,11 @@ import {
   PopularResults,
   BlogResultList,
 } from '@/features/naver-popular/components';
-
-import {
-  PopularViewerModal,
-  type PopularViewerItem,
-} from '@/features/naver-popular/components/_PopularViewerModal';
-import { BLOG_IDS, BLOG_ID_SET } from '@/constants';
+import { PopularViewerModal } from '@/features/naver-popular/components/_PopularViewerModal';
+import { BLOG_ID_SET } from '@/constants';
 import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
-import {
-  copyPreviewToClipboard,
-  copyFullContentToClipboard,
-} from '@/features/naver-popular/lib';
-import { MainHeader } from '@/features/naver-popular/components/_MainHeader';
 import { useRecentSearch } from '@/features/naver-popular/hooks';
+import { ExposureStatusWidget, BlogMatchWidget } from '@/widgets/naver-popular';
 
 export const meta = (_: Route.MetaArgs) => [
   { title: 'Naver 인기글 추출' },
@@ -55,18 +42,22 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
   return { q, url: directUrl };
 };
 
+interface MatchItem {
+  id: string;
+  item: PopularItem;
+}
+
 const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   const { show } = useToast();
   const [error] = useAtom(popularErrorAtom);
   const [data] = useAtom(popularDataAtom);
   const [blogSearchData] = useAtom(blogSearchDataAtom);
   const [isViewerOpen, setIsViewerOpen] = useAtom(viewerOpenAtom);
-  const [isViewerLoading, setIsViewerLoading] = useAtom(viewerLoadingAtom);
-  const [viewerItem, setViewerItem] = useAtom(viewerItemAtom);
+  const [isViewerLoading] = useAtom(viewerLoadingAtom);
+  const [viewerItem] = useAtom(viewerItemAtom);
   const setQuery = useSetAtom(popularQueryAtom);
   const setUrl = useSetAtom(popularUrlAtom);
   const setIsAutoUrl = useSetAtom(popularIsAutoUrlAtom);
-  const { fetchPopular } = usePopularActions();
   const prevRef = useRef<{ q: string; u: string }>({ q: '', u: '' });
   const [isLoading, setIsLoading] = useAtom(popularIsLoadingAtom);
   const setError = useSetAtom(popularErrorAtom);
@@ -84,7 +75,6 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     const uu = (u ?? '').trim();
 
     if (!qq && !uu) return;
-
     if (prevRef.current.q === qq && prevRef.current.u === uu) return;
     prevRef.current = { q: qq, u: uu };
 
@@ -105,16 +95,16 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         setIsLoading(true);
         setError('');
         setData(null);
-        // setBlogSearchData(null); // 블로그 데이터는 초기화하지 않음 (별도 API)
         const res = await fetch(endpoint);
-        const json: { error?: string; blog?: typeof blogSearchData } & typeof data =
-          await res.json();
+        const json: {
+          error?: string;
+          blog?: typeof blogSearchData;
+        } & typeof data = await res.json();
 
         if (json.error) {
           setError(json.error);
         } else {
           setData(json);
-          // 블로그 데이터가 있으면 저장
           if (json.blog) {
             setBlogSearchData(json.blog);
           }
@@ -133,297 +123,70 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     setIsLoading,
     setError,
     setData,
+    setBlogSearchData,
   ]);
 
-  type MatchItem = {
-    id: string;
-    item: PopularItem;
-  };
-  const matchedIdList = (() => {
+  const matchedIdList: MatchItem[] = useMemo(() => {
     const list = new Set<MatchItem>();
     const items = data?.items || [];
     for (const it of items) {
       const id = extractBlogIdFromUrl(it.link);
       if (id && BLOG_ID_SET.has(id)) {
-        const matchedItem: MatchItem = {
-          id,
-          item: it,
-        };
-        list.add(matchedItem);
+        list.add({ id, item: it });
       }
     }
-
     return Array.from(list);
-  })();
+  }, [data]);
 
   useEffect(() => {
     const query = (loaderData?.q ?? '').trim();
-
     if (!query || !data) return;
-
     const hasExposure = matchedIdList.length > 0;
     updateRecentSearchExposure(query, hasExposure);
   }, [data, matchedIdList.length, loaderData, updateRecentSearchExposure]);
 
   return (
-    <div
-      className={cn(
-        'min-h-screen bg-white dark:bg-black transition-colors duration-300'
-      )}
-    >
-      <div className={cn('absolute inset-0 -z-10')}>
-        <div
-          className={cn(
-            'absolute inset-0 opacity-[0.015] dark:opacity-[0.03]',
-            'bg-[radial-gradient(circle_at_center,black_1px,transparent_1px)]',
-            'dark:bg-[radial-gradient(circle_at_center,white_1px,transparent_1px)]'
-          )}
-          style={{ backgroundSize: '24px 24px' }}
-        />
+    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <PopularViewerModal
+        open={isViewerOpen}
+        loading={isViewerLoading}
+        item={viewerItem}
+        onClose={() => setIsViewerOpen(false)}
+      />
 
-        <div
-          className={cn(
-            'absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-50/50',
-            'dark:to-gray-950/50'
-          )}
-        />
-      </div>
+      <header className="mb-6">
+        <PopularSearchForm />
+      </header>
 
-      <div className={cn('relative')}>
-        <div
-          className={cn(
-            'container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16'
-          )}
-        >
-          <PopularViewerModal
-            open={isViewerOpen}
-            loading={isViewerLoading}
-            item={viewerItem}
-            onClose={() => setIsViewerOpen(false)}
-          />
+      <article className="flex flex-col gap-4">
+        {data && data.items?.length > 0 && (
+          <ExposureStatusWidget matchedIdList={matchedIdList} />
+        )}
 
-          <PopularSearchForm />
-          <div className={cn('mb-8 sm:mb-12')}>
-            {data && data.items?.length > 0 && (
-              <div
-                className={cn(
-                  'mb-6 p-6 rounded-2xl border',
-                  'bg-white dark:bg-black',
-                  'border-gray-200 dark:border-gray-800',
-                  'shadow-sm hover:shadow-md transition-shadow duration-200'
-                )}
-              >
-                <div className={cn('flex items-center justify-between')}>
-                  <h3
-                    className={cn(
-                      'text-lg font-semibold text-black dark:text-white'
-                    )}
-                  >
-                    노출 항목
-                  </h3>
+        {blogSearchData && blogSearchData.items?.length > 0 && (
+          <BlogMatchWidget blogSearchData={blogSearchData} />
+        )}
 
-                  <div className={cn('flex items-center gap-3')}>
-                    <span
-                      className={cn('text-sm text-gray-600 dark:text-gray-400')}
-                    >
-                      노출항목:
-                    </span>
-                    {matchedIdList.length > 0 ? (
-                      <div
-                        className={cn(
-                          'flex items-center gap-2 px-3 py-1.5 rounded-full',
-                          'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800'
-                        )}
-                      >
-                        <div
-                          className={cn('w-2 h-2 rounded-full bg-green-500')}
-                        />
-                        <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                          {matchedIdList.length}개 발견
-                        </span>
-                      </div>
-                    ) : (
-                      <div
-                        className={cn(
-                          'flex items-center gap-2 px-3 py-1.5 rounded-full',
-                          'bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800'
-                        )}
-                      >
-                        <div
-                          className={cn('w-2 h-2 rounded-full bg-red-500')}
-                        />
-                        <span className="text-sm font-medium text-red-700 dark:text-red-300">
-                          매칭 없음
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
+        {error && (
+          <aside
+            role="alert"
+            className="p-4 rounded-xl bg-[var(--color-error-soft)] border border-[var(--color-error)]"
+          >
+            <p className="text-sm text-[var(--color-error)] font-medium">{error}</p>
+          </aside>
+        )}
 
-                {matchedIdList.length > 0 && (
-                  <div className={cn('mt-4 flex flex-wrap gap-2')}>
-                    {matchedIdList.map((el, idx) => (
-                      <div
-                        key={`popular-match-${el.id}-${idx}`}
-                        className={cn(
-                          'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg',
-                          'bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800',
-                          'hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors'
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            'text-xs font-mono font-medium text-black dark:text-white'
-                          )}
-                        >
-                          #{el.id}
-                        </span>
-                        <span
-                          className={cn(
-                            'text-sm text-gray-700 dark:text-gray-300'
-                          )}
-                        >
-                          {el.item.blogName}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {blogSearchData && blogSearchData.items?.length > 0 && (
-              <div
-                className={cn(
-                  'mb-6 p-4 rounded-xl border',
-                  'bg-white dark:bg-black',
-                  'border-gray-200 dark:border-gray-800',
-                  'shadow-sm'
-                )}
-              >
-                <div className={cn('flex items-center justify-between mb-3')}>
-                  <div className={cn('flex items-center gap-2')}>
-                    <h4
-                      className={cn(
-                        'text-sm font-medium text-black dark:text-white'
-                      )}
-                    >
-                      블로그 검색 매칭
-                    </h4>
-                    <span
-                      className={cn('text-xs text-gray-500 dark:text-gray-400')}
-                    >
-                      "{blogSearchData.keyword}"
-                    </span>
-                  </div>
-                </div>
-                {(() => {
-                  const matchedBlogs = new Map(); // blogId -> { count, keyword, positions }
-
-                  blogSearchData.items.forEach((item, index) => {
-                    const id = extractBlogIdFromUrl(item.link);
-                    if (id && BLOG_ID_SET.has(id)) {
-                      if (!matchedBlogs.has(id)) {
-                        matchedBlogs.set(id, {
-                          count: 0,
-                          keyword: blogSearchData.keyword,
-                          blogName: item?.blogName || '',
-                          positions: [],
-                        });
-                      }
-                      const current = matchedBlogs.get(id);
-                      current.count++;
-                      current.positions.push(index + 1);
-                    }
-                  });
-
-                  const matchedBlogArray = Array.from(matchedBlogs.entries());
-
-                  if (matchedBlogArray.length > 0) {
-                    return (
-                      <div className={cn('flex flex-wrap gap-2')}>
-                        {matchedBlogArray.map(([blogId, info], idx) => (
-                          <div
-                            key={`blog-match-${String(blogId)}-${idx}`}
-                            className={cn(
-                              'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs',
-                              'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800',
-                              'text-green-800 dark:text-green-300'
-                            )}
-                          >
-                            <span className={cn('font-mono font-bold')}>
-                              #{String(blogId)}
-                            </span>
-                            <span
-                              className={cn(
-                                'text-green-600 dark:text-green-400'
-                              )}
-                            >
-                              {info.count}개
-                            </span>
-                            <span
-                              className={cn(
-                                'text-green-500 dark:text-green-500'
-                              )}
-                            >
-                              {info.positions.slice(0, 2).join(',')}
-                              {info.positions.length > 2 ? '...' : ''}위
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div
-                        className={cn(
-                          'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs',
-                          'bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800',
-                          'text-red-800 dark:text-red-300'
-                        )}
-                      >
-                        <span>매칭 없음</span>
-                        <span className={cn('text-red-600 dark:text-red-400')}>
-                          (총 {blogSearchData.items.length}개 중)
-                        </span>
-                      </div>
-                    );
-                  }
-                })()}
-              </div>
-            )}
-          </div>
-          {error && (
-            <div
-              className={cn(
-                'p-6 rounded-2xl border mb-8',
-                'bg-red-50 dark:bg-red-950/50 border-red-200 dark:border-red-800',
-                'shadow-sm'
-              )}
-            >
-              <div className={cn('flex items-center gap-3')}>
-                <div
-                  className={cn(
-                    'w-5 h-5 rounded-full bg-red-500 flex-shrink-0'
-                  )}
-                />
-                <p className="font-medium text-red-800 dark:text-red-300">
-                  {error}
-                </p>
-              </div>
-            </div>
-          )}
-
+        <section aria-label="인기글 결과" className="mt-2">
           <PopularResults />
+        </section>
 
-          {(blogSearchData !== null || isLoading) && (
-            <div className={cn('mb-12')}>
-              <BlogResultList blogData={blogSearchData} isLoading={isLoading} />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+        {(blogSearchData !== null || isLoading) && (
+          <section aria-label="블로그 검색 결과" className="mt-4">
+            <BlogResultList blogData={blogSearchData} isLoading={isLoading} />
+          </section>
+        )}
+      </article>
+    </main>
   );
 };
 

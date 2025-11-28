@@ -1,5 +1,4 @@
 import React from 'react';
-import { cn } from '@/shared';
 import type { RecentSearch } from '../types';
 import { RecentSearchItem } from './_RecentSearchItem';
 
@@ -12,10 +11,10 @@ interface RecentSearchSectionProps {
   onRemove: (query: string) => void;
 }
 
-const TITLE_STYLES: Record<ExposureStatus, string> = {
-  notExposed: 'text-red-600 dark:text-red-400',
-  exposed: 'text-green-600 dark:text-green-400',
-  unchecked: 'text-gray-500 dark:text-gray-400',
+const STATUS_STYLES: Record<ExposureStatus, string> = {
+  exposed: 'text-[var(--color-success)]',
+  notExposed: 'text-[var(--color-error)]',
+  unchecked: 'text-[var(--color-text-tertiary)]',
 };
 
 export const RecentSearchSection: React.FC<RecentSearchSectionProps> = ({
@@ -28,10 +27,10 @@ export const RecentSearchSection: React.FC<RecentSearchSectionProps> = ({
 
   return (
     <div>
-      <div className={cn('text-xs mb-2 font-medium', TITLE_STYLES[status])}>
+      <div className={`text-xs font-medium mb-2 ${STATUS_STYLES[status]}`}>
         {title} ({items.length})
       </div>
-      <div className={cn('flex gap-2 flex-wrap')}>
+      <div className="flex flex-wrap gap-2">
         {items.map((item) => (
           <RecentSearchItem
             key={item.query}
