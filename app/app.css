@@ -1,15 +1,412 @@
 @import "tailwindcss";
 
+/* ============================================
+   Design System - Toss + Apple HIG Hybrid
+   TailwindCSS v4 Theme Configuration
+   ============================================ */
+
+/* ============================================
+   Color Variables (Light / Dark Mode)
+   ============================================ */
+
+:root {
+  color-scheme: light;
+
+  /* Background */
+  --color-bg-primary: #F5F7FA;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #F0F2F5;
+
+  /* Surface (Cards, Modals) */
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+
+  /* Primary Brand Color (Toss Blue) */
+  --color-primary: #0064FF;
+  --color-primary-hover: #0052D4;
+  --color-primary-soft: #E0EDFF;
+
+  /* Text Colors */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+
+  /* Border & Divider */
+  --color-border: #E5E7EB;
+  --color-border-focus: #0064FF;
+
+  /* Semantic Colors (Apple HIG) */
+  --color-success: #34C759;
+  --color-success-soft: #D1FAE5;
+  --color-warning: #FF9500;
+  --color-warning-soft: #FEF3C7;
+  --color-error: #FF3B30;
+  --color-error-soft: #FEE2E2;
+  --color-info: #007AFF;
+  --color-info-soft: #DBEAFE;
+
+  /* Interactive States */
+  --color-hover: rgba(0, 0, 0, 0.04);
+  --color-active: rgba(0, 0, 0, 0.08);
+  --color-focus: rgba(0, 100, 255, 0.12);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* Skeleton */
+  --skeleton-base: #f0f0f0;
+  --skeleton-shine: #e0e0e0;
+}
+
+/* Dark Mode - Soft Dark (Toss + Apple Style) */
+:root.dark {
+  color-scheme: dark;
+
+  /* Background - Soft dark gray, not pure black */
+  --color-bg-primary: #121418;
+  --color-bg-secondary: #1A1D24;
+  --color-bg-tertiary: #232830;
+
+  /* Surface (Cards, Modals) - Slightly elevated from bg */
+  --color-surface: #1E2229;
+  --color-surface-elevated: #282D36;
+
+  /* Primary Brand Color (Toss Blue - brighter for dark mode visibility) */
+  --color-primary: #4A9FFF;
+  --color-primary-hover: #6BB3FF;
+  --color-primary-soft: rgba(74, 159, 255, 0.12);
+
+  /* Text Colors - High contrast but not harsh */
+  --color-text-primary: #F0F2F5;
+  --color-text-secondary: #A0A8B4;
+  --color-text-tertiary: #6B7280;
+  --color-text-inverse: #121418;
+
+  /* Border & Divider - Subtle separation */
+  --color-border: #2E3440;
+  --color-border-focus: #4A9FFF;
+
+  /* Semantic Colors (Softer for dark mode) */
+  --color-success: #4ADE80;
+  --color-success-soft: rgba(74, 222, 128, 0.12);
+  --color-warning: #FBBF24;
+  --color-warning-soft: rgba(251, 191, 36, 0.12);
+  --color-error: #F87171;
+  --color-error-soft: rgba(248, 113, 113, 0.12);
+  --color-info: #60A5FA;
+  --color-info-soft: rgba(96, 165, 250, 0.12);
+
+  /* Interactive States */
+  --color-hover: rgba(255, 255, 255, 0.05);
+  --color-active: rgba(255, 255, 255, 0.08);
+  --color-focus: rgba(74, 159, 255, 0.15);
+
+  /* Shadows - Subtle glow effect for dark mode */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 28px rgba(0, 0, 0, 0.5);
+
+  /* Skeleton */
+  --skeleton-base: #2C3038;
+  --skeleton-shine: #383E48;
+}
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Font */
+  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* ----------------------------------------
+     Color Tokens (reference CSS variables)
+     ---------------------------------------- */
+
+  /* Background */
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-tertiary: var(--color-bg-tertiary);
+
+  /* Surface (Cards, Modals) */
+  --color-surface: var(--color-surface);
+  --color-surface-elevated: var(--color-surface-elevated);
+
+  /* Primary Brand Color (Toss Blue) */
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-soft: var(--color-primary-soft);
+
+  /* Text Colors */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+  --color-text-inverse: var(--color-text-inverse);
+
+  /* Border & Divider */
+  --color-border: var(--color-border);
+  --color-border-focus: var(--color-border-focus);
+
+  /* Semantic Colors (Apple HIG) */
+  --color-success: var(--color-success);
+  --color-success-soft: var(--color-success-soft);
+  --color-warning: var(--color-warning);
+  --color-warning-soft: var(--color-warning-soft);
+  --color-error: var(--color-error);
+  --color-error-soft: var(--color-error-soft);
+  --color-info: var(--color-info);
+  --color-info-soft: var(--color-info-soft);
+
+  /* Interactive States */
+  --color-hover: var(--color-hover);
+  --color-active: var(--color-active);
+  --color-focus: var(--color-focus);
+
+  /* ----------------------------------------
+     Spacing (8px grid)
+     ---------------------------------------- */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+
+  /* ----------------------------------------
+     Border Radius (Apple-style soft corners)
+     ---------------------------------------- */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-full: 9999px;
+
+  /* ----------------------------------------
+     Shadows (Apple-style soft depth)
+     ---------------------------------------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* ----------------------------------------
+     Animation
+     ---------------------------------------- */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* ----------------------------------------
+     Z-Index Scale
+     ---------------------------------------- */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal: 1050;
+  --z-toast: 1080;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+/* ============================================
+   Utility Classes (Optional - for new components)
+   ============================================ */
+
+.card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.card-hover {
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.card-hover:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  color: var(--color-text-inverse);
+  background-color: var(--color-primary);
+  border: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-soft {
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+  border: none;
+}
+
+.btn-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.btn-lg {
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.chip-success {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.chip-warning {
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.chip-error {
+  background-color: var(--color-error-soft);
+  color: var(--color-error);
+}
+
+.chip-neutral {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+}
+
+.press-effect {
+  transition: transform 100ms ease;
+}
+
+.press-effect:active {
+  transform: scale(0.98);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Skeleton loader (Toss-style shimmer) */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shine) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+/* Toast animation */
+@keyframes toast-slide-in {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
   }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-toast-in {
+  animation: toast-slide-in 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Slide down animation */
+@keyframes slide-down {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 200ms ease;
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   Selection
+   ============================================ */
+
+::selection {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
 }
