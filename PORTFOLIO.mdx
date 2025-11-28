@@ -1,9 +1,10 @@
 ---
-title: "네이버 검색 인기글 분석 엔진"
-description: "네이버 검색 결과 HTML 파싱 및 인기글/스블 자동 구분, 원고 분석 시스템"
-tags: ["React", "TypeScript", "React Router", "Web Scraping", "Cheerio", "Jotai"]
-period: "2024.09 - 2024.11"
-role: "Full-stack Developer"
+title: '네이버 검색 인기글 분석 엔진'
+description: '네이버 검색 결과 HTML 파싱 및 인기글/스블 자동 구분, 원고 분석 시스템'
+tags:
+  ['React', 'TypeScript', 'React Router', 'Web Scraping', 'Cheerio', 'Jotai']
+period: '2025.09 - 2025.11'
+role: 'Full-stack Developer'
 ---
 
 # 네이버 검색 인기글 분석 엔진
@@ -53,17 +54,18 @@ role: "Full-stack Developer"
 ```typescript
 // 추출 결과 예시
 interface PopularItem {
-  title: string;        // 게시글 제목
-  link: string;         // 게시글 URL
-  group: string;        // 카테고리/섹션명
-  blogName: string;     // 블로그명
-  blogLink: string;     // 블로그 URL
-  snippet: string;      // 본문 미리보기
-  image: string;        // 썸네일 이미지
+  title: string; // 게시글 제목
+  link: string; // 게시글 URL
+  group: string; // 카테고리/섹션명
+  blogName: string; // 블로그명
+  blogLink: string; // 블로그 URL
+  snippet: string; // 본문 미리보기
+  image: string; // 썸네일 이미지
 }
 ```
 
 **구현 방식:**
+
 - Cheerio를 사용한 DOM 탐색
 - CSS 셀렉터 기반 데이터 추출
 - 섹션별 순회를 통한 정확한 그룹 할당
@@ -75,28 +77,30 @@ interface PopularItem {
 **알고리즘:**
 
 ```typescript
-const uniqueGroups = new Set(items.map(item => item.group));
+const uniqueGroups = new Set(items.map((item) => item.group));
 
 const type = uniqueGroups.size === 1 ? '인기글' : '스블';
 ```
 
 **분류 로직:**
+
 - 고유 그룹 개수가 1개: 모든 아이템이 동일 주제 → 인기글
 - 고유 그룹 개수가 2개 이상: 서로 다른 주제 → 스블
 
 **검증 결과:**
 
-| 검색어 | 아이템 수 | 고유 그룹 수 | 분류 결과 |
-|--------|----------|-------------|----------|
-| 알파CD | 4 | 1 | 인기글 |
-| 김포공항주차대행 | 8 | 3 | 스블 |
-| 위고비 | 7 | 3 | 스블 |
+| 검색어           | 아이템 수 | 고유 그룹 수 | 분류 결과 |
+| ---------------- | --------- | ------------ | --------- |
+| 알파CD           | 4         | 1            | 인기글    |
+| 김포공항주차대행 | 8         | 3            | 스블      |
+| 위고비           | 7         | 3            | 스블      |
 
 ### 3. 원고 분석 시스템
 
 블로그 글의 통계 정보와 키워드를 분석합니다.
 
 **제공 지표:**
+
 - 문자수 (공백 포함/제외)
 - 단어수 (띄어쓰기 기준)
 - 예상 읽기 시간 (500자/분 기준)
@@ -133,14 +137,14 @@ const type = uniqueGroups.size === 1 ? '인기글' : '스블';
 
 ```typescript
 interface ExposureResult {
-  query: string;           // 검색어
-  blogId: string;          // 블로그 ID
-  blogName: string;        // 블로그명
-  exposureType: string;    // '인기글' | '스블'
-  topicName: string;       // 스블인 경우 인기 주제명
-  position: number;        // 노출 순위
-  postTitle: string;       // 게시글 제목
-  postLink: string;        // 게시글 링크
+  query: string; // 검색어
+  blogId: string; // 블로그 ID
+  blogName: string; // 블로그명
+  exposureType: string; // '인기글' | '스블'
+  topicName: string; // 스블인 경우 인기 주제명
+  position: number; // 노출 순위
+  postTitle: string; // 게시글 제목
+  postLink: string; // 게시글 링크
 }
 ```
 
@@ -163,7 +167,7 @@ const CURRENT_SELECTORS = {
   title: '.sds-comps-text-type-headline1.sds-comps-text-weight-sm',
   preview: '.d69hemU4DtemeWuXiq5g .sds-comps-text-type-body1',
   blogInfo: '.sds-comps-profile-info-title-text a',
-  image: '.sds-comps-image img'
+  image: '.sds-comps-image img',
 };
 ```
 
@@ -215,7 +219,7 @@ if (!categoryName) {
 ```typescript
 // 문제가 있던 코드
 $popularItems.each((_, item) => {
-  const groupLabel = findGroupLabelNear($, $item);  // 각 아이템마다 호출
+  const groupLabel = findGroupLabelNear($, $item); // 각 아이템마다 호출
   items.push({ group: groupLabel });
 });
 ```
@@ -227,10 +231,10 @@ $popularItems.each((_, item) => {
 ```typescript
 // 개선된 코드
 $popularSections.each((_, section) => {
-  let categoryName = extractCategoryName($section);  // 섹션당 1번만 추출
+  let categoryName = extractCategoryName($section); // 섹션당 1번만 추출
 
   $popularItems.each((_, item) => {
-    items.push({ group: categoryName });  // 동일한 값 할당
+    items.push({ group: categoryName }); // 동일한 값 할당
   });
 });
 ```
@@ -243,12 +247,12 @@ $popularSections.each((_, section) => {
 
 ```typescript
 // Before
-readBlock($, $('body'), items);      // 레거시 방식
-readPopularSection($, items);         // 정확한 방식
+readBlock($, $('body'), items); // 레거시 방식
+readPopularSection($, items); // 정확한 방식
 
 // After
-readPopularSection($, items);         // 정확한 방식 우선
-readBlock($, $('body'), items);      // Fallback
+readPopularSection($, items); // 정확한 방식 우선
+readBlock($, $('body'), items); // Fallback
 ```
 
 중복 제거 로직이 먼저 추가된 값을 유지하므로, 정확한 파싱 결과가 먼저 들어가도록 순서를 조정했습니다.
@@ -261,9 +265,10 @@ readBlock($, $('body'), items);      // Fallback
 
 ```typescript
 // 개선 전
-const tokens = text.split(/\s+/)
-  .filter(t => t.length >= 2 && !STOPWORDS.has(t));
-const wordCount = tokens.length;  // 불용어 제외된 수
+const tokens = text
+  .split(/\s+/)
+  .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+const wordCount = tokens.length; // 불용어 제외된 수
 ```
 
 **개선 후:**
@@ -275,9 +280,9 @@ const wordCount = tokens.length;  // 불용어 제외된 수
 const allWords = text
   .replace(/[^\p{L}\p{N}\s]/gu, ' ')
   .split(/\s+/)
-  .filter(t => t.length > 0);
+  .filter((t) => t.length > 0);
 
-const wordCount = allWords.length;  // 전체 단어 수
+const wordCount = allWords.length; // 전체 단어 수
 
 const freq = new Map<string, number>();
 for (const word of allWords) {
@@ -321,12 +326,12 @@ app/
 
 ### API 엔드포인트
 
-| Method | Endpoint | 설명 |
-|--------|----------|------|
-| GET | `/api/naver-popular?q={query}` | 인기글 파싱 |
-| GET | `/api/search?q={query}` | 네이버 블로그 검색 |
-| POST | `/api/analyze-manuscript` | 원고 분석 |
-| GET | `/api/content?url={url}` | 블로그 콘텐츠 크롤링 |
+| Method | Endpoint                       | 설명                 |
+| ------ | ------------------------------ | -------------------- |
+| GET    | `/api/naver-popular?q={query}` | 인기글 파싱          |
+| GET    | `/api/search?q={query}`        | 네이버 블로그 검색   |
+| POST   | `/api/analyze-manuscript`      | 원고 분석            |
+| GET    | `/api/content?url={url}`       | 블로그 콘텐츠 크롤링 |
 
 ---
 
@@ -335,21 +340,25 @@ app/
 ### 기능 검증
 
 **파싱 정확도:**
+
 - 테스트 케이스 3개 (위고비, 김포공항주차대행, 알파CD) 모두 정확한 분류 확인
 - 섹션별 그룹 할당 오류 해결 완료
 
 **코드 품질:**
+
 - TypeScript strict mode 적용, 타입 에러 0건
 - 함수형 프로그래밍 원칙 적용 (순수 함수, 불변성)
 
 ### 개발 생산성
 
 **문서화:**
+
 - 944줄 분량의 기술 문서 작성 (NAVER_POPULAR_PARSING_GUIDE.md)
 - 크론 봇 구현 명세서 작성 (CRON_BOT_SPEC.md)
 - 버그 분석 문서 작성 (DEBUG.md)
 
 **자동화:**
+
 - 슬래시 커맨드를 통한 셀렉터 업데이트 프로세스 구축
 - Git 커밋 자동화 (/commit 커맨드)
 
@@ -360,33 +369,39 @@ app/
 ### React Router v7
 
 **선택 이유:**
+
 - SSR 기본 지원으로 초기 로딩 성능 향상
 - 파일 기반 라우팅으로 API 엔드포인트 관리 용이
 - Remix의 장점을 가져오면서 React Router의 익숙함 유지
 
 **활용:**
+
 - `loader` 함수로 서버사이드 데이터 페칭
 - API Routes로 RESTful 엔드포인트 구성
 
 ### Jotai
 
 **선택 이유:**
+
 - Atomic 패턴으로 컴포넌트별 독립적 상태 관리
 - Redux보다 작은 번들 사이즈 (약 3KB)
 - TypeScript 타입 추론 우수
 
 **활용:**
+
 - 검색어, 검색 결과 리스트 등 글로벌 상태 관리
 - 파생 상태로 필터링 로직 최적화
 
 ### Cheerio
 
 **선택 이유:**
+
 - 서버사이드 HTML 파싱에 최적화
 - JSDOM 대비 약 10배 빠른 성능
 - jQuery-like API로 낮은 러닝 커브
 
 **활용:**
+
 - 네이버 검색 결과 HTML 파싱
 - CSS 셀렉터 기반 데이터 추출
 - 메모리 효율적 처리 (브라우저 없이 파싱)
@@ -424,16 +439,19 @@ app/
 ## 향후 개선 계획
 
 ### 기능 확장
+
 - 크론 봇 실제 구현 및 스케줄링
 - 대시보드 UI 개선 (차트 시각화)
 - 이메일 알림 기능 추가
 
 ### 기술 개선
+
 - 에러 핸들링 강화 (Sentry 연동)
 - 테스트 코드 작성 (Jest, React Testing Library)
 - 성능 모니터링 (Lighthouse CI)
 
 ### 확장성
+
 - 다른 검색 엔진 지원 (구글, 다음)
 - API Rate Limiting 적용
 - 캐싱 전략 도입 (Redis)
