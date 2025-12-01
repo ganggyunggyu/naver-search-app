@@ -78,37 +78,41 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   return (
     <div
       ref={containerRef}
+      className="relative overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {(isPulling || isRefreshing) && (
         <div
+          className="absolute top-0 left-0 right-0 flex items-center justify-center transition-all overflow-hidden"
           style={{
             height: `${Math.max(pullDistance, isRefreshing ? 60 : 0)}px`,
             transform: `translateY(${isRefreshing ? 0 : -20}px)`
           }}
         >
-          <div>
+          <div className="flex flex-col items-center gap-2">
             <div
+              className={`text-[var(--color-primary)] transition-transform ${isRefreshing ? 'animate-spin' : ''}`}
               style={{
-                transform: `rotate(${isRefreshing ? 0 : refreshProgress * 360}deg)`
+                transform: isRefreshing ? undefined : `rotate(${refreshProgress * 360}deg)`
               }}
             >
               <RefreshCw size={20} />
             </div>
 
-            <div>
+            <span className="text-xs text-[var(--color-text-secondary)]">
               {isRefreshing
                 ? '새로고침 중...'
                 : shouldTrigger
                   ? '놓으면 새로고침'
                   : '아래로 당겨서 새로고침'
               }
-            </div>
+            </span>
 
-            <div>
+            <div className="w-24 h-1 rounded-full bg-[var(--color-border)] overflow-hidden">
               <div
+                className="h-full bg-[var(--color-primary)] transition-all"
                 style={{
                   width: `${isRefreshing ? 100 : refreshProgress * 100}%`
                 }}
@@ -119,6 +123,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
       )}
 
       <div
+        className="transition-transform"
         style={{
           transform: `translateY(${isPulling ? pullDistance : isRefreshing ? 60 : 0}px)`
         }}

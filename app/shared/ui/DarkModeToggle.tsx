@@ -1,9 +1,7 @@
 import React from 'react';
 import { Moon, Sun } from 'lucide-react';
 
-interface DarkModeToggleProps {}
-
-export const DarkModeToggle: React.FC<DarkModeToggleProps> = () => {
+export const DarkModeToggle: React.FC = () => {
   const [isDark, setIsDark] = React.useState(false);
   const [isClient, setIsClient] = React.useState(false);
 
@@ -37,21 +35,36 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = () => {
   };
 
   if (!isClient) {
-    return <div />;
+    return (
+      <div className="w-10 h-10 rounded-lg bg-[var(--color-bg-tertiary)] animate-pulse" />
+    );
   }
 
   return (
     <button
       onClick={toggleDarkMode}
-      aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-      title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      aria-label={isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
+      title={isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
+      className="
+        relative w-10 h-10 rounded-lg
+        bg-[var(--color-bg-tertiary)] hover:bg-[var(--color-hover)]
+        text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]
+        transition-all active:scale-95
+        flex items-center justify-center
+      "
     >
-      <div />
-      <div>
-        <Sun size={24} style={{ display: isDark ? 'none' : 'block' }} />
-        <Moon size={24} style={{ display: isDark ? 'block' : 'none' }} />
-      </div>
-      <div />
+      <Sun
+        size={20}
+        className={`absolute transition-all duration-200 ${
+          isDark ? 'opacity-0 rotate-90 scale-0' : 'opacity-100 rotate-0 scale-100'
+        }`}
+      />
+      <Moon
+        size={20}
+        className={`absolute transition-all duration-200 ${
+          isDark ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'
+        }`}
+      />
     </button>
   );
 };

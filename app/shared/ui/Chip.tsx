@@ -10,6 +10,21 @@ interface ChipProps {
   disabled?: boolean;
 }
 
+const VARIANT_STYLES: Record<NonNullable<ChipProps['variant']>, string> = {
+  default: 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)]',
+  primary: 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]',
+  secondary: 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)]',
+  success: 'bg-[var(--color-success-soft)] text-[var(--color-success)]',
+  warning: 'bg-[var(--color-warning-soft)] text-[var(--color-warning)]',
+  danger: 'bg-[var(--color-error-soft)] text-[var(--color-error)]',
+};
+
+const SIZE_STYLES: Record<NonNullable<ChipProps['size']>, string> = {
+  sm: 'px-2 py-0.5 text-xs gap-1',
+  md: 'px-3 py-1 text-sm gap-1.5',
+  lg: 'px-4 py-1.5 text-base gap-2',
+};
+
 export const Chip: React.FC<ChipProps> = ({
   children,
   variant = 'default',
@@ -37,6 +52,15 @@ export const Chip: React.FC<ChipProps> = ({
     }
   };
 
+  const baseStyles = `
+    inline-flex items-center rounded-full font-medium
+    transition-all
+    ${isClickable ? 'cursor-pointer hover:opacity-80 active:scale-[0.98]' : ''}
+    ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+    ${VARIANT_STYLES[variant]}
+    ${SIZE_STYLES[size]}
+  `;
+
   const ChipElement = isClickable ? 'button' : 'div';
 
   return (
@@ -44,10 +68,16 @@ export const Chip: React.FC<ChipProps> = ({
       onClick={isClickable ? handleClick : undefined}
       disabled={isClickable ? disabled : undefined}
       type={isClickable ? 'button' : undefined}
+      className={baseStyles}
     >
       <span>{children}</span>
       {isRemovable && (
-        <button onClick={handleRemove} aria-label="제거" type="button">
+        <button
+          onClick={handleRemove}
+          aria-label="제거"
+          type="button"
+          className="ml-0.5 p-0.5 rounded-full hover:bg-[var(--color-hover)] transition-colors"
+        >
           <X size={12} />
         </button>
       )}

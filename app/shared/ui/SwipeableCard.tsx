@@ -127,6 +127,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
   return (
     <div
       ref={cardRef}
+      className={`relative select-none transition-transform ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
       style={{
         transform: `translateX(${translateX * 0.3}px)`
       }}
@@ -142,13 +143,22 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
 
       {isDragging && (
         <React.Fragment>
-          {translateX < -50 && onSwipeLeft && <div>←</div>}
-          {translateX > 50 && onSwipeRight && <div>→</div>}
+          {translateX < -50 && onSwipeLeft && (
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl text-[var(--color-error)]">
+              ←
+            </div>
+          )}
+          {translateX > 50 && onSwipeRight && (
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-[var(--color-success)]">
+              →
+            </div>
+          )}
         </React.Fragment>
       )}
 
       {isDragging && (
         <div
+          className="absolute inset-0 rounded-xl bg-[var(--color-hover)] pointer-events-none"
           style={{
             opacity: Math.min(Math.abs(translateX) / 100, 0.3)
           }}
