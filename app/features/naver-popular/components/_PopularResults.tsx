@@ -128,7 +128,7 @@ export const PopularResults: React.FC = () => {
                 </button>
               </header>
 
-              <div className="flex flex-col gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {list
                   .filter((item: any) => {
                     const link = item.blogLink || item.link || '';

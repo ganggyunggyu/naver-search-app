@@ -87,8 +87,8 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
             <div className="h-5 w-32 rounded bg-[var(--color-bg-tertiary)]" />
             <div className="h-4 w-20 rounded bg-[var(--color-bg-tertiary)]" />
           </div>
-          <div className="flex flex-col gap-3">
-            {[...Array(3)].map((_, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {[...Array(4)].map((_, i) => (
               <div
                 key={i}
                 className="h-24 rounded-lg bg-[var(--color-bg-tertiary)]"
@@ -155,7 +155,7 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
               )}
             </div>
           </header>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {allBlogs.map((blog, index) => {
               const blogItem = blog.item;
               const popularItem: PopularItem = {
