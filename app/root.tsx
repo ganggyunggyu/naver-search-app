@@ -22,34 +22,37 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: 'stylesheet',
-    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
+    href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css',
   },
 ];
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (
-  <html lang="en">
+  <html lang="ko">
     <head>
       <meta charSet="utf-8" />
       <meta
         name="viewport"
-        content="width=device-width, initial-scale=1, user-scalable=no"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
       />
       <Meta />
       <Links />
     </head>
-    <body>
+    <body className="bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] antialiased">
       <ToastProvider>
-        {/* 데스크톱에서만 기존 Header 표시 */}
-        <div>
+        {/* Desktop Header */}
+        <div className="hidden sm:block">
           <Header />
         </div>
 
-        <div>{children}</div>
+        {/* Main Content */}
+        <div className="min-h-screen pb-20 sm:pb-0">
+          {children}
+        </div>
 
-        {/* 모바일/태블릿에서만 하단 네비게이션 표시 */}
-        <div>
+        {/* Mobile Bottom Navigation */}
+        <div className="sm:hidden">
           <BottomNavigation />
         </div>
       </ToastProvider>
@@ -82,14 +85,18 @@ export const ErrorBoundary: React.FC<Route.ErrorBoundaryProps> = ({
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
+    <main className="min-h-screen flex items-center justify-center p-4">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-[var(--color-text-primary)] mb-2">
+          {message}
+        </h1>
+        <p className="text-[var(--color-text-secondary)] mb-4">{details}</p>
+        {stack && (
+          <pre className="text-left p-4 rounded-xl bg-[var(--color-bg-tertiary)] text-xs overflow-x-auto max-w-lg mx-auto">
+            <code className="text-[var(--color-text-tertiary)]">{stack}</code>
+          </pre>
+        )}
+      </div>
     </main>
   );
 };
