@@ -10,7 +10,11 @@ interface BlogItem {
   title: string;
   link: string;
   description: string;
-  [key: string]: any;
+  blogName?: string;
+  blogLink?: string;
+  author?: string;
+  date?: string;
+  thumbnail?: string;
 }
 
 interface BlogCrawlResponse {

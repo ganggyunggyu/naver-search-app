@@ -5,6 +5,7 @@ export interface PopularItem {
   blogLink?: string;
 
   snippet?: string;
+  description?: string;
   image?: string;
   badge?: string;
   group?: string;

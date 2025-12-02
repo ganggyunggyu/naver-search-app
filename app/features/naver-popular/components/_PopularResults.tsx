@@ -9,6 +9,11 @@ import { Download, Copy } from 'lucide-react';
 import { BLOG_ID_SET } from '@/constants';
 import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
 
+interface PopularItemWithMatch extends PopularItem {
+  blogId?: string;
+  isMatched: boolean;
+}
+
 const DEFAULT_GROUP = '비즈니스·경제 인기글';
 
 export const PopularResults: React.FC = () => {
@@ -17,7 +22,7 @@ export const PopularResults: React.FC = () => {
   const { show } = useToast();
 
   const { grouped, totalMatchedCount } = useMemo(() => {
-    const map: Record<string, PopularItem[]> = {};
+    const map: Record<string, PopularItemWithMatch[]> = {};
     let totalMatchedCount = 0;
 
     for (const it of itemList || []) {
@@ -130,21 +135,19 @@ export const PopularResults: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {list
-                  .filter((item: any) => {
+                  .filter((item) => {
                     const link = item.blogLink || item.link || '';
                     return !link.includes('cafe.naver.com');
                   })
-                  .map((item: any, idx) => {
-                    return (
-                      <PopularItemCard
-                        key={`${group}-${idx}`}
-                        item={item}
-                        position={idx + 1}
-                        isMatched={item.isMatched || false}
-                        blogId={item.blogId}
-                      />
-                    );
-                  })}
+                  .map((item, idx) => (
+                    <PopularItemCard
+                      key={`${group}-${idx}`}
+                      item={item}
+                      position={idx + 1}
+                      isMatched={item.isMatched}
+                      blogId={item.blogId}
+                    />
+                  ))}
               </div>
             </div>
           ))}

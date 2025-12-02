@@ -31,7 +31,7 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     ''
   ).trim();
 
-  const encoded = (((params as any) || {}).encoded || '').trim();
+  const encoded = ((params as { encoded?: string })?.encoded || '').trim();
   if (encoded) {
     try {
       input = decodeURIComponent(encoded);
@@ -76,8 +76,8 @@ const UrlSearchPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     try {
       const res = await fetch(`/api/content?url=${encodeURIComponent(target)}`);
       const json: ContentResult = await res.json();
-      if ((json as any).error) {
-        const msg = String((json as any).error);
+      if (json.error) {
+        const msg = json.error;
         setError(msg);
         show(msg, { type: 'error' });
       } else {
@@ -132,7 +132,7 @@ const UrlSearchPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   };
 
   useEffect(() => {
-    const initialUrl = ((loaderData as any)?.url as string | undefined) || '';
+    const initialUrl = (loaderData as { url?: string })?.url || '';
     const uu = initialUrl.trim();
     if (!uu) return;
     if (prevUrlRef.current === uu) return;

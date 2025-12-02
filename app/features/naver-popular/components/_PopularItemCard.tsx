@@ -1,14 +1,7 @@
-import type { PopularItem } from '@/entities/naver/_types';
 import React from 'react';
+import { useSetAtom } from 'jotai';
 import { Download, Copy, FileText, Eye, Smartphone, Monitor, Edit } from 'lucide-react';
-
-interface Props {
-  item: PopularItem;
-  position?: number;
-  isMatched?: boolean;
-  blogId?: string;
-}
-
+import type { PopularItem } from '@/entities/naver/_types';
 import { useToast } from '@/shared/ui/Toast';
 import {
   copyFullContentToClipboard,
@@ -18,8 +11,14 @@ import {
   copyDesktopLinkToClipboard,
   copyEditLinkToClipboard
 } from '@/features/naver-popular/lib';
-import { useSetAtom } from 'jotai';
 import { useViewerActions, viewerItemAtom } from '@/features';
+
+interface Props {
+  item: PopularItem;
+  position?: number;
+  isMatched?: boolean;
+  blogId?: string;
+}
 
 export const PopularItemCard: React.FC<Props> = ({
   item,
@@ -101,10 +100,10 @@ export const PopularItemCard: React.FC<Props> = ({
         )}
       </div>
 
-      {(item as any).description && (
+      {item.description && (
         <p className="text-xs text-[var(--color-text-tertiary)] mb-3 line-clamp-2">
-          {((item as any).description as string).replace(/<[^>]*>/g, '').slice(0, 100)}
-          {((item as any).description as string).length > 100 ? '...' : ''}
+          {item.description.replace(/<[^>]*>/g, '').slice(0, 100)}
+          {item.description.length > 100 ? '...' : ''}
         </p>
       )}
 
