@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { X, ExternalLink, FileText, BarChart3, Copy } from 'lucide-react';
 import { popularQueryAtom } from '@/features/naver-popular/store';
@@ -34,6 +34,17 @@ export const PopularViewerModal: React.FC<Props> = ({
     () => analyzeManuscript(content, query),
     [content, query]
   );
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+
+    if (open) {
+      document.addEventListener('keydown', handleEsc);
+      return () => document.removeEventListener('keydown', handleEsc);
+    }
+  }, [open, onClose]);
 
   const copyAnalysis = async () => {
     if (!item) return;
@@ -222,9 +233,9 @@ export const PopularViewerModal: React.FC<Props> = ({
           <section className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <FileText size={16} className="text-[var(--color-text-tertiary)]" />
-              <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
                 본문 내용
-              </h4>
+              </h3>
             </div>
 
             {loading ? (
