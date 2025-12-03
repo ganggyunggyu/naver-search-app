@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useCallback } from 'react';
+import confetti from 'canvas-confetti';
 import type { Route } from './+types/naver-popular';
 import { useToast } from '@/shared/ui/Toast';
 import type { PopularItem } from '@/entities/naver/_types';
@@ -138,12 +139,46 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     return Array.from(list);
   }, [data]);
 
+  const triggerConfetti = useCallback(() => {
+    const count = 200;
+    const defaults = { origin: { y: 0.7 }, zIndex: 9999 };
+
+    const fire = (particleRatio: number, opts: confetti.Options) => {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio),
+      });
+    };
+
+    fire(0.25, { spread: 26, startVelocity: 55 });
+    fire(0.2, { spread: 60 });
+    fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+    fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+    fire(0.1, { spread: 120, startVelocity: 45 });
+  }, []);
+
+  const processedRef = useRef<{ query: string; dataCount: number | null }>({ query: '', dataCount: null });
+
   useEffect(() => {
     const query = (loaderData?.q ?? '').trim();
     if (!query || !data) return;
+
+    const dataCount = data.count;
+
+    // 같은 쿼리 + 같은 데이터면 스킵 (중복 실행 방지)
+    if (processedRef.current.query === query && processedRef.current.dataCount === dataCount) {
+      return;
+    }
+    processedRef.current = { query, dataCount };
+
     const hasExposure = matchedIdList.length > 0;
     updateRecentSearchExposure(query, hasExposure);
-  }, [data, matchedIdList.length, loaderData, updateRecentSearchExposure]);
+
+    if (hasExposure) {
+      triggerConfetti();
+    }
+  }, [data, matchedIdList.length, loaderData, updateRecentSearchExposure, triggerConfetti]);
 
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
