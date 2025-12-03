@@ -11,9 +11,9 @@ interface RecentSearchItemProps {
 }
 
 const STATUS_BG: Record<ExposureStatus, string> = {
-  exposed: 'bg-[var(--color-success-soft)] hover:bg-[var(--color-success-soft)]/80',
-  notExposed: 'bg-[var(--color-error-soft)] hover:bg-[var(--color-error-soft)]/80',
-  unchecked: 'bg-[var(--color-bg-tertiary)] hover:bg-[var(--color-hover)]',
+  exposed: 'bg-[var(--color-success-soft)]',
+  notExposed: 'bg-[var(--color-error-soft)]',
+  unchecked: 'bg-[var(--color-bg-tertiary)]',
 };
 
 const STATUS_TEXT: Record<ExposureStatus, string> = {

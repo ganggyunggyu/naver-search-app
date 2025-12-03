@@ -36,10 +36,32 @@ export const useRecentSearch = () => {
 
   const updateRecentSearchExposure = useCallback(
     (query: string, hasExposure: boolean) => {
+      const q = (query || '').trim();
+      if (!q) return;
+
+      setRecentSearchList((prev) => {
+        const existingItem = prev.find((item) => item.query === q);
+
+        // 이미 같은 값이면 업데이트하지 않음 (리렌더링 방지)
+        if (existingItem && existingItem.hasExposure === hasExposure) {
+          return prev;
+        }
+
+        if (existingItem) {
+          return prev.map((item) =>
+            item.query === q ? { ...item, hasExposure } : item
+          );
+        }
+        return [{ query: q, timestamp: Date.now(), hasExposure }, ...prev];
+      });
+    },
+    [setRecentSearchList]
+  );
+
+  const clearByExposure = useCallback(
+    (hasExposure: boolean | undefined) => {
       setRecentSearchList((prev) =>
-        prev.map((item) =>
-          item.query === query ? { ...item, hasExposure } : item
-        )
+        prev.filter((item) => item.hasExposure !== hasExposure)
       );
     },
     [setRecentSearchList]
@@ -51,5 +73,6 @@ export const useRecentSearch = () => {
     clearRecentSearch,
     removeRecentSearch,
     updateRecentSearchExposure,
+    clearByExposure,
   };
 };

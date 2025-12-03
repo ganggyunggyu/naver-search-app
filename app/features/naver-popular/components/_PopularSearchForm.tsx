@@ -18,9 +18,9 @@ export const PopularSearchForm: React.FC = () => {
   const [isLoading] = useAtom(popularIsLoadingAtom);
   const {
     recentSearchList,
-    addRecentSearch,
     clearRecentSearch,
     removeRecentSearch,
+    clearByExposure,
   } = useRecentSearch();
   const navigate = useNavigate();
 
@@ -107,7 +107,6 @@ export const PopularSearchForm: React.FC = () => {
           if (isAutoUrl) {
             const qq = (query || '').trim();
             if (!qq) return;
-            addRecentSearch(qq);
             navigate(`/${encodeURIComponent(qq)}`);
           } else {
             const u = (url || '').trim();
@@ -227,7 +226,7 @@ export const PopularSearchForm: React.FC = () => {
             <button
               type="button"
               onClick={() => {
-                const searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(query.trim())}`;
+                const searchUrl = `https://m.search.naver.com/search.naver?query=${encodeURIComponent(query.trim())}`;
                 window.open(searchUrl, '_blank', 'noopener,noreferrer');
               }}
               className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 sm:py-2 px-3 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
@@ -240,7 +239,7 @@ export const PopularSearchForm: React.FC = () => {
             <button
               type="button"
               onClick={() => {
-                const blogUrl = `https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query=${encodeURIComponent(query.trim())}`;
+                const blogUrl = `https://m.search.naver.com/search.naver?ssc=tab.m_blog.all&sm=mtb_jum&query=${encodeURIComponent(query.trim())}`;
                 window.open(blogUrl, '_blank', 'noopener,noreferrer');
               }}
               className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 sm:py-2 px-3 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
@@ -278,18 +277,21 @@ export const PopularSearchForm: React.FC = () => {
                 items={recentSearchList.filter((item) => item.hasExposure === false)}
                 status="notExposed"
                 onRemove={removeRecentSearch}
+                onClearSection={() => clearByExposure(false)}
               />
               <RecentSearchSection
                 title="노출"
                 items={recentSearchList.filter((item) => item.hasExposure === true)}
                 status="exposed"
                 onRemove={removeRecentSearch}
+                onClearSection={() => clearByExposure(true)}
               />
               <RecentSearchSection
                 title="미확인"
                 items={recentSearchList.filter((item) => item.hasExposure === undefined)}
                 status="unchecked"
                 onRemove={removeRecentSearch}
+                onClearSection={() => clearByExposure(undefined)}
               />
             </div>
           ) : isClient ? (
