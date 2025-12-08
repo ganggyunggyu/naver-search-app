@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap');
 
 /* ============================================
    Design System - Toss + Apple HIG Hybrid
@@ -438,4 +439,77 @@ body {
 ::selection {
   background-color: var(--color-primary-soft);
   color: var(--color-primary);
+}
+
+/* ============================================
+   Crazy Arcade LOSE!! Effect
+   - Silver metal gradient text
+   - Double stroke outline
+   - Bounce animation
+   - Rounded font (Fredoka)
+   ============================================ */
+
+/* 은색 메탈 그라데이션 텍스트 */
+.lose-text-metal {
+  /* 둥근 폰트 */
+  font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+  /* 세로 그라데이션: 위 #F8FFFF → 중간 #CBCBCB → 아래 #8A8E96 */
+  background: linear-gradient(
+    180deg,
+    #F8FFFF 0%,
+    #CBCBCB 50%,
+    #8A8E96 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* 폴백 색상 */
+  color: #CBCBCB;
+}
+
+/* 스트로크 레이어용 (뒤 텍스트) */
+.lose-text-stroke {
+  font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+}
+
+@keyframes lose-appear {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes lose-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes lose-fadeout {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+.animate-lose-appear {
+  animation:
+    lose-appear 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+    lose-shake 0.1s ease-in-out 0.7s 3,
+    lose-fadeout 0.3s ease-in 1.0s forwards;
 }

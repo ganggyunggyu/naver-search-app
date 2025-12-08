@@ -22,7 +22,12 @@ import {
   BlogResultList,
 } from '@/features/naver-popular/components';
 import { PopularViewerModal } from '@/features/naver-popular/components/_PopularViewerModal';
-import { BLOG_ID_SET } from '@/constants';
+import {
+  BLOG_ID_SET,
+  LOSE_TEXT_STYLE,
+  fireSuccessConfetti,
+  fireRainEffect,
+} from '@/constants';
 import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
 import { useRecentSearch } from '@/features/naver-popular/hooks';
 import { ExposureStatusWidget, BlogMatchWidget } from '@/widgets/naver-popular';
@@ -50,6 +55,7 @@ interface MatchItem {
 
 const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   const { show } = useToast();
+  const [showLose, setShowLose] = React.useState(false);
   const [error] = useAtom(popularErrorAtom);
   const [data] = useAtom(popularDataAtom);
   const [blogSearchData] = useAtom(blogSearchDataAtom);
@@ -126,20 +132,12 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
 
           // 노출되면 폭죽!
           if (hasExposure) {
-            const count = 200;
-            const defaults = { origin: { y: 0.7 }, zIndex: 9999 };
-            const fire = (particleRatio: number, opts: confetti.Options) => {
-              confetti({
-                ...defaults,
-                ...opts,
-                particleCount: Math.floor(count * particleRatio),
-              });
-            };
-            fire(0.25, { spread: 26, startVelocity: 55 });
-            fire(0.2, { spread: 60 });
-            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-            fire(0.1, { spread: 120, startVelocity: 45 });
+            fireSuccessConfetti(confetti);
+          } else {
+            // 노출 실패 시 LOSE!! 이펙트 + 빗방울
+            setShowLose(true);
+            setTimeout(() => setShowLose(false), LOSE_TEXT_STYLE.duration);
+            fireRainEffect(confetti);
           }
         }
       } catch {
@@ -175,6 +173,30 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
 
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      {/* 크아 스타일 LOSE!! 이펙트 */}
+      {showLose && (
+        <div className="fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center">
+          <div className="animate-lose-appear relative">
+            {/* 스트로크용 텍스트 (뒤) */}
+            <span
+              className="absolute inset-0 flex items-center justify-center text-6xl sm:text-8xl font-black tracking-wider select-none lose-text-stroke"
+              style={{
+                color: LOSE_TEXT_STYLE.fallbackColor,
+                textShadow: LOSE_TEXT_STYLE.textShadow,
+                WebkitTextStroke: `3px ${LOSE_TEXT_STYLE.strokeColors.inner}`,
+              }}
+              aria-hidden="true"
+            >
+              LOSE!!
+            </span>
+            {/* 그라데이션 텍스트 (앞) */}
+            <span className="relative text-6xl sm:text-8xl font-black tracking-wider select-none lose-text-metal">
+              LOSE!!
+            </span>
+          </div>
+        </div>
+      )}
+
       <PopularViewerModal
         open={isViewerOpen}
         loading={isViewerLoading}
