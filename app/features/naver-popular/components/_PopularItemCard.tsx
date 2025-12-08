@@ -1,6 +1,6 @@
 import React from 'react';
-import { useSetAtom } from 'jotai';
-import { Download, Copy, FileText, Eye, Smartphone, Monitor, Edit } from 'lucide-react';
+import { useAtom, useSetAtom } from 'jotai';
+import { Download, Copy, FileText, Eye, Smartphone, Monitor, Edit, Link2 } from 'lucide-react';
 import type { PopularItem } from '@/entities/naver/_types';
 import { useToast } from '@/shared/ui/Toast';
 import {
@@ -9,9 +9,11 @@ import {
   downloadContentToFile,
   copyMobileLinkToClipboard,
   copyDesktopLinkToClipboard,
-  copyEditLinkToClipboard
+  copyEditLinkToClipboard,
+  copyKeywordWithMobileLink
 } from '@/features/naver-popular/lib';
 import { useViewerActions, viewerItemAtom } from '@/features';
+import { popularQueryAtom } from '@/features/naver-popular/store';
 
 interface Props {
   item: PopularItem;
@@ -29,6 +31,7 @@ export const PopularItemCard: React.FC<Props> = ({
   const { show } = useToast();
   const setViewerItem = useSetAtom(viewerItemAtom);
   const { openViewer } = useViewerActions();
+  const [keyword] = useAtom(popularQueryAtom);
   const displayLink = item.link.replace('://blog.', '://m.blog.');
 
   return (
@@ -118,6 +121,19 @@ export const PopularItemCard: React.FC<Props> = ({
           <Eye size={14} />
           <span>자세히</span>
         </button>
+
+        {keyword && (
+          <button
+            onClick={() =>
+              copyKeywordWithMobileLink(keyword, item.link, (m, o) => show(m, o))
+            }
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-success)] text-white text-xs font-medium hover:opacity-90 transition-all active:scale-[0.98]"
+            title={`${keyword} / 모바일링크 복사`}
+          >
+            <Link2 size={14} />
+            <span>키워드+링크</span>
+          </button>
+        )}
 
         <div className="flex gap-1">
           <button

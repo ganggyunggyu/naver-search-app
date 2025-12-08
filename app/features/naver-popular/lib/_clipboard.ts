@@ -427,5 +427,24 @@ export const copyEditLinkToClipboard = async (
   }
 };
 
+// 키워드 + 모바일 링크 복사 (예: "브로멜라인 / https://m.blog.naver.com/...")
+export const copyKeywordWithMobileLink = async (
+  keyword: string,
+  link: string,
+  show: (
+    message: string,
+    opts?: { type?: 'success' | 'error' | 'info' }
+  ) => void
+) => {
+  try {
+    const mobileLink = convertToMobileLink(link);
+    const text = `${keyword} / ${mobileLink}`;
+    await navigator.clipboard.writeText(text);
+    show('키워드 + 링크가 복사되었습니다!', { type: 'success' });
+  } catch {
+    show('복사 실패', { type: 'error' });
+  }
+};
+
 // 하위 호환성을 위한 별칭
 export const downloadAllContentToFile = downloadAllContentToZip;
