@@ -72,7 +72,6 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   const setBlogSearchData = useSetAtom(blogSearchDataAtom);
   const { updateRecentSearchExposure } = useRecentSearch();
 
-
   useEffect(() => {
     const { q, url: u } = loaderData ?? { q: '', url: '' };
     const qq = (q ?? '').trim();
@@ -172,7 +171,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   }, [data]);
 
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <main className="max-w-screen-2xl mx-auto px-4 lg:px-8 pt-4 lg:pt-8 lg:h-screen lg:overflow-hidden">
       {/* 크아 스타일 LOSE!! 이펙트 */}
       {showLose && (
         <div className="fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center">
@@ -204,38 +203,45 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         onClose={() => setIsViewerOpen(false)}
       />
 
-      <header className="mb-6">
-        <PopularSearchForm />
-      </header>
+      {/* 데스크탑: 사이드바 레이아웃 / 모바일: 세로 스택 */}
+      <div className="lg:grid lg:grid-cols-[400px_1fr] lg:gap-6 lg:h-[calc(100vh-2rem)]">
+        {/* 좌측 사이드바 - 독립 스크롤 */}
+        <aside className="space-y-4 mb-6 lg:mb-0 lg:overflow-y-auto lg:pr-3">
+          <PopularSearchForm />
 
-      <article className="flex flex-col gap-4">
-        {data && data.items?.length > 0 && (
-          <ExposureStatusWidget matchedIdList={matchedIdList} />
-        )}
+          {data && data.items?.length > 0 && (
+            <ExposureStatusWidget matchedIdList={matchedIdList} />
+          )}
 
-        {blogSearchData && blogSearchData.items?.length > 0 && (
-          <BlogMatchWidget blogSearchData={blogSearchData} />
-        )}
+          {blogSearchData && blogSearchData.items?.length > 0 && (
+            <BlogMatchWidget blogSearchData={blogSearchData} />
+          )}
 
-        {error && (
-          <aside
-            role="alert"
-            className="p-4 rounded-xl bg-[var(--color-error-soft)] border border-[var(--color-error)]"
-          >
-            <p className="text-sm text-[var(--color-error)] font-medium">{error}</p>
-          </aside>
-        )}
+          {error && (
+            <aside
+              role="alert"
+              className="p-4 rounded-xl bg-[var(--color-error-soft)] border border-[var(--color-error)]"
+            >
+              <p className="text-sm text-[var(--color-error)] font-medium">
+                {error}
+              </p>
+            </aside>
+          )}
+        </aside>
 
-        <section aria-label="인기글 결과" className="mt-2">
-          <PopularResults />
-        </section>
-
-        {(blogSearchData !== null || isLoading) && (
-          <section aria-label="블로그 검색 결과" className="mt-4">
-            <BlogResultList blogData={blogSearchData} isLoading={isLoading} />
+        {/* 우측 메인 콘텐츠 - 독립 스크롤 */}
+        <article className="flex flex-col gap-4 min-w-0 lg:overflow-y-auto">
+          <section aria-label="인기글 결과">
+            <PopularResults />
           </section>
-        )}
-      </article>
+
+          {(blogSearchData !== null || isLoading) && (
+            <section aria-label="블로그 검색 결과" className="mt-4">
+              <BlogResultList blogData={blogSearchData} isLoading={isLoading} />
+            </section>
+          )}
+        </article>
+      </div>
     </main>
   );
 };

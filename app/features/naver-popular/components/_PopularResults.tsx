@@ -133,7 +133,7 @@ export const PopularResults: React.FC = () => {
                 </button>
               </header>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                 {list
                   .filter((item) => {
                     const link = item.blogLink || item.link || '';
