@@ -438,7 +438,7 @@ export const copyKeywordWithMobileLink = async (
 ) => {
   try {
     const mobileLink = convertToMobileLink(link);
-    const text = `${keyword} / ${mobileLink}`;
+    const text = `${keyword} / ${mobileLink}\n\n확인 부탁드립니다!`;
     await navigator.clipboard.writeText(text);
     show('키워드 + 링크가 복사되었습니다!', { type: 'success' });
   } catch {

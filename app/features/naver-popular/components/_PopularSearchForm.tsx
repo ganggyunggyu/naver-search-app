@@ -232,7 +232,7 @@ export const PopularSearchForm: React.FC = () => {
               className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 sm:py-2 px-3 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
             >
               <Search size={14} />
-              <span className="hidden sm:inline">네이버 통합검색</span>
+              <span className="hidden sm:inline">네이버 통검</span>
               <span className="sm:hidden">통합</span>
               <ExternalLink size={10} className="hidden sm:block" />
             </button>
@@ -245,7 +245,7 @@ export const PopularSearchForm: React.FC = () => {
               className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 sm:py-2 px-3 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
             >
               <Edit3 size={14} />
-              <span className="hidden sm:inline">네이버 블로그</span>
+              <span className="hidden sm:inline">블로그</span>
               <span className="sm:hidden">블로그</span>
               <ExternalLink size={10} className="hidden sm:block" />
             </button>
