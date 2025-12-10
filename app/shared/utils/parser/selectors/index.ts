@@ -29,7 +29,7 @@ export const DEFAULT_SELECTORS: PopularSelectorConfig = {
 
   singleIntentionList: '.fds-ugc-single-intention-item-list, .fds-ugc-single-intention-item-list-rra',
   intentionItem: '[data-template-id="ugcItem"]',
-  intentionTitle: 'a[data-heatmap-target=".link"]',
+  intentionTitle: 'a[data-heatmap-target=".link"], a[data-heatmap-target=".imgtitlelink"]',
   intentionHeadline: '.sds-comps-text-type-headline1',
   intentionPreview: '.sds-comps-text-type-body1',
   intentionProfile: '.sds-comps-profile-info-title-text a',
