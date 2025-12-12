@@ -39,15 +39,15 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
       <Meta />
       <Links />
     </head>
-    <body className="bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] antialiased">
+    <body className="bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] antialiased sm:h-screen sm:overflow-hidden sm:flex sm:flex-col">
       <ToastProvider>
-        {/* Desktop Header */}
-        <div className="hidden sm:block">
+        {/* Desktop Header - 고정 */}
+        <div className="hidden sm:block shrink-0">
           <Header />
         </div>
 
-        {/* Main Content */}
-        <div className="min-h-screen pb-20 sm:pb-0">
+        {/* Main Content - 나머지 영역 채움 */}
+        <div className="min-h-screen sm:min-h-0 sm:flex-1 sm:overflow-hidden pb-20 sm:pb-0">
           {children}
         </div>
 

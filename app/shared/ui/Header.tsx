@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router';
 import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '@/features/theme';
@@ -12,6 +12,11 @@ const navigationItems = [
 
 const Header: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-[var(--color-surface)]/80 backdrop-blur-lg border-b border-[var(--color-border)]">
@@ -48,10 +53,10 @@ const Header: React.FC = () => {
 
           <button
             onClick={toggleTheme}
-            aria-label={isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
+            aria-label={isClient && isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
             className="p-2 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover)] transition-colors"
           >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            {isClient && isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
       </div>

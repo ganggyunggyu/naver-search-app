@@ -78,6 +78,7 @@ export const BLOG_IDS = [
   'youngtae0510',
   'sasane',
   'sesrsoa',
+  'llo__8ii',
 ];
 
 export const BLOG_ID_SET = new Set(BLOG_IDS.map((id) => id.toLowerCase()));

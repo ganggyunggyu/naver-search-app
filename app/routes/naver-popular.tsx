@@ -26,7 +26,6 @@ import {
   BLOG_ID_SET,
   LOSE_TEXT_STYLE,
   fireSuccessConfetti,
-  fireRainEffect,
 } from '@/constants';
 import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
 import { useRecentSearch } from '@/features/naver-popular/hooks';
@@ -133,10 +132,9 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
           if (hasExposure) {
             fireSuccessConfetti(confetti);
           } else {
-            // 노출 실패 시 LOSE!! 이펙트 + 빗방울
+            // 노출 실패 시 LOSE!! 이펙트
             setShowLose(true);
             setTimeout(() => setShowLose(false), LOSE_TEXT_STYLE.duration);
-            fireRainEffect(confetti);
           }
         }
       } catch {
@@ -171,7 +169,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   }, [data]);
 
   return (
-    <main className="max-w-screen-2xl mx-auto px-4 lg:px-8 pt-4 lg:pt-8 lg:h-screen lg:overflow-hidden">
+    <main className="max-w-screen-2xl mx-auto px-4 lg:px-8 pt-4 lg:pt-8 h-full flex flex-col overflow-hidden">
       {/* 크아 스타일 LOSE!! 이펙트 */}
       {showLose && (
         <div className="fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center">
@@ -204,9 +202,9 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
       />
 
       {/* 데스크탑: 사이드바 레이아웃 / 모바일: 세로 스택 */}
-      <div className="lg:grid lg:grid-cols-[400px_1fr] lg:gap-6 lg:h-[calc(100vh-2rem)]">
+      <div className="flex-1 min-h-0 lg:grid lg:grid-cols-[400px_1fr] lg:gap-6 overflow-y-auto lg:overflow-hidden">
         {/* 좌측 사이드바 - 독립 스크롤 */}
-        <aside className="space-y-4 mb-6 lg:mb-0 lg:overflow-y-auto lg:pr-3">
+        <aside className="space-y-4 mb-6 lg:mb-0 lg:overflow-y-auto lg:pr-3 lg:pb-8">
           <PopularSearchForm />
 
           {data && data.items?.length > 0 && (
@@ -230,7 +228,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         </aside>
 
         {/* 우측 메인 콘텐츠 - 독립 스크롤 */}
-        <article className="flex flex-col gap-4 min-w-0 lg:overflow-y-auto">
+        <article className="flex flex-col gap-4 min-w-0 lg:overflow-y-auto lg:pb-8">
           <section aria-label="인기글 결과">
             <PopularResults />
           </section>
