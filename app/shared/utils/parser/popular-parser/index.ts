@@ -10,67 +10,19 @@ export const extractPopularItems = (html: string): PopularItem[] => {
   const $ = loadHtml(html);
   const items: PopularItem[] = [];
 
-  const $collectionRoots = $(SELECTORS.collectionRoot);
-
-  $collectionRoots.each((_, root) => {
-    const $root = $(root);
-
-    const headline = $root.find(SELECTORS.headline).first().text().trim();
-
-    const topicName = headline || '인기글';
-
-    const $blocks = $root.find(SELECTORS.blockMod);
-
-    $blocks.each((_, block) => {
-      const $block = $(block);
-
-      const $blogInfo = $block.find(SELECTORS.blogInfo).first();
-      const blogName = $blogInfo.text().trim();
-      const blogHref =
-        ($blogInfo.is('a') ? $blogInfo : $blogInfo.closest('a'))
-          .attr('href')
-          ?.trim() || '';
-
-      const $postTitle = $block.find(SELECTORS.postTitle).first();
-      const $titleWrap = $block.find(SELECTORS.postTitleWrap).first();
-      const title = $postTitle.text().trim();
-
-      let postHref = '';
-      if ($titleWrap.length > 0 && $titleWrap.is('a')) {
-        postHref = $titleWrap.attr('href')?.trim() || '';
-      } else if ($postTitle.is('a')) {
-        postHref = $postTitle.attr('href')?.trim() || '';
-      }
-
-      if (
-        postHref &&
-        postHref.includes('naver.com') &&
-        !postHref.includes('cafe.naver.com') &&
-        !postHref.includes('ader.naver.com') &&
-        title
-      ) {
-        items.push({
-          title,
-          link: postHref,
-          snippet: '',
-          image: '',
-          badge: '',
-          group: topicName,
-          blogLink: blogHref,
-          blogName: blogName || '',
-        });
-      }
-    });
-  });
-
+  // Single Intention (인기글) 섹션
   const $singleIntentionSections = $(SELECTORS.singleIntentionList);
   if ($singleIntentionSections.length > 0) {
     $singleIntentionSections.each((_, section) => {
       const $section = $(section);
 
+      // 섹션 헤더 구조:
+      // .sds-comps-vertical-layout (공통 부모)
+      //   └─ .fds-header .sds-comps-header-left h2.sds-comps-text-ellipsis-1 (헤더)
+      //   └─ .fds-ugc-single-intention-item-list (리스트)
       const headline = $section
-        .closest('.sds-comps-vertical-layout')
-        .find('.sds-comps-text-type-headline1')
+        .parent()
+        .find('.fds-header .sds-comps-header-left .sds-comps-text-ellipsis-1')
         .first()
         .text()
         .trim();
@@ -99,6 +51,128 @@ export const extractPopularItems = (html: string): PopularItem[] => {
         const image =
           $item.find(SELECTORS.intentionImage).first().attr('src')?.trim() ||
           '';
+
+        if (
+          postHref &&
+          title &&
+          !postHref.includes('cafe.naver.com') &&
+          !postHref.includes('ader.naver.com')
+        ) {
+          items.push({
+            title,
+            link: postHref,
+            snippet,
+            image,
+            badge: '',
+            group: topicName,
+            blogLink: blogHref,
+            blogName,
+          });
+        }
+      });
+    });
+  }
+
+  // Snippet Paragraph (스블) 섹션
+  const $snippetParagraphSections = $(SELECTORS.snippetParagraphList);
+  if ($snippetParagraphSections.length > 0) {
+    $snippetParagraphSections.each((_, section) => {
+      const $section = $(section);
+
+      // 섹션 헤더 구조:
+      // .sds-comps-vertical-layout (공통 부모)
+      //   └─ .fds-header .sds-comps-header-left h2.sds-comps-text-ellipsis-1 (헤더)
+      //   └─ .fds-ugc-snippet-paragraph-item-list (리스트)
+      const headline = $section
+        .parent()
+        .find('.fds-header .sds-comps-header-left .sds-comps-text-ellipsis-1')
+        .first()
+        .text()
+        .trim();
+
+      const topicName = headline || '스니펫';
+
+      const $items = $section.find(SELECTORS.snippetItem);
+
+      $items.each((_, item) => {
+        const $item = $(item);
+
+        const $titleLink = $item.find(SELECTORS.snippetTitle).first();
+        const title = $titleLink.find(SELECTORS.snippetHeadline).text().trim();
+        const postHref = $titleLink.attr('href')?.trim() || '';
+
+        const $profile = $item.find(SELECTORS.snippetProfile).first();
+        const blogName = $profile.text().trim();
+        const blogHref = $profile.attr('href')?.trim() || '';
+
+        const snippet = $item
+          .find(SELECTORS.snippetPreview)
+          .first()
+          .text()
+          .trim();
+
+        const image =
+          $item.find(SELECTORS.snippetImage).first().attr('src')?.trim() || '';
+
+        if (
+          postHref &&
+          title &&
+          !postHref.includes('cafe.naver.com') &&
+          !postHref.includes('ader.naver.com')
+        ) {
+          items.push({
+            title,
+            link: postHref,
+            snippet,
+            image,
+            badge: '',
+            group: topicName,
+            blogLink: blogHref,
+            blogName,
+          });
+        }
+      });
+    });
+  }
+
+  // Snippet Image (스이) 섹션
+  const $snippetImageSections = $(SELECTORS.snippetImageList);
+  if ($snippetImageSections.length > 0) {
+    $snippetImageSections.each((_, section) => {
+      const $section = $(section);
+
+      // 섹션 헤더 구조:
+      // .sds-comps-vertical-layout (공통 부모)
+      //   └─ .fds-header .sds-comps-header-left h2.sds-comps-text-ellipsis-1 (헤더)
+      //   └─ .fds-ugc-snippet-image-item-list (리스트)
+      const headline = $section
+        .parent()
+        .find('.fds-header .sds-comps-header-left .sds-comps-text-ellipsis-1')
+        .first()
+        .text()
+        .trim();
+
+      const topicName = headline || '스니펫 이미지';
+
+      const $items = $section.find(SELECTORS.snippetImageItem);
+
+      $items.each((_, item) => {
+        const $item = $(item);
+
+        const $titleLink = $item.find(SELECTORS.snippetImageTitle).first();
+        const title = $titleLink.find(SELECTORS.snippetImageHeadline).text().trim();
+        const postHref = $titleLink.attr('href')?.trim() || '';
+
+        const $profile = $item.find(SELECTORS.snippetImageProfile).first();
+        const blogName = $profile.text().trim();
+        const blogHref = $profile.attr('href')?.trim() || '';
+
+        // 스니펫 이미지는 본문 미리보기 없음
+        const snippet = '';
+
+        // 이미지 추출
+        const image =
+          $item.find('.sds-comps-image img').first().attr('src')?.trim() || '';
 
         if (
           postHref &&
