@@ -37,6 +37,7 @@ export const crawlNaverBlogSearch = async (
   keyword: string
 ): Promise<BlogCrawlResponse> => {
   const searchUrl = `https://m.search.naver.com/search.naver?ssc=tab.m_blog.all&sm=mtb_jum&query=${encodeURIComponent(keyword)}&start=1&display=${BLOG_SEARCH_CONFIG.MAX_DISPLAY}&sort=sim`;
+  // const searchUrl = `https://search.naver.com/search.naver?query==${encodeURIComponent(keyword)}`;
 
   try {
     const html = await fetchHtml(searchUrl, NAVER_MOBILE_HEADERS);
@@ -66,9 +67,14 @@ export const crawlNaverBlogSearch = async (
 
           const description = $el.find(DESC_SELECTORS).first().text().trim();
           const blogInfo = $el.find(BLOG_INFO_SELECTORS).first().text().trim();
-          const date = $el.find('.date, .sub_time, .time').first().text().trim();
+          const date = $el
+            .find('.date, .sub_time, .time')
+            .first()
+            .text()
+            .trim();
           const thumbEl = $el.find('img').first();
-          const thumbnail = thumbEl.attr('src') || thumbEl.attr('data-src') || '';
+          const thumbnail =
+            thumbEl.attr('src') || thumbEl.attr('data-src') || '';
 
           items.push({
             title: stripHtmlTags(title),
@@ -92,7 +98,8 @@ export const crawlNaverBlogSearch = async (
         const title = $el.text().trim();
         const link = $el.attr('href') || '';
 
-        if (title.length <= BLOG_SEARCH_CONFIG.MIN_TITLE_LENGTH || !link) return;
+        if (title.length <= BLOG_SEARCH_CONFIG.MIN_TITLE_LENGTH || !link)
+          return;
 
         const fullLink = buildFullLink(link);
 
