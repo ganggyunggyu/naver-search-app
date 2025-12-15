@@ -45,7 +45,7 @@ export const RecentSearchSection: React.FC<RecentSearchSectionProps> = ({
           </button>
         )}
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
         {items.map((item) => (
           <RecentSearchItem
             key={item.query}

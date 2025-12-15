@@ -11,7 +11,11 @@ import {
 } from '../store';
 import { RecentSearchSection } from './_RecentSearchSection';
 
-export const PopularSearchForm: React.FC = () => {
+interface PopularSearchFormProps {
+  children?: React.ReactNode;
+}
+
+export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({ children }) => {
   const [query, setQuery] = useAtom(popularQueryAtom);
   const [isAutoUrl, setIsAutoUrl] = useAtom(popularIsAutoUrlAtom);
   const [url, setUrl] = useAtom(popularUrlAtom);
@@ -252,6 +256,8 @@ export const PopularSearchForm: React.FC = () => {
           </div>
         )}
       </form>
+
+      {children}
 
       {isAutoUrl && (
         <div className="mt-6 pt-5 border-t border-[var(--color-border)]">

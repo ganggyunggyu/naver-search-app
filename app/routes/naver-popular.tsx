@@ -205,15 +205,19 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
       <div className="flex-1 min-h-0 lg:grid lg:grid-cols-[400px_1fr] lg:gap-6 overflow-y-auto lg:overflow-hidden">
         {/* 좌측 사이드바 - 독립 스크롤 */}
         <aside className="space-y-4 mb-6 lg:mb-0 lg:overflow-y-auto lg:pr-3 lg:pb-8">
-          <PopularSearchForm />
+          <PopularSearchForm>
+            {data && data.items?.length > 0 && (
+              <div className="mt-4">
+                <ExposureStatusWidget matchedIdList={matchedIdList} />
+              </div>
+            )}
 
-          {data && data.items?.length > 0 && (
-            <ExposureStatusWidget matchedIdList={matchedIdList} />
-          )}
-
-          {blogSearchData && blogSearchData.items?.length > 0 && (
-            <BlogMatchWidget blogSearchData={blogSearchData} />
-          )}
+            {blogSearchData && blogSearchData.items?.length > 0 && (
+              <div className="mt-4">
+                <BlogMatchWidget blogSearchData={blogSearchData} />
+              </div>
+            )}
+          </PopularSearchForm>
 
           {error && (
             <aside
