@@ -5,7 +5,7 @@ import { popularQueryAtom } from '@/features/naver-popular/store';
 import type { PopularItem } from '@/entities/naver/_types';
 import { analyzeManuscript, formatManuscriptAnalysis } from '@/shared';
 import { useToast } from '@/shared/ui/Toast';
-import { copyFullContentToClipboard } from '@/features/naver-popular/lib';
+import { copyFullContentToClipboard, removeExternalLinks } from '@/features/naver-popular/lib';
 
 export interface PopularViewerItem extends PopularItem {
   content?: string;
@@ -250,7 +250,7 @@ export const PopularViewerModal: React.FC<Props> = ({
             ) : (
               <div className="p-4 rounded-xl bg-[var(--color-bg-tertiary)]">
                 <pre className="text-sm text-[var(--color-text-primary)] whitespace-pre-wrap font-sans leading-relaxed">
-                  {item?.content || '본문이 비어있습니다.'}
+                  {item?.content ? removeExternalLinks(item.content) : '본문이 비어있습니다.'}
                 </pre>
               </div>
             )}

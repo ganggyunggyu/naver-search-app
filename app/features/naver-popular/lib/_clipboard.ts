@@ -1,6 +1,59 @@
 import type { PopularItem } from '@/entities/naver/_types';
 import JSZip from 'jszip';
 
+// 외부 링크 및 홍보성 텍스트 제거
+export const removeExternalLinks = (text: string): string => {
+  return text
+    // 외부 URL 제거 (네이버 블로그 제외)
+    .replace(/https?:\/\/(?!(?:m\.)?blog\.naver\.com)[^\s\n]+/gi, '')
+    // ⬇ 기호와 함께 있는 URL 라인 제거
+    .replace(/⬇[^\n]*https?:\/\/[^\s\n]+[^\n]*/gi, '')
+    // "이 글 전체 내용 보기" 등의 홍보성 텍스트 제거
+    .replace(/이 글 전체 내용 보기[^\n]*/gi, '')
+    .replace(/전체 글 보기[^\n]*/gi, '')
+    // 외부 도메인 링크 박스 형태 제거 (예: firstmj0513.com 인테리어 후...)
+    .replace(/[a-zA-Z0-9-]+\.(com|co\.kr|net|org|kr)[^\n]*\n?/gi, '')
+    // 점 구분선 제거 (....., ·····, ------, ====== 등)
+    .replace(/[.·\-=]{5,}/g, '')
+    // zero-width space 및 특수 공백 제거
+    .replace(/[\u200B\u200C\u200D\uFEFF]/g, '')
+    // 연속 공백/줄바꿈 정리
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+};
+
+// HTML 엔티티 디코딩 및 본문 정리
+const cleanContentText = (content: string): string => {
+  if (!content) return '';
+  return String(content)
+    .replace(/\r\n?/g, '\n')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/[ \t\f\v\u00A0]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .split('\n')
+    .map((l) => l.replace(/[ \t\f\v\u00A0]+$/g, ''))
+    .join('\n')
+    .trim();
+};
+
+// 제목 정리
+const cleanTitleText = (title: string): string => {
+  if (!title) return '';
+  return String(title).replace(/[ \t\f\v\u00A0]+/g, ' ').trim();
+};
+
+// 안전한 파일명 생성
+const toSafeFileName = (name: string, maxLength = 100): string => {
+  return name
+    .replace(/[<>:"/\\|?*]/g, '')
+    .replace(/\s+/g, '_')
+    .substring(0, maxLength);
+};
+
 export const copyPreviewToClipboard = async (
   item: PopularItem,
   show: (
@@ -10,7 +63,7 @@ export const copyPreviewToClipboard = async (
 ) => {
   const cleanTitle = item.title.replace(/\s+/g, ' ').trim();
   const cleanSnippet = item.snippet
-    ? item.snippet.replace(/\s+/g, ' ').replace(/\n+/g, ' ').trim()
+    ? removeExternalLinks(item.snippet.replace(/\s+/g, ' ').replace(/\n+/g, ' ').trim())
     : '';
   const plain = [cleanTitle, cleanSnippet, item.link]
     .filter(Boolean)
@@ -89,31 +142,13 @@ export const copyFullContentToClipboard = async (
       return;
     }
 
-    const cleanTitle = json.title
-      ? String(json.title)
-          .replace(/[ \t\f\v\u00A0]+/g, ' ')
-          .trim()
-      : '';
+    const cleanTitle = cleanTitleText(json.title);
     let finalContent = json.content || '';
     if (directContent && directContent.trim().length > finalContent.length)
       finalContent = directContent;
-    const cleanContent = finalContent
-      ? String(finalContent)
-          .replace(/\r\n?/g, '\n')
-          .replace(/<[^>]*>/g, '')
-          .replace(/&nbsp;/g, ' ')
-          .replace(/&amp;/g, '&')
-          .replace(/&quot;/g, '"')
-          .replace(/&#x27;|&#39;/g, "'")
-          .replace(/[ \t\f\v\u00A0]+/g, ' ')
-          .replace(/\n{3,}/g, '\n\n')
-          .split('\n')
-          .map((l) => l.replace(/[ \t\f\v\u00A0]+$/g, ''))
-          .join('\n')
-          .trim()
-      : '';
+    const cleanContent = cleanContentText(finalContent);
 
-    const full = [cleanTitle, cleanContent].filter(Boolean).join('\n\n');
+    const full = [cleanTitle, removeExternalLinks(cleanContent)].filter(Boolean).join('\n\n');
     await navigator.clipboard.writeText(full);
     show('전체 본문이 복사되었습니다!', { type: 'success' });
   } catch {
@@ -172,36 +207,14 @@ export const downloadContentToFile = async (
       return;
     }
 
-    const cleanTitle = json.title
-      ? String(json.title)
-          .replace(/[ \t\f\v\u00A0]+/g, ' ')
-          .trim()
-      : title;
+    const cleanTitle = cleanTitleText(json.title) || title;
     let finalContent = json.content || '';
     if (directContent && directContent.trim().length > finalContent.length)
       finalContent = directContent;
-    const cleanContent = finalContent
-      ? String(finalContent)
-          .replace(/\r\n?/g, '\n')
-          .replace(/<[^>]*>/g, '')
-          .replace(/&nbsp;/g, ' ')
-          .replace(/&amp;/g, '&')
-          .replace(/&quot;/g, '"')
-          .replace(/&#x27;|&#39;/g, "'")
-          .replace(/[ \t\f\v\u00A0]+/g, ' ')
-          .replace(/\n{3,}/g, '\n\n')
-          .split('\n')
-          .map((l) => l.replace(/[ \t\f\v\u00A0]+$/g, ''))
-          .join('\n')
-          .trim()
-      : '';
+    const cleanContent = cleanContentText(finalContent);
 
-    const full = [cleanTitle, cleanContent].filter(Boolean).join('\n\n');
-
-    const safeFileName = cleanTitle
-      .replace(/[<>:"/\\|?*]/g, '')
-      .replace(/\s+/g, '_')
-      .substring(0, 100);
+    const full = [cleanTitle, removeExternalLinks(cleanContent)].filter(Boolean).join('\n\n');
+    const safeFileName = toSafeFileName(cleanTitle);
 
     const blob = new Blob([full], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -274,36 +287,15 @@ export const downloadAllContentToZip = async (
         const json = await res.json();
 
         if (!json.error) {
-          const cleanTitle = json.title
-            ? String(json.title)
-                .replace(/[ \t\f\v\u00A0]+/g, ' ')
-                .trim()
-            : item.title;
+          const cleanTitle = cleanTitleText(json.title) || item.title;
           let finalContent = json.content || '';
           if (directContent && directContent.trim().length > finalContent.length)
             finalContent = directContent;
-          const cleanContent = finalContent
-            ? String(finalContent)
-                .replace(/\r\n?/g, '\n')
-                .replace(/<[^>]*>/g, '')
-                .replace(/&nbsp;/g, ' ')
-                .replace(/&amp;/g, '&')
-                .replace(/&quot;/g, '"')
-                .replace(/&#x27;|&#39;/g, "'")
-                .replace(/[ \t\f\v\u00A0]+/g, ' ')
-                .replace(/\n{3,}/g, '\n\n')
-                .split('\n')
-                .map((l) => l.replace(/[ \t\f\v\u00A0]+$/g, ''))
-                .join('\n')
-                .trim()
-            : '';
+          const cleanContent = removeExternalLinks(cleanContentText(finalContent));
 
           if (cleanContent) {
             const full = [cleanTitle, cleanContent].filter(Boolean).join('\n\n');
-            const safeFileName = cleanTitle
-              .replace(/[<>:"/\\|?*]/g, '')
-              .replace(/\s+/g, '_')
-              .substring(0, 80);
+            const safeFileName = toSafeFileName(cleanTitle, 80);
 
             zip.file(`${safeFileName || `인기글_${i + 1}`}.txt`, full);
             successCount++;
