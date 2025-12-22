@@ -40,7 +40,7 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
 
     let matchedCount = 0;
 
-    const allBlogs = blogData.items.slice(0, 20).map((item, index) => {
+    const allBlogs = blogData.items.map((item, index) => {
       const id = extractBlogIdFromUrl(item.link);
       const isMatched = id && BLOG_ID_SET.has(id);
 
