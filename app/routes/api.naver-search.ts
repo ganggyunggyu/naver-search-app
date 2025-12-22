@@ -1,7 +1,7 @@
 import type { Route } from './+types/api.naver-search';
 import {
   fetchHtml,
-  NAVER_MOBILE_HEADERS,
+  NAVER_DESKTOP_HEADERS,
   jsonError,
   extractTextsFromSearch,
 } from '@/shared';
@@ -16,7 +16,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   if (!targetUrl) return jsonError('URL이 필요합니다.', 400);
 
   try {
-    const html = await fetchHtml(targetUrl, NAVER_MOBILE_HEADERS);
+    const html = await fetchHtml(targetUrl, NAVER_DESKTOP_HEADERS);
     const results = extractTextsFromSearch(html, className);
 
     console.log(results);

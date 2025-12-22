@@ -1,4 +1,4 @@
-import { fetchHtml, NAVER_MOBILE_HEADERS } from '@/shared/utils/_http';
+import { fetchHtml, NAVER_DESKTOP_HEADERS } from '@/shared/utils/_http';
 import { loadHtml } from '@/shared/utils/html';
 import {
   extractBlogIdFromUrl,
@@ -40,7 +40,7 @@ export const crawlNaverBlogSearch = async (
   // const searchUrl = `https://search.naver.com/search.naver?query==${encodeURIComponent(keyword)}`;
 
   try {
-    const html = await fetchHtml(searchUrl, NAVER_MOBILE_HEADERS);
+    const html = await fetchHtml(searchUrl, NAVER_DESKTOP_HEADERS);
     const $ = loadHtml(html);
     const items: BlogCrawlItem[] = [];
 
