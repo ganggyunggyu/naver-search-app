@@ -1,16 +1,26 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
+type ChipVariant =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger';
+
+type ChipSize = 'sm' | 'md' | 'lg';
+
 interface ChipProps {
   children: React.ReactNode;
-  variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: ChipVariant;
+  size?: ChipSize;
   onRemove?: () => void;
   onClick?: () => void;
   disabled?: boolean;
 }
 
-const VARIANT_STYLES: Record<NonNullable<ChipProps['variant']>, string> = {
+const VARIANT_STYLES: Record<ChipVariant, string> = {
   default: 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)]',
   primary: 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]',
   secondary: 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)]',
@@ -19,7 +29,7 @@ const VARIANT_STYLES: Record<NonNullable<ChipProps['variant']>, string> = {
   danger: 'bg-[var(--color-error-soft)] text-[var(--color-error)]',
 };
 
-const SIZE_STYLES: Record<NonNullable<ChipProps['size']>, string> = {
+const SIZE_STYLES: Record<ChipSize, string> = {
   sm: 'px-2 py-0.5 text-xs gap-1',
   md: 'px-3 py-1 text-sm gap-1.5',
   lg: 'px-4 py-1.5 text-base gap-2',
@@ -54,9 +64,11 @@ export const Chip: React.FC<ChipProps> = ({
 
   const baseStyles = `
     inline-flex items-center rounded-full font-medium
-    transition-all
-    ${isClickable ? 'cursor-pointer hover:opacity-80 active:scale-[0.98]' : ''}
-    ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+    transition-all duration-150 ease-out select-none
+    hover:scale-105 hover:shadow-sm
+    active:scale-95 active:shadow-none
+    ${isClickable ? 'cursor-pointer' : ''}
+    ${disabled ? 'opacity-50 cursor-not-allowed hover:scale-100 active:scale-100' : ''}
     ${VARIANT_STYLES[variant]}
     ${SIZE_STYLES[size]}
   `;
@@ -76,7 +88,7 @@ export const Chip: React.FC<ChipProps> = ({
           onClick={handleRemove}
           aria-label="제거"
           type="button"
-          className="ml-0.5 p-0.5 rounded-full hover:bg-[var(--color-hover)] transition-colors"
+          className="ml-0.5 p-0.5 rounded-full hover:bg-black/10 active:scale-90 transition-all cursor-pointer"
         >
           <X size={12} />
         </button>
@@ -84,3 +96,5 @@ export const Chip: React.FC<ChipProps> = ({
     </ChipElement>
   );
 };
+
+export type { ChipProps, ChipVariant, ChipSize };
