@@ -2,6 +2,7 @@ import React from 'react';
 import { Trash2 } from 'lucide-react';
 import type { RecentSearch } from '../types';
 import { RecentSearchItem } from './_RecentSearchItem';
+import { Button } from '@/shared/ui';
 
 type ExposureStatus = 'exposed' | 'notExposed' | 'unchecked';
 
@@ -29,23 +30,24 @@ export const RecentSearchSection: React.FC<RecentSearchSectionProps> = ({
   if (items.length === 0) return null;
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <div className="flex items-center justify-between mb-2">
         <div className={`text-xs font-medium ${STATUS_STYLES[status]}`}>
           {title} ({items.length})
         </div>
         {onClearSection && items.length > 1 && (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<Trash2 size={10} />}
             onClick={onClearSection}
-            className="inline-flex items-center gap-1 text-[10px] text-[var(--color-text-tertiary)] hover:text-[var(--color-error)] transition-colors"
+            className="text-[10px]! text-text-tertiary! hover:text-error! px-1.5! py-0.5!"
           >
-            <Trash2 size={10} />
-            <span>삭제</span>
-          </button>
+            삭제
+          </Button>
         )}
       </div>
-      <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+      <div className="flex flex-wrap gap-2 max-h-[20vh] overflow-y-auto overflow-x-hidden p-1 -m-1">
         {items.map((item) => (
           <RecentSearchItem
             key={item.query}

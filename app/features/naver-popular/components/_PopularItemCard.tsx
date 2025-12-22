@@ -1,8 +1,18 @@
 import React from 'react';
 import { useAtom, useSetAtom } from 'jotai';
-import { Download, Copy, FileText, Eye, Smartphone, Monitor, Edit, Link2 } from 'lucide-react';
+import {
+  Download,
+  Copy,
+  FileText,
+  Eye,
+  Smartphone,
+  Monitor,
+  Edit,
+  Link2,
+} from 'lucide-react';
 import type { PopularItem } from '@/entities/naver/_types';
 import { useToast } from '@/shared/ui/Toast';
+import { Button } from '@/shared/ui';
 import {
   copyFullContentToClipboard,
   copyTitleToClipboard,
@@ -10,7 +20,7 @@ import {
   copyMobileLinkToClipboard,
   copyDesktopLinkToClipboard,
   copyEditLinkToClipboard,
-  copyKeywordWithMobileLink
+  copyKeywordWithMobileLink,
 } from '@/features/naver-popular/lib';
 import { useViewerActions, viewerItemAtom } from '@/features';
 import { popularQueryAtom } from '@/features/naver-popular/store';
@@ -26,7 +36,7 @@ export const PopularItemCard: React.FC<Props> = ({
   item,
   position,
   isMatched = false,
-  blogId
+  blogId,
 }) => {
   const { show } = useToast();
   const setViewerItem = useSetAtom(viewerItemAtom);
@@ -65,28 +75,30 @@ export const PopularItemCard: React.FC<Props> = ({
       <div className="mb-3">
         <div className="flex items-start gap-2">
           <h3
-            onClick={() => window.open(displayLink, '_blank', 'noopener,noreferrer')}
+            onClick={() =>
+              window.open(displayLink, '_blank', 'noopener,noreferrer')
+            }
             className="flex-1 text-sm font-medium text-[var(--color-text-primary)] cursor-pointer hover:text-[var(--color-primary)] transition-colors line-clamp-2"
           >
             {item.title}
           </h3>
           <div className="flex gap-1">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              icon={<Edit size={14} />}
               aria-label="수정 링크 복사"
-              onClick={() => copyEditLinkToClipboard(item.link, (m, o) => show(m, o))}
-              className="p-1.5 rounded hover:bg-[var(--color-hover)] text-[var(--color-text-tertiary)] transition-colors"
-            >
-              <Edit size={14} />
-            </button>
-            <button
-              type="button"
+              onClick={() =>
+                copyEditLinkToClipboard(item.link, (m, o) => show(m, o))
+              }
+            />
+            <Button
+              variant="ghost"
+              icon={<Copy size={14} />}
               aria-label="제목 복사"
-              onClick={() => copyTitleToClipboard(item.title, (m, o) => show(m, o))}
-              className="p-1.5 rounded hover:bg-[var(--color-hover)] text-[var(--color-text-tertiary)] transition-colors"
-            >
-              <Copy size={14} />
-            </button>
+              onClick={() =>
+                copyTitleToClipboard(item.title, (m, o) => show(m, o))
+              }
+            />
           </div>
         </div>
 
@@ -94,7 +106,9 @@ export const PopularItemCard: React.FC<Props> = ({
           <div className="flex items-center gap-1.5 mt-1">
             <span className="w-1 h-1 rounded-full bg-[var(--color-text-tertiary)]" />
             <span
-              onClick={() => window.open(item.blogLink!, '_blank', 'noopener,noreferrer')}
+              onClick={() =>
+                window.open(item.blogLink!, '_blank', 'noopener,noreferrer')
+              }
               className="text-xs text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-primary)] transition-colors"
             >
               {item.blogName}
@@ -111,72 +125,78 @@ export const PopularItemCard: React.FC<Props> = ({
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        <button
+        <Button
+          variant="primary"
+          size="sm"
+          icon={<Eye size={14} />}
           onClick={() => {
             setViewerItem(item);
             openViewer(item.link);
           }}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-primary)] text-white text-xs font-medium hover:bg-[var(--color-primary-hover)] transition-all active:scale-[0.98]"
         >
-          <Eye size={14} />
-          <span>자세히</span>
-        </button>
+          자세히
+        </Button>
 
         {keyword && (
-          <button
+          <Button
+            variant="success"
+            size="sm"
+            icon={<Link2 size={14} />}
             onClick={() =>
-              copyKeywordWithMobileLink(keyword, item.link, (m, o) => show(m, o))
+              copyKeywordWithMobileLink(keyword, item.link, (m, o) =>
+                show(m, o)
+              )
             }
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-success)] text-white text-xs font-medium hover:opacity-90 transition-all active:scale-[0.98]"
             title={`${keyword} / 모바일링크 복사`}
           >
-            <Link2 size={14} />
-            <span>키워드+링크</span>
-          </button>
+            키워드+링크
+          </Button>
         )}
 
         <div className="flex gap-1">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<FileText size={12} />}
             onClick={() =>
               copyFullContentToClipboard(item.link, (m, o) => show(m, o))
             }
-            className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md border border-[var(--color-border)] text-xs text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
           >
-            <FileText size={12} />
-            <span>본문</span>
-          </button>
+            본문
+          </Button>
 
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<Download size={12} />}
             onClick={() =>
-              downloadContentToFile(item.link, item.title, (m, o) => show(m, o))
+              downloadContentToFile(item.link, item.title, (m, o) =>
+                show(m, o)
+              )
             }
-            className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md border border-[var(--color-border)] text-xs text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
           >
-            <Download size={12} />
-            <span>저장</span>
-          </button>
+            저장
+          </Button>
         </div>
 
         <div className="flex gap-1">
-          <button
+          <Button
+            variant="secondary"
+            icon={<Smartphone size={12} />}
             onClick={() =>
               copyMobileLinkToClipboard(item.link, (m, o) => show(m, o))
             }
-            className="p-1.5 rounded border border-[var(--color-border)] text-[var(--color-text-tertiary)] hover:bg-[var(--color-hover)] transition-all"
             title="모바일 링크 복사"
-          >
-            <Smartphone size={12} />
-          </button>
+          />
 
-          <button
+          <Button
+            variant="secondary"
+            icon={<Monitor size={12} />}
             onClick={() =>
               copyDesktopLinkToClipboard(item.link, (m, o) => show(m, o))
             }
-            className="p-1.5 rounded border border-[var(--color-border)] text-[var(--color-text-tertiary)] hover:bg-[var(--color-hover)] transition-all"
             title="데스크탑 링크 복사"
-          >
-            <Monitor size={12} />
-          </button>
+          />
         </div>
       </div>
 

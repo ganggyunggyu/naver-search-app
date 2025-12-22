@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useAtom } from 'jotai';
-import { ExternalLink, Search, Edit3, Loader2 } from 'lucide-react';
+import { ExternalLink, Search, Loader2 } from 'lucide-react';
 import { useRecentSearch } from '../hooks';
 import {
   popularQueryAtom,
@@ -10,12 +10,15 @@ import {
   popularIsLoadingAtom,
 } from '../store';
 import { RecentSearchSection } from './_RecentSearchSection';
+import { Button } from '@/shared/ui';
 
 interface PopularSearchFormProps {
   children?: React.ReactNode;
 }
 
-export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({ children }) => {
+export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
+  children,
+}) => {
   const [query, setQuery] = useAtom(popularQueryAtom);
   const [isAutoUrl, setIsAutoUrl] = useAtom(popularIsAutoUrlAtom);
   const [url, setUrl] = useAtom(popularUrlAtom);
@@ -30,7 +33,8 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({ children }
 
   const [isClient, setIsClient] = React.useState(false);
   const [showAutocomplete, setShowAutocomplete] = React.useState(false);
-  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = React.useState(-1);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] =
+    React.useState(-1);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -145,48 +149,51 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({ children }
                   className="w-full px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-focus)] transition-all"
                 />
 
-                {isClient && showAutocomplete && filteredSuggestions.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 py-1 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-lg">
-                    {filteredSuggestions.map((item, index) => (
-                      <button
-                        key={item.query}
-                        type="button"
-                        onClick={() => {
-                          setQuery(item.query);
-                          setShowAutocomplete(false);
-                          setSelectedSuggestionIndex(-1);
-                        }}
-                        className={`w-full px-4 py-2 text-left text-sm transition-colors ${
-                          index === selectedSuggestionIndex
-                            ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]'
-                            : 'text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]'
-                        }`}
-                      >
-                        {item.query}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading || !query.trim()}
-                className="w-full sm:w-auto py-3 px-6 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] flex-shrink-0"
-              >
-                <span className="inline-flex items-center justify-center gap-2">
-                  {isLoading ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      <span className="sm:hidden">분석 중</span>
-                    </>
-                  ) : (
-                    <>
-                      <Search size={18} className="sm:hidden" />
-                      <span className="hidden sm:inline">검색 시작</span>
-                    </>
+                {isClient &&
+                  showAutocomplete &&
+                  filteredSuggestions.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 py-1 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-lg">
+                      {filteredSuggestions.map((item, index) => (
+                        <button
+                          key={item.query}
+                          type="button"
+                          onClick={() => {
+                            setQuery(item.query);
+                            setShowAutocomplete(false);
+                            setSelectedSuggestionIndex(-1);
+                          }}
+                          className={`w-full px-4 py-2 text-left text-sm transition-colors ${
+                            index === selectedSuggestionIndex
+                              ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]'
+                              : 'text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]'
+                          }`}
+                        >
+                          {item.query}
+                        </button>
+                      ))}
+                    </div>
                   )}
-                </span>
-              </button>
+              </div>
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                disabled={isLoading || !query.trim()}
+                icon={
+                  isLoading ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <Search size={18} className="sm:hidden" />
+                  )
+                }
+                className="w-full sm:w-auto shrink-0"
+              >
+                {isLoading ? (
+                  <span className="sm:hidden">분석 중</span>
+                ) : (
+                  <span className="hidden sm:inline">검색 시작</span>
+                )}
+              </Button>
             </div>
           </div>
         ) : (
@@ -202,57 +209,58 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({ children }
                 placeholder="https://search.naver.com/search.naver?..."
                 className="flex-1 px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-focus)] transition-all"
               />
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="lg"
                 disabled={isLoading || !url.trim()}
-                className="w-full sm:w-auto py-3 px-6 rounded-lg bg-[var(--color-primary)] text-white font-medium hover:bg-[var(--color-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] flex-shrink-0"
-              >
-                <span className="inline-flex items-center justify-center gap-2">
-                  {isLoading ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      <span className="sm:hidden">분석 중</span>
-                    </>
+                icon={
+                  isLoading ? (
+                    <Loader2 size={18} className="animate-spin" />
                   ) : (
-                    <>
-                      <Search size={18} className="sm:hidden" />
-                      <span className="hidden sm:inline">추출하기</span>
-                    </>
-                  )}
-                </span>
-              </button>
+                    <Search size={18} className="sm:hidden" />
+                  )
+                }
+                className="w-full sm:w-auto shrink-0"
+              >
+                {isLoading ? (
+                  <span className="sm:hidden">분석 중</span>
+                ) : (
+                  <span className="hidden sm:inline">추출하기</span>
+                )}
+              </Button>
             </div>
           </div>
         )}
 
         {isAutoUrl && query.trim() && (
           <div className="flex gap-2">
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
+              icon={<ExternalLink size={14} />}
               onClick={() => {
                 const searchUrl = `https://m.search.naver.com/search.naver?query=${encodeURIComponent(query.trim())}`;
                 window.open(searchUrl, '_blank', 'noopener,noreferrer');
               }}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 sm:py-2 px-3 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
+              className="flex-1"
             >
-              <Search size={14} />
-              <span className="hidden sm:inline">네이버 통검</span>
-              <span className="sm:hidden">통합</span>
-              <ExternalLink size={10} className="hidden sm:block" />
-            </button>
-            <button
+              네이버 통검
+            </Button>
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
+              icon={<ExternalLink size={14} />}
               onClick={() => {
                 const blogUrl = `https://m.search.naver.com/search.naver?ssc=tab.m_blog.all&sm=mtb_jum&query=${encodeURIComponent(query.trim())}`;
                 window.open(blogUrl, '_blank', 'noopener,noreferrer');
               }}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 sm:py-2 px-3 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
+              className="flex-1"
             >
-              <Edit3 size={14} />
-              <span className="hidden sm:inline">블로그</span>
-              <span className="sm:hidden">블로그</span>
-              <ExternalLink size={10} className="hidden sm:block" />
-            </button>
+              블로그
+            </Button>
           </div>
         )}
       </form>
@@ -266,13 +274,14 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({ children }
               최근 검색어
             </h3>
             {isClient && recentSearchList.length > 0 && (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={clearRecentSearch}
-                className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-error)] transition-colors"
+                className="text-xs! text-text-tertiary! hover:text-error!"
               >
                 전체 삭제
-              </button>
+              </Button>
             )}
           </div>
 
@@ -280,21 +289,27 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({ children }
             <div className="flex flex-col gap-3">
               <RecentSearchSection
                 title="미노출"
-                items={recentSearchList.filter((item) => item.hasExposure === false)}
+                items={recentSearchList.filter(
+                  (item) => item.hasExposure === false
+                )}
                 status="notExposed"
                 onRemove={removeRecentSearch}
                 onClearSection={() => clearByExposure(false)}
               />
               <RecentSearchSection
                 title="노출"
-                items={recentSearchList.filter((item) => item.hasExposure === true)}
+                items={recentSearchList.filter(
+                  (item) => item.hasExposure === true
+                )}
                 status="exposed"
                 onRemove={removeRecentSearch}
                 onClearSection={() => clearByExposure(true)}
               />
               <RecentSearchSection
                 title="미확인"
-                items={recentSearchList.filter((item) => item.hasExposure === undefined)}
+                items={recentSearchList.filter(
+                  (item) => item.hasExposure === undefined
+                )}
                 status="unchecked"
                 onRemove={removeRecentSearch}
                 onClearSection={() => clearByExposure(undefined)}

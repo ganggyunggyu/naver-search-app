@@ -31,11 +31,11 @@ export const RecentSearchItem: React.FC<RecentSearchItemProps> = ({
 
   return (
     <div
-      className={`inline-flex items-center gap-1 pl-3 pr-1.5 py-1 rounded-full text-sm transition-all ${STATUS_BG[status]}`}
+      className={`inline-flex items-center gap-1 pl-3 pr-1.5 py-1 rounded-full text-sm transition-all duration-150 hover:scale-105 hover:shadow-sm active:scale-95 ${STATUS_BG[status]}`}
     >
       <button
         onClick={() => navigate(`/${encodeURIComponent(query)}`)}
-        className={`font-medium ${STATUS_TEXT[status]}`}
+        className={`font-medium cursor-pointer hover:opacity-80 transition-opacity ${STATUS_TEXT[status]}`}
       >
         {query}
       </button>
@@ -45,7 +45,7 @@ export const RecentSearchItem: React.FC<RecentSearchItemProps> = ({
           onRemove(query);
         }}
         aria-label={`${query} 검색어 삭제`}
-        className="p-1 rounded-full hover:bg-black/5 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-colors"
+        className="p-1 rounded-full hover:bg-black/5 active:scale-90 text-text-tertiary hover:text-text-secondary transition-all cursor-pointer"
       >
         <X size={12} />
       </button>
