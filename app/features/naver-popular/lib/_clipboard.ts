@@ -11,8 +11,8 @@ export const removeExternalLinks = (text: string): string => {
     // "이 글 전체 내용 보기" 등의 홍보성 텍스트 제거
     .replace(/이 글 전체 내용 보기[^\n]*/gi, '')
     .replace(/전체 글 보기[^\n]*/gi, '')
-    // 외부 도메인 링크 박스 형태 제거 (예: firstmj0513.com 인테리어 후...)
-    .replace(/[a-zA-Z0-9-]+\.(com|co\.kr|net|org|kr)[^\n]*\n?/gi, '')
+    // 링크 박스 끝에 단독으로 있는 도메인만 제거 (예: "firstmj0513.com ​" 형태)
+    .replace(/\s+[a-zA-Z0-9-]+\.(com|co\.kr|net|org|kr)\s*[​\u200B]*$/gim, '')
     // 점 구분선 제거 (....., ·····, ------, ====== 등)
     .replace(/[.·\-=]{5,}/g, '')
     // zero-width space 및 특수 공백 제거
