@@ -24,6 +24,9 @@ export const links: Route.LinksFunction = () => [
     rel: 'stylesheet',
     href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css',
   },
+  // PWA
+  { rel: 'manifest', href: '/manifest.json' },
+  { rel: 'apple-touch-icon', href: '/icons/app_icon_1024_ios_opaque.png' },
 ];
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({
@@ -36,6 +39,11 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
         name="viewport"
         content="width=device-width, initial-scale=1, viewport-fit=cover"
       />
+      {/* PWA - iOS */}
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="네검" />
+      <meta name="theme-color" content="#03C75A" />
       <Meta />
       <Links />
     </head>

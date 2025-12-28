@@ -1,0 +1,31 @@
+{
+  "name": "네이버 검색 엔진",
+  "short_name": "네검",
+  "description": "네이버 인기글 검색 및 분석 도구",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#03C75A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/app_icon_512_transparent.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/app_icon_1024_transparent.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/app_icon_1024_ios_opaque.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["productivity", "utilities"]
+}
