@@ -289,27 +289,27 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
             <div className="flex flex-col gap-3">
               <RecentSearchSection
                 title="미노출"
-                items={recentSearchList.filter(
-                  (item) => item.hasExposure === false
-                )}
+                items={recentSearchList
+                  .filter((item) => item.hasExposure === false)
+                  .sort((a, b) => a.query.localeCompare(b.query, 'ko'))}
                 status="notExposed"
                 onRemove={removeRecentSearch}
                 onClearSection={() => clearByExposure(false)}
               />
               <RecentSearchSection
                 title="노출"
-                items={recentSearchList.filter(
-                  (item) => item.hasExposure === true
-                )}
+                items={recentSearchList
+                  .filter((item) => item.hasExposure === true)
+                  .sort((a, b) => a.query.localeCompare(b.query, 'ko'))}
                 status="exposed"
                 onRemove={removeRecentSearch}
                 onClearSection={() => clearByExposure(true)}
               />
               <RecentSearchSection
                 title="미확인"
-                items={recentSearchList.filter(
-                  (item) => item.hasExposure === undefined
-                )}
+                items={recentSearchList
+                  .filter((item) => item.hasExposure === undefined)
+                  .sort((a, b) => a.query.localeCompare(b.query, 'ko'))}
                 status="unchecked"
                 onRemove={removeRecentSearch}
                 onClearSection={() => clearByExposure(undefined)}
