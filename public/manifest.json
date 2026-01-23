@@ -1,7 +1,7 @@
 {
-  "name": "네이버 검색 엔진",
-  "short_name": "네검",
-  "description": "네이버 인기글 검색 및 분석 도구",
+  "name": "Popular Finder",
+  "short_name": "PF",
+  "description": "Naver popular blog search and analysis tool",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
