@@ -5,6 +5,7 @@ import { useTheme } from '@/features/theme';
 
 const navigationItems = [
   { to: '/', label: '인기글' },
+  { to: '/keyword-test', label: '키워드' },
   { to: '/url-search', label: 'URL검색' },
   { to: '/doc-analyzer', label: '문서 분석' },
   { to: '/doc-compare', label: '문서 비교' },

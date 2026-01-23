@@ -6,8 +6,11 @@ export default [
   route('/url-search', 'routes/url-search.tsx'),
   route('/doc-analyzer', 'routes/doc-analyzer.tsx'),
   route('/doc-compare', 'routes/doc-compare.tsx'),
+  route('/keyword-test', 'routes/keyword-test.tsx'),
 
   route('/api/search', 'routes/api.search.ts'),
+  route('/api/datalab', 'routes/api.datalab.ts'),
+  route('/api/searchad', 'routes/api.searchad.ts'),
   route('/api/news', 'routes/api.news.ts'),
   route('/api/content', 'routes/api.content.ts'),
   route('/api/naver-search', 'routes/api.naver-search.ts'),
