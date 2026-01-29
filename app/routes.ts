@@ -16,6 +16,7 @@ export default [
   route('/api/naver-search', 'routes/api.naver-search.ts'),
   route('/api/naver-popular', 'routes/api.naver-popular.ts'),
   route('/api/blog-search', 'routes/api.blog-search.ts'),
+  route('/api/blog-contents', 'routes/api.blog-contents.ts'),
   route('/api/analyze-manuscript', 'routes/api.analyze-manuscript.ts'),
 
   route('/url/:encoded', 'routes/url-search.dynamic.tsx'),
