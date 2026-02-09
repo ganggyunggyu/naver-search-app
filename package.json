@@ -13,6 +13,7 @@
   "dependencies": {
     "@react-router/node": "^7.7.1",
     "@react-router/serve": "^7.7.1",
+    "axios": "^1.7.9",
     "canvas-confetti": "^1.9.4",
     "cheerio": "^1.1.2",
     "clsx": "^2.1.1",

@@ -1,8 +1,13 @@
 import React, { useEffect, useRef, useMemo } from 'react';
+import axios from 'axios';
 import confetti from 'canvas-confetti';
 import type { Route } from './+types/naver-popular';
 import { useToast } from '@/shared/ui/Toast';
-import type { PopularItem } from '@/entities/naver/_types';
+import type {
+  PopularItem,
+  PopularResponse,
+  BlogCrawlResponse,
+} from '@/entities/naver/_types';
 import { useAtom, useSetAtom } from 'jotai';
 import {
   popularDataAtom,
@@ -52,6 +57,11 @@ interface MatchItem {
   item: PopularItem;
 }
 
+interface PopularApiResponse extends PopularResponse {
+  error?: string;
+  blog?: BlogCrawlResponse;
+}
+
 const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   const { show } = useToast();
   const [showLose, setShowLose] = React.useState(false);
@@ -72,11 +82,14 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   const { updateRecentSearchExposure } = useRecentSearch();
 
   useEffect(() => {
+    let isActive = true;
     const { q, url: u } = loaderData ?? { q: '', url: '' };
     const qq = (q ?? '').trim();
     const uu = (u ?? '').trim();
 
-    if (!qq && !uu) return;
+    if (!qq && !uu) {
+      return;
+    }
     if (prevRef.current.q === qq && prevRef.current.u === uu) return;
     prevRef.current = { q: qq, u: uu };
 
@@ -88,7 +101,7 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
       setUrl(uu);
     }
 
-    const endpoint = qq
+    const popularEndpoint = qq
       ? `/api/naver-popular?q=${encodeURIComponent(qq)}&blog=true`
       : `/api/naver-popular?url=${encodeURIComponent(uu)}`;
 
@@ -97,11 +110,11 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
         setIsLoading(true);
         setError('');
         setData(null);
-        const res = await fetch(endpoint);
-        const json: {
-          error?: string;
-          blog?: typeof blogSearchData;
-        } & typeof data = await res.json();
+        const { data: json } = await axios.get<PopularApiResponse>(
+          popularEndpoint
+        );
+
+        if (!isActive) return;
 
         if (json.error) {
           setError(json.error);
@@ -138,11 +151,17 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
           }
         }
       } catch {
+        if (!isActive) return;
         setError('요청 중 오류가 발생했습니다.');
       } finally {
+        if (!isActive) return;
         setIsLoading(false);
       }
     })();
+
+    return () => {
+      isActive = false;
+    };
   }, [
     loaderData,
     setIsAutoUrl,

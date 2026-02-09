@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import axios from 'axios';
 import { BarChart3, Sparkles } from 'lucide-react';
 import {
   KeywordInput,
@@ -19,6 +20,9 @@ import {
 } from '@/features/keyword-analysis';
 import type { SortBy, ViewMode } from '@/features/keyword-analysis';
 import { generateShareUrl, parseUrlKeywords } from '@/features/keyword-analysis';
+import { LogicStatusWidget } from '@/widgets/naver-popular';
+import type { LogicCheckResult } from '@/widgets/naver-popular';
+import { cn } from '@/shared';
 
 export const meta = () => [{ title: '키워드 분석 | Naver Search Engine' }];
 
@@ -28,6 +32,9 @@ const KeywordTestPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<ViewMode>('card');
   const [showFavorites, setShowFavorites] = useState(false);
+  const [logicData, setLogicData] = useState<LogicCheckResult | null>(null);
+  const [logicError, setLogicError] = useState('');
+  const [isLogicLoading, setIsLogicLoading] = useState(false);
 
   const { analyses, relatedKeywords, loading, error, analyze } = useKeywordAnalysis();
   const { favorites, isFavorite, toggleFavorite, removeFavorite } = useFavorites();
@@ -42,12 +49,64 @@ const KeywordTestPage: React.FC = () => {
   } = useSuggestions();
   const { toggleExpanded, isExpanded, getExposureData } = useTopExposure();
 
+  const primaryKeyword = keywords[0] ?? '';
+
+  const resetLogicState = useCallback(() => {
+    setLogicData(null);
+    setLogicError('');
+    setIsLogicLoading(false);
+  }, []);
+
+  const resolveLogicErrorMessage = useCallback((err: unknown): string => {
+    if (axios.isAxiosError<{ error?: string }>(err)) {
+      return err.response?.data?.error || err.message || '로직 확인 중 오류가 발생했습니다.';
+    }
+    if (err instanceof Error) return err.message;
+    return '로직 확인 중 오류가 발생했습니다.';
+  }, []);
+
   useEffect(() => {
     const urlKeywords = parseUrlKeywords();
     if (urlKeywords.length > 0) {
       setKeywords(urlKeywords);
     }
   }, []);
+
+  useEffect(() => {
+    let isActive = true;
+    if (!primaryKeyword) {
+      resetLogicState();
+      return () => {
+        isActive = false;
+      };
+    }
+
+    (async () => {
+      try {
+        setIsLogicLoading(true);
+        setLogicError('');
+        setLogicData(null);
+
+        const { data } = await axios.post<LogicCheckResult>('/api/check-logic', {
+          keyword: primaryKeyword,
+        });
+
+        if (!isActive) return;
+        setLogicData(data);
+      } catch (err) {
+        if (!isActive) return;
+        setLogicData(null);
+        setLogicError(resolveLogicErrorMessage(err));
+      } finally {
+        if (!isActive) return;
+        setIsLogicLoading(false);
+      }
+    })();
+
+    return () => {
+      isActive = false;
+    };
+  }, [primaryKeyword, resetLogicState, resolveLogicErrorMessage]);
 
   const handleAnalyze = useCallback(() => {
     if (keywords.length > 0) {
@@ -181,6 +240,21 @@ const KeywordTestPage: React.FC = () => {
             onBlur={hideSuggestions}
             onSelectSuggestion={clearSuggestions}
           />
+
+          {primaryKeyword && (
+            <div className={cn('space-y-2')}>
+              {keywords.length > 1 && (
+                <p className={cn('text-xs text-[var(--color-text-tertiary)]')}>
+                  복수 키워드는 첫 번째 키워드 기준으로 표시됩니다.
+                </p>
+              )}
+              <LogicStatusWidget
+                data={logicData}
+                isLoading={isLogicLoading}
+                errorMessage={logicError}
+              />
+            </div>
+          )}
         </div>
 
         {/* Error State */}
