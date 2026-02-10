@@ -1,1 +1,1 @@
-export * from './_clipboard';
+export * from './clipboard';

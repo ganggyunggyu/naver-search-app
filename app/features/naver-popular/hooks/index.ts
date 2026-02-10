@@ -1,3 +1,3 @@
-export * from './_usePopularActions';
-export * from './_useRecentSearch';
-export * from './_useViewerActions';
+export * from './use-popular-actions';
+export * from './use-recent-search';
+export * from './use-viewer-actions';

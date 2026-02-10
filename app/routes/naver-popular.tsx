@@ -7,7 +7,7 @@ import type {
   PopularItem,
   PopularResponse,
   BlogCrawlResponse,
-} from '@/entities/naver/_types';
+} from '@/entities/naver/types';
 import { useAtom, useSetAtom } from 'jotai';
 import {
   popularDataAtom,
@@ -26,13 +26,13 @@ import {
   PopularResults,
   BlogResultList,
 } from '@/features/naver-popular/components';
-import { PopularViewerModal } from '@/features/naver-popular/components/_PopularViewerModal';
+import { PopularViewerModal } from '@/features/naver-popular/components/PopularViewerModal';
 import {
   BLOG_ID_SET,
   LOSE_TEXT_STYLE,
   fireSuccessConfetti,
 } from '@/constants';
-import { extractBlogIdFromUrl } from '@/shared/utils/_blog';
+import { extractBlogIdFromUrl } from '@/shared/utils/blog';
 import { useRecentSearch } from '@/features/naver-popular/hooks';
 import { ExposureStatusWidget, BlogMatchWidget } from '@/widgets/naver-popular';
 

@@ -9,8 +9,8 @@ import { crawlNaverBlogSearch } from '@/entities';
 import type {
   PopularItem,
   BlogCrawlResponse,
-} from '@/entities/naver/_types';
-import type { ExposureCheckResult } from '@/shared/utils/_exposure';
+} from '@/entities/naver/types';
+import type { ExposureCheckResult } from '@/shared/utils/exposure';
 
 interface PopularApiResult {
   url: string;

@@ -1,3 +1,2 @@
-export * from './_dom';
-export * from './_selector';
-
+export * from './dom';
+export * from './selector';

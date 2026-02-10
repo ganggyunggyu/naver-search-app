@@ -1,1 +1,1 @@
-export * from './_DiffViewer';
+export * from './DiffViewer';

@@ -1,5 +1,5 @@
 import { loadHtml } from '../../html';
-import { fetchHtml } from '../../_http';
+import { fetchHtml } from '../../http';
 import { NAVER_DESKTOP_HEADERS } from '@/constants';
 import type { PopularItem } from '@/entities';
 import { DEFAULT_SELECTORS } from '../selectors';

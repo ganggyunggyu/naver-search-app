@@ -1,5 +1,5 @@
 import React from 'react';
-import type { PopularItem } from '@/entities/naver/_types';
+import type { PopularItem } from '@/entities/naver/types';
 
 interface MatchItem {
   id: string;

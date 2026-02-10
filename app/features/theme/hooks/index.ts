@@ -1,1 +1,1 @@
-export * from './_useTheme';
+export * from './use-theme';

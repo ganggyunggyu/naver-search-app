@@ -1,1 +1,1 @@
-export * from './_recent-search';
+export * from './recent-search';
