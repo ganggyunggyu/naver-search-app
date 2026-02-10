@@ -1,13 +1,6 @@
 import React from 'react';
 import { Chip, cn } from '@/shared';
-
-export interface LogicCheckResult {
-  ok: boolean;
-  keyword: string;
-  isNewLogic: boolean;
-  topicNames: string[];
-  itemCount: number;
-}
+import type { LogicCheckResult } from '@/entities/naver/types';
 
 interface LogicStatusWidgetProps {
   data: LogicCheckResult | null;

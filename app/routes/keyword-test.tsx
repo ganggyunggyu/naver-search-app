@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import axios from 'axios';
 import { BarChart3, Sparkles } from 'lucide-react';
 import {
   KeywordInput,
@@ -16,12 +15,12 @@ import {
   useKeywordAnalysis,
   useFavorites,
   useSuggestions,
+  useLogicCheck,
   useTopExposure,
 } from '@/features/keyword-analysis';
 import type { SortBy, ViewMode } from '@/features/keyword-analysis';
 import { generateShareUrl, parseUrlKeywords } from '@/features/keyword-analysis';
 import { LogicStatusWidget } from '@/widgets/naver-popular';
-import type { LogicCheckResult } from '@/widgets/naver-popular';
 import { cn } from '@/shared';
 
 export const meta = () => [{ title: '키워드 분석 | Naver Search Engine' }];
@@ -32,10 +31,6 @@ const KeywordTestPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<ViewMode>('card');
   const [showFavorites, setShowFavorites] = useState(false);
-  const [logicData, setLogicData] = useState<LogicCheckResult | null>(null);
-  const [logicError, setLogicError] = useState('');
-  const [isLogicLoading, setIsLogicLoading] = useState(false);
-
   const { analyses, relatedKeywords, loading, error, analyze } = useKeywordAnalysis();
   const { favorites, isFavorite, toggleFavorite, removeFavorite } = useFavorites();
   const {
@@ -48,22 +43,15 @@ const KeywordTestPage: React.FC = () => {
     hideSuggestions,
   } = useSuggestions();
   const { toggleExpanded, isExpanded, getExposureData } = useTopExposure();
+  const {
+    data: logicData,
+    errorMessage: logicError,
+    isLoading: isLogicLoading,
+    run: runLogicCheck,
+    reset: resetLogicState,
+  } = useLogicCheck();
 
   const primaryKeyword = keywords[0] ?? '';
-
-  const resetLogicState = useCallback(() => {
-    setLogicData(null);
-    setLogicError('');
-    setIsLogicLoading(false);
-  }, []);
-
-  const resolveLogicErrorMessage = useCallback((err: unknown): string => {
-    if (axios.isAxiosError<{ error?: string }>(err)) {
-      return err.response?.data?.error || err.message || '로직 확인 중 오류가 발생했습니다.';
-    }
-    if (err instanceof Error) return err.message;
-    return '로직 확인 중 오류가 발생했습니다.';
-  }, []);
 
   useEffect(() => {
     const urlKeywords = parseUrlKeywords();
@@ -72,63 +60,47 @@ const KeywordTestPage: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    let isActive = true;
-    if (!primaryKeyword) {
-      resetLogicState();
-      return () => {
-        isActive = false;
-      };
-    }
-
-    (async () => {
-      try {
-        setIsLogicLoading(true);
-        setLogicError('');
-        setLogicData(null);
-
-        const { data } = await axios.post<LogicCheckResult>('/api/check-logic', {
-          keyword: primaryKeyword,
-        });
-
-        if (!isActive) return;
-        setLogicData(data);
-      } catch (err) {
-        if (!isActive) return;
-        setLogicData(null);
-        setLogicError(resolveLogicErrorMessage(err));
-      } finally {
-        if (!isActive) return;
-        setIsLogicLoading(false);
-      }
-    })();
-
-    return () => {
-      isActive = false;
-    };
-  }, [primaryKeyword, resetLogicState, resolveLogicErrorMessage]);
-
   const handleAnalyze = useCallback(() => {
-    if (keywords.length > 0) {
-      analyze(keywords);
-    }
-  }, [keywords, analyze]);
+    if (keywords.length === 0) return;
+    analyze(keywords);
+    runLogicCheck(primaryKeyword);
+  }, [keywords, analyze, runLogicCheck, primaryKeyword]);
 
-  const handleKeywordsChange = useCallback((newKeywords: string[]) => {
-    setKeywords(newKeywords);
-  }, []);
+  const handleKeywordsChange = useCallback(
+    (newKeywords: string[]) => {
+      resetLogicState();
+      setKeywords(newKeywords);
+    },
+    [resetLogicState]
+  );
 
-  const handleSelectRelatedKeyword = useCallback((keyword: string) => {
-    setKeywords([keyword]);
-  }, []);
+  const handleSelectRelatedKeyword = useCallback(
+    (keyword: string) => {
+      resetLogicState();
+      setKeywords([keyword]);
+    },
+    [resetLogicState]
+  );
 
-  const handleSelectFavorite = useCallback((keyword: string) => {
-    setKeywords([keyword]);
-    setShowFavorites(false);
-  }, []);
+  const handleSelectFavorite = useCallback(
+    (keyword: string) => {
+      resetLogicState();
+      setKeywords([keyword]);
+      setShowFavorites(false);
+    },
+    [resetLogicState]
+  );
 
-  const handleExampleClick = useCallback((keyword: string) => {
-    setKeywords([keyword]);
+  const handleExampleClick = useCallback(
+    (keyword: string) => {
+      resetLogicState();
+      setKeywords([keyword]);
+    },
+    [resetLogicState]
+  );
+
+  const handleToggleFavorites = useCallback(() => {
+    setShowFavorites((prev) => !prev);
   }, []);
 
   const handleSortChange = useCallback(
@@ -221,7 +193,7 @@ const KeywordTestPage: React.FC = () => {
             <Favorites
               favorites={favorites}
               visible={showFavorites}
-              onToggleVisible={() => setShowFavorites(!showFavorites)}
+              onToggleVisible={handleToggleFavorites}
               onSelectKeyword={handleSelectFavorite}
               onRemoveKeyword={removeFavorite}
             />
