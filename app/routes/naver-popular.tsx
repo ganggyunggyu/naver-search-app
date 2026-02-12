@@ -241,9 +241,9 @@ const NaverPopularPage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
           {error && (
             <aside
               role="alert"
-              className="p-4 rounded-xl bg-[var(--color-error-soft)] border border-[var(--color-error)]"
+              className="p-4 rounded-xl bg-error-soft border border-error"
             >
-              <p className="text-sm text-[var(--color-error)] font-medium">
+              <p className="text-sm text-error font-medium">
                 {error}
               </p>
             </aside>

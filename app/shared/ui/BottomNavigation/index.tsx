@@ -19,7 +19,7 @@ export const BottomNavigation: React.FC = () => {
   return (
     <React.Fragment>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-[var(--z-fixed)] bg-[var(--color-surface)]/95 backdrop-blur-lg border-t border-[var(--color-border)] sm:hidden"
+        className="fixed bottom-0 left-0 right-0 z-fixed bg-surface/95 backdrop-blur-lg border-t border-border sm:hidden"
         role="navigation"
         aria-label="메인 네비게이션"
       >
@@ -34,16 +34,16 @@ export const BottomNavigation: React.FC = () => {
                 className={({ isActive }) =>
                   `flex flex-col items-center justify-center flex-1 h-full py-1.5 transition-all active:scale-95 ${
                     isActive
-                      ? 'text-[var(--color-primary)]'
-                      : 'text-[var(--color-text-tertiary)]'
+                      ? 'text-primary'
+                      : 'text-text-tertiary'
                   }`
                 }
               >
                 {({ isActive }) => (
-                  <>
+                  <React.Fragment>
                     <div
                       className={`p-1.5 rounded-xl transition-colors ${
-                        isActive ? 'bg-[var(--color-primary-soft)]' : ''
+                        isActive ? 'bg-primary-soft' : ''
                       }`}
                     >
                       <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
@@ -55,14 +55,14 @@ export const BottomNavigation: React.FC = () => {
                     >
                       {item.label}
                     </span>
-                  </>
+                  </React.Fragment>
                 )}
               </NavLink>
             );
           })}
         </div>
         {/* iOS Safe Area */}
-        <div className="h-[env(safe-area-inset-bottom)] bg-[var(--color-surface)]" />
+        <div className="h-[env(safe-area-inset-bottom)] bg-surface" />
       </nav>
       {/* Spacer for content */}
       <div className="h-[calc(3.5rem+env(safe-area-inset-bottom))] sm:hidden" />

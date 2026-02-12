@@ -1,6 +1,6 @@
 import React from 'react';
 import { LayoutGrid, Table, Download, Share2, ArrowUpDown } from 'lucide-react';
-import type { SortBy, ViewMode } from '../types';
+import type { SortBy, ViewMode } from '@/features/keyword-analysis/types';
 
 interface AnalysisToolbarProps {
   sortBy: SortBy;
@@ -31,16 +31,16 @@ export const AnalysisToolbar: React.FC<AnalysisToolbarProps> = ({
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-4">
       <div className="flex items-center gap-3">
-        <h2 className="text-lg font-bold text-[var(--color-text-primary)]">분석 결과</h2>
-        <span className="px-2.5 py-1 bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-full text-xs font-semibold">
+        <h2 className="text-lg font-bold text-text-primary">분석 결과</h2>
+        <span className="px-2.5 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">
           {count}개
         </span>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
         {/* Sort Options */}
-        <div className="flex items-center gap-1 p-1 bg-[var(--color-hover)] rounded-xl">
-          <ArrowUpDown className="w-4 h-4 text-[var(--color-text-tertiary)] ml-2" />
+        <div className="flex items-center gap-1 p-1 bg-hover rounded-xl">
+          <ArrowUpDown className="w-4 h-4 text-text-tertiary ml-2" />
           {SORT_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
@@ -48,8 +48,8 @@ export const AnalysisToolbar: React.FC<AnalysisToolbarProps> = ({
               onClick={() => onSortChange(value)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
                 sortBy === value
-                  ? 'bg-[var(--color-surface)] text-[var(--color-primary)] shadow-sm'
-                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                  ? 'bg-surface text-primary shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               {label}
@@ -58,14 +58,14 @@ export const AnalysisToolbar: React.FC<AnalysisToolbarProps> = ({
         </div>
 
         {/* View Mode */}
-        <div className="flex p-1 bg-[var(--color-hover)] rounded-xl">
+        <div className="flex p-1 bg-hover rounded-xl">
           <button
             type="button"
             onClick={() => onViewModeChange('card')}
             className={`p-2 rounded-lg transition-all ${
               viewMode === 'card'
-                ? 'bg-[var(--color-surface)] text-[var(--color-primary)] shadow-sm'
-                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]'
+                ? 'bg-surface text-primary shadow-sm'
+                : 'text-text-tertiary hover:text-text-primary'
             }`}
             title="카드 뷰"
           >
@@ -76,8 +76,8 @@ export const AnalysisToolbar: React.FC<AnalysisToolbarProps> = ({
             onClick={() => onViewModeChange('table')}
             className={`p-2 rounded-lg transition-all ${
               viewMode === 'table'
-                ? 'bg-[var(--color-surface)] text-[var(--color-primary)] shadow-sm'
-                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]'
+                ? 'bg-surface text-primary shadow-sm'
+                : 'text-text-tertiary hover:text-text-primary'
             }`}
             title="테이블 뷰"
           >
@@ -90,7 +90,7 @@ export const AnalysisToolbar: React.FC<AnalysisToolbarProps> = ({
           <button
             type="button"
             onClick={onShare}
-            className="p-2 text-[var(--color-text-tertiary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-hover)] rounded-xl transition-all"
+            className="p-2 text-text-tertiary hover:text-primary hover:bg-hover rounded-xl transition-all"
             title="공유하기"
           >
             <Share2 className="w-4 h-4" />
@@ -98,7 +98,7 @@ export const AnalysisToolbar: React.FC<AnalysisToolbarProps> = ({
           <button
             type="button"
             onClick={onDownload}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] bg-[var(--color-hover)] hover:bg-[var(--color-primary)]/10 rounded-xl transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-text-secondary hover:text-primary bg-hover hover:bg-primary/10 rounded-xl transition-all"
           >
             <Download className="w-4 h-4" />
             CSV

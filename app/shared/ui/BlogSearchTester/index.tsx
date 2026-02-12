@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, Loader2 } from 'lucide-react';
-import { useToast } from './Toast';
+import { useToast } from '@/shared/ui/Toast';
 
 export const BlogSearchTester: React.FC = () => {
   const { show } = useToast();
@@ -38,12 +38,12 @@ export const BlogSearchTester: React.FC = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]">
+    <div className="p-4 sm:p-6 rounded-xl bg-surface border border-border">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-[var(--color-success-soft)] flex items-center justify-center">
-          <Search size={20} className="text-[var(--color-success)]" />
+        <div className="w-10 h-10 rounded-lg bg-success-soft flex items-center justify-center">
+          <Search size={20} className="text-success" />
         </div>
-        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+        <h3 className="text-lg font-semibold text-text-primary">
           네이버 블로그 검색 테스터
         </h3>
       </div>
@@ -52,7 +52,7 @@ export const BlogSearchTester: React.FC = () => {
         <div>
           <label
             htmlFor="blog-keyword"
-            className="block text-sm font-medium text-[var(--color-text-primary)] mb-1.5"
+            className="block text-sm font-medium text-text-primary mb-1.5"
           >
             검색 키워드
           </label>
@@ -64,18 +64,18 @@ export const BlogSearchTester: React.FC = () => {
             onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleBlogSearch()}
             placeholder="검색할 키워드를 입력하세요 (예: 리액트, 자바스크립트)"
             disabled={isLoading}
-            className="w-full px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-focus)] transition-all disabled:opacity-50"
+            className="w-full px-4 py-3 rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary focus:ring-2 focus:ring-focus transition-all disabled:opacity-50"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-[var(--color-text-secondary)]">빠른 검색:</span>
+          <span className="text-sm text-text-secondary">빠른 검색:</span>
           {['리액트', '자바스크립트', 'TypeScript', 'Next.js', 'Vue.js'].map((quick) => (
             <button
               key={quick}
               onClick={() => handleQuickSearch(quick)}
               disabled={isLoading}
-              className="px-3 py-1.5 rounded-full text-sm bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text-primary)] transition-colors disabled:opacity-50"
+              className="px-3 py-1.5 rounded-full text-sm bg-bg-tertiary text-text-secondary hover:bg-hover hover:text-text-primary transition-colors disabled:opacity-50"
             >
               {quick}
             </button>
@@ -85,7 +85,7 @@ export const BlogSearchTester: React.FC = () => {
         <button
           onClick={handleBlogSearch}
           disabled={isLoading}
-          className="w-full py-3 px-4 rounded-lg bg-[var(--color-success)] text-white font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+          className="w-full py-3 px-4 rounded-lg bg-success text-white font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] flex items-center justify-center gap-2"
         >
           {isLoading ? (
             <>
@@ -97,7 +97,7 @@ export const BlogSearchTester: React.FC = () => {
           )}
         </button>
 
-        <div className="p-3 rounded-lg bg-[var(--color-info-soft)] text-sm text-[var(--color-info)]">
+        <div className="p-3 rounded-lg bg-info-soft text-sm text-info">
           <p className="font-medium">사용법:</p>
           <p className="mt-1 opacity-80">
             검색 버튼을 클릭하면 콘솔(F12)에 네이버 블로그 검색 결과가 출력됩니다.

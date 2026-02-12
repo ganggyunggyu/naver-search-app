@@ -7,19 +7,19 @@ export const MainHeader = () => {
   return (
     <React.Fragment>
       {/* Compact Header - Mobile & Desktop */}
-      <header className="sticky top-0 z-[var(--z-sticky)] bg-[var(--color-surface)]/95 backdrop-blur-lg border-b border-[var(--color-border)]">
+      <header className="sticky top-0 z-sticky bg-surface/95 backdrop-blur-lg border-b border-border">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Search size={16} className="text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-[var(--color-text-primary)] leading-tight">
+                <span className="text-sm font-bold text-text-primary leading-tight">
                   NAVER SEARCH
                 </span>
-                <span className="text-xs text-[var(--color-text-tertiary)] leading-tight hidden sm:block">
+                <span className="text-xs text-text-tertiary leading-tight hidden sm:block">
                   인기글 분석 엔진
                 </span>
               </div>
@@ -34,27 +34,27 @@ export const MainHeader = () => {
       </header>
 
       {/* Hero Section - Desktop only */}
-      <section className="hidden sm:block py-8 bg-gradient-to-b from-[var(--color-bg-primary)] to-[var(--color-surface)]">
+      <section className="hidden sm:block py-8 bg-gradient-to-b from-bg-primary to-surface">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary)] flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg">
               <Search size={24} className="text-white" />
             </div>
             <div className="text-left">
-              <h1 className="text-xl font-bold text-[var(--color-text-primary)]">
+              <h1 className="text-xl font-bold text-text-primary">
                 NAVER SEARCH
               </h1>
-              <p className="text-sm text-[var(--color-text-secondary)]">
+              <p className="text-sm text-text-secondary">
                 AI 분석 엔진
               </p>
             </div>
           </div>
 
-          <p className="text-[var(--color-text-secondary)] text-sm mb-4">
+          <p className="text-text-secondary text-sm mb-4">
             키워드 검색부터 블로그 분석까지 원클릭으로 완료하세요
           </p>
 
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-success-soft)] text-[var(--color-success)]">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-success-soft text-success">
             <div className="flex gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
               <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" style={{ animationDelay: '0.2s' }} />
@@ -69,23 +69,23 @@ export const MainHeader = () => {
       <section className="hidden sm:block pb-6">
         <div className="max-w-3xl mx-auto px-6">
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]">
-              <div className="w-10 h-10 rounded-lg bg-[var(--color-primary-soft)] flex items-center justify-center">
-                <Search size={18} className="text-[var(--color-primary)]" />
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-surface border border-border">
+              <div className="w-10 h-10 rounded-lg bg-primary-soft flex items-center justify-center">
+                <Search size={18} className="text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[var(--color-text-primary)]">키워드 검색</p>
-                <p className="text-xs text-[var(--color-text-tertiary)]">인기글 추출</p>
+                <p className="text-sm font-semibold text-text-primary">키워드 검색</p>
+                <p className="text-xs text-text-tertiary">인기글 추출</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]">
-              <div className="w-10 h-10 rounded-lg bg-[var(--color-info-soft)] flex items-center justify-center">
-                <Search size={18} className="text-[var(--color-info)]" />
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-surface border border-border">
+              <div className="w-10 h-10 rounded-lg bg-info-soft flex items-center justify-center">
+                <Search size={18} className="text-info" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[var(--color-text-primary)]">URL 분석</p>
-                <p className="text-xs text-[var(--color-text-tertiary)]">직접 추출</p>
+                <p className="text-sm font-semibold text-text-primary">URL 분석</p>
+                <p className="text-xs text-text-tertiary">직접 추출</p>
               </div>
             </div>
           </div>

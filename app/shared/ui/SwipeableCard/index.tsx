@@ -144,12 +144,12 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
       {isDragging && (
         <React.Fragment>
           {translateX < -50 && onSwipeLeft && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl text-[var(--color-error)]">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl text-error">
               ←
             </div>
           )}
           {translateX > 50 && onSwipeRight && (
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-[var(--color-success)]">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-success">
               →
             </div>
           )}
@@ -158,7 +158,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
 
       {isDragging && (
         <div
-          className="absolute inset-0 rounded-xl bg-[var(--color-hover)] pointer-events-none"
+          className="absolute inset-0 rounded-xl bg-hover pointer-events-none"
           style={{
             opacity: Math.min(Math.abs(translateX) / 100, 0.3)
           }}

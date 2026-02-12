@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { TopExposureData } from '../types';
+import type { TopExposureData } from '@/features/keyword-analysis/types';
 
 interface TopExposureMap {
   [keyword: string]: TopExposureData;

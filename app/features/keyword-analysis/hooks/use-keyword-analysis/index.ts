@@ -4,8 +4,8 @@ import type {
   RelatedKeyword,
   SearchadResponse,
   DatalabResponse,
-} from '../types';
-import { getTotalSearchNum, calculateScore } from '../utils';
+} from '@/features/keyword-analysis/types';
+import { getTotalSearchNum, calculateScore } from '@/features/keyword-analysis/utils';
 
 interface BlogCountMap {
   [keyword: string]: number;

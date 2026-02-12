@@ -13,9 +13,9 @@ import {
   Loader2,
   Zap,
 } from 'lucide-react';
-import type { KeywordAnalysis, TopExposureData } from '../types';
-import { formatNumber, getCompColor, getSaturationInfo, getScoreGrade } from '../utils';
-import { TrendChart } from './TrendChart';
+import type { KeywordAnalysis, TopExposureData } from '@/features/keyword-analysis/types';
+import { formatNumber, getCompColor, getSaturationInfo, getScoreGrade } from '@/features/keyword-analysis/utils';
+import { TrendChart } from '@/features/keyword-analysis/components/TrendChart';
 
 interface AnalysisCardProps {
   analysis: KeywordAnalysis;
@@ -39,20 +39,20 @@ export const AnalysisCard: React.FC<AnalysisCardProps> = ({
   const scoreGrade = getScoreGrade(score);
 
   return (
-    <div className="group bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl overflow-hidden hover:shadow-lg hover:border-[var(--color-primary)]/30 transition-all duration-300">
+    <div className="group bg-surface border border-border rounded-2xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300">
       {/* Header */}
-      <div className="p-5 border-b border-[var(--color-border)]">
+      <div className="p-5 border-b border-border">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-lg font-bold text-[var(--color-text-primary)]">{stat.relKeyword}</h3>
+            <h3 className="text-lg font-bold text-text-primary">{stat.relKeyword}</h3>
             <button
               type="button"
               onClick={onToggleFavorite}
-              className="p-1.5 hover:bg-[var(--color-hover)] rounded-lg transition-colors"
+              className="p-1.5 hover:bg-hover rounded-lg transition-colors"
             >
               <Star
                 className={`w-5 h-5 transition-colors ${
-                  isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-[var(--color-text-tertiary)]'
+                  isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-text-tertiary'
                 }`}
               />
             </button>
@@ -95,7 +95,7 @@ export const AnalysisCard: React.FC<AnalysisCardProps> = ({
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-sm font-bold text-[var(--color-text-primary)]">{score}</span>
+                <span className="text-sm font-bold text-text-primary">{score}</span>
               </div>
             </div>
             <div>
@@ -103,7 +103,7 @@ export const AnalysisCard: React.FC<AnalysisCardProps> = ({
                 <Zap className={`w-4 h-4 ${scoreGrade.color}`} />
                 <span className={`text-sm font-bold ${scoreGrade.color}`}>{scoreGrade.label}</span>
               </div>
-              <span className="text-xs text-[var(--color-text-tertiary)]">종합 점수</span>
+              <span className="text-xs text-text-tertiary">종합 점수</span>
             </div>
           </div>
 
@@ -163,7 +163,7 @@ export const AnalysisCard: React.FC<AnalysisCardProps> = ({
         <button
           type="button"
           onClick={onToggleExpand}
-          className="mt-4 w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-hover)] rounded-xl transition-colors"
+          className="mt-4 w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-text-secondary hover:text-primary hover:bg-hover rounded-xl transition-colors"
         >
           <Trophy className="w-4 h-4" />
           상위 노출 분석
@@ -172,9 +172,9 @@ export const AnalysisCard: React.FC<AnalysisCardProps> = ({
 
         {/* Top Exposure Content */}
         {isExpanded && (
-          <div className="mt-3 p-4 bg-[var(--color-hover)]/50 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mt-3 p-4 bg-hover/50 rounded-xl animate-in fade-in slide-in-from-top-2 duration-200">
             {exposureData?.loading ? (
-              <div className="flex items-center justify-center gap-2 py-6 text-sm text-[var(--color-text-tertiary)]">
+              <div className="flex items-center justify-center gap-2 py-6 text-sm text-text-tertiary">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 상위 노출 블로그 분석 중...
               </div>
@@ -188,7 +188,7 @@ export const AnalysisCard: React.FC<AnalysisCardProps> = ({
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex gap-3 p-3 bg-[var(--color-surface)] rounded-xl hover:shadow-md transition-all group/item"
+                    className="flex gap-3 p-3 bg-surface rounded-xl hover:shadow-md transition-all group/item"
                   >
                     {item.image && (
                       <img
@@ -199,16 +199,16 @@ export const AnalysisCard: React.FC<AnalysisCardProps> = ({
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start gap-2">
-                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-full text-xs font-bold">
+                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-primary/10 text-primary rounded-full text-xs font-bold">
                           {i + 1}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[var(--color-text-primary)] line-clamp-2 group-hover/item:text-[var(--color-primary)] transition-colors">
+                          <p className="text-sm font-medium text-text-primary line-clamp-2 group-hover/item:text-primary transition-colors">
                             {item.title}
                             <ExternalLink className="inline-block w-3 h-3 ml-1 opacity-0 group-hover/item:opacity-100" />
                           </p>
                           {item.blogName && (
-                            <p className="text-xs text-[var(--color-text-tertiary)] mt-1">{item.blogName}</p>
+                            <p className="text-xs text-text-tertiary mt-1">{item.blogName}</p>
                           )}
                         </div>
                       </div>
@@ -217,7 +217,7 @@ export const AnalysisCard: React.FC<AnalysisCardProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="text-sm text-[var(--color-text-tertiary)] text-center py-6">
+              <div className="text-sm text-text-tertiary text-center py-6">
                 상위 노출 블로그를 찾을 수 없습니다
               </div>
             )}
@@ -237,12 +237,12 @@ interface StatItemProps {
 }
 
 const StatItem: React.FC<StatItemProps> = ({ icon: Icon, label, value, highlight, valueColor }) => (
-  <div className={`p-3 rounded-xl ${highlight ? 'bg-[var(--color-primary)]/10' : 'bg-[var(--color-hover)]'}`}>
+  <div className={`p-3 rounded-xl ${highlight ? 'bg-primary/10' : 'bg-hover'}`}>
     <div className="flex items-center gap-1.5 mb-1">
-      <Icon className={`w-3.5 h-3.5 ${highlight ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-tertiary)]'}`} />
-      <span className="text-[10px] text-[var(--color-text-tertiary)]">{label}</span>
+      <Icon className={`w-3.5 h-3.5 ${highlight ? 'text-primary' : 'text-text-tertiary'}`} />
+      <span className="text-[10px] text-text-tertiary">{label}</span>
     </div>
-    <div className={`text-base font-bold ${valueColor || (highlight ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-primary)]')}`}>
+    <div className={`text-base font-bold ${valueColor || (highlight ? 'text-primary' : 'text-text-primary')}`}>
       {value}
     </div>
   </div>

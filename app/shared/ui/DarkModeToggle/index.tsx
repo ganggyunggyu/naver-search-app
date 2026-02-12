@@ -36,7 +36,7 @@ export const DarkModeToggle: React.FC = () => {
 
   if (!isClient) {
     return (
-      <div className="w-10 h-10 rounded-lg bg-[var(--color-bg-tertiary)] animate-pulse" />
+      <div className="w-10 h-10 rounded-lg bg-bg-tertiary animate-pulse" />
     );
   }
 
@@ -47,8 +47,8 @@ export const DarkModeToggle: React.FC = () => {
       title={isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
       className="
         relative w-10 h-10 rounded-lg
-        bg-[var(--color-bg-tertiary)] hover:bg-[var(--color-hover)]
-        text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]
+        bg-bg-tertiary hover:bg-hover
+        text-text-secondary hover:text-text-primary
         transition-all active:scale-95
         flex items-center justify-center
       "

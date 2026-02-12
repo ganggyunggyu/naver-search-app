@@ -172,7 +172,7 @@ export const UI_CONSTANTS = {
 
 **현재 코드**:
 ```typescript
-className="p-1.5 rounded hover:bg-[var(--color-hover)] text-[var(--color-text-tertiary)] transition-colors"
+className="p-1.5 rounded hover:bg-hover text-text-tertiary transition-colors"
 // 4회 반복
 ```
 
@@ -181,7 +181,7 @@ className="p-1.5 rounded hover:bg-[var(--color-hover)] text-[var(--color-text-te
 // shared/ui/IconButton.tsx
 export const IconButton: React.FC<Props> = ({ children, ...props }) => (
   <button
-    className="p-1.5 rounded hover:bg-[var(--color-hover)] text-[var(--color-text-tertiary)] transition-colors"
+    className="p-1.5 rounded hover:bg-hover text-text-tertiary transition-colors"
     {...props}
   >
     {children}
@@ -262,9 +262,9 @@ className 문자열이 너무 길어 가독성 저하
 // cn 유틸리티 적극 활용
 const buttonStyles = cn(
   'p-2 rounded-lg',
-  'text-[var(--color-text-tertiary)]',
-  'hover:text-[var(--color-text-primary)]',
-  'hover:bg-[var(--color-hover)]',
+  'text-text-tertiary',
+  'hover:text-text-primary',
+  'hover:bg-hover',
   'transition-colors'
 );
 ```

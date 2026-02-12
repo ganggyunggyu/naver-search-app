@@ -14,13 +14,13 @@ const FALLBACK_ERROR_MESSAGE = '로직 확인 중 오류가 발생했습니다.'
 const LOGIC_STATUS = {
   newLogic: {
     label: '신로직',
-    className: 'bg-[var(--color-success-soft)] text-[var(--color-success)]',
-    dotClassName: 'bg-[var(--color-success)]',
+    className: 'bg-success-soft text-success',
+    dotClassName: 'bg-success',
   },
   oldLogic: {
     label: '구로직',
-    className: 'bg-[var(--color-warning-soft)] text-[var(--color-warning)]',
-    dotClassName: 'bg-[var(--color-warning)]',
+    className: 'bg-warning-soft text-warning',
+    dotClassName: 'bg-warning',
   },
 };
 
@@ -38,14 +38,14 @@ export const LogicStatusWidget: React.FC<LogicStatusWidgetProps> = ({
     <section
       aria-labelledby="logic-status-heading"
       className={cn(
-        'p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]'
+        'p-4 sm:p-5 rounded-xl bg-surface shadow-card'
       )}
     >
       <header className={cn('flex items-center justify-between gap-3 flex-wrap')}>
         <div className={cn('flex items-center gap-2 flex-wrap')}>
           <h3
             id="logic-status-heading"
-            className={cn('text-base font-semibold text-[var(--color-text-primary)]')}
+            className={cn('text-base font-semibold text-text-primary')}
           >
             로직 판별
           </h3>
@@ -71,13 +71,13 @@ export const LogicStatusWidget: React.FC<LogicStatusWidgetProps> = ({
       </header>
 
       {isLoading && (
-        <p className={cn('mt-3 text-sm text-[var(--color-text-secondary)]')}>
+        <p className={cn('mt-3 text-sm text-text-secondary')}>
           로직 확인 중입니다.
         </p>
       )}
 
       {!isLoading && errorMessage && (
-        <p className={cn('mt-3 text-sm text-[var(--color-error)]')}>
+        <p className={cn('mt-3 text-sm text-error')}>
           {errorMessage || FALLBACK_ERROR_MESSAGE}
         </p>
       )}
@@ -87,20 +87,20 @@ export const LogicStatusWidget: React.FC<LogicStatusWidgetProps> = ({
           <div className={cn('flex flex-wrap gap-2')}>
             <div
               className={cn(
-                'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-bg-tertiary)] text-sm'
+                'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-bg-tertiary text-sm'
               )}
             >
-              <span className={cn('text-[var(--color-text-secondary)]')}>
+              <span className={cn('text-text-secondary')}>
                 아이템
               </span>
-              <span className={cn('font-semibold text-[var(--color-text-primary)]')}>
+              <span className={cn('font-semibold text-text-primary')}>
                 {data.itemCount}개
               </span>
             </div>
           </div>
 
           <div className={cn('mt-4')}>
-            <p className={cn('text-xs text-[var(--color-text-tertiary)]')}>
+            <p className={cn('text-xs text-text-tertiary')}>
               인기 주제
             </p>
             {topicNameList.length > 0 ? (
@@ -116,7 +116,7 @@ export const LogicStatusWidget: React.FC<LogicStatusWidgetProps> = ({
                 ))}
               </div>
             ) : (
-              <p className={cn('mt-2 text-sm text-[var(--color-text-tertiary)]')}>
+              <p className={cn('mt-2 text-sm text-text-tertiary')}>
                 주제를 찾지 못했습니다.
               </p>
             )}
@@ -125,7 +125,7 @@ export const LogicStatusWidget: React.FC<LogicStatusWidgetProps> = ({
       )}
 
       {!isLoading && !errorMessage && !data && (
-        <p className={cn('mt-3 text-sm text-[var(--color-text-tertiary)]')}>
+        <p className={cn('mt-3 text-sm text-text-tertiary')}>
           {EMPTY_MESSAGE}
         </p>
       )}

@@ -22,17 +22,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_STYLES: Record<ButtonVariant, string> = {
   primary:
-    'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] hover:shadow-md',
+    'bg-primary text-white hover:bg-primary-hover hover:shadow-md',
   secondary:
-    'bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] hover:bg-[var(--color-hover)] border border-[var(--color-border)] hover:shadow-sm',
+    'bg-bg-tertiary text-text-primary hover:bg-hover border border-border hover:shadow-sm',
   ghost:
-    'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text-primary)]',
+    'bg-transparent text-text-secondary hover:bg-hover hover:text-text-primary',
   success:
-    'bg-[var(--color-success)] text-white hover:opacity-90 hover:shadow-md',
+    'bg-success text-white hover:opacity-90 hover:shadow-md',
   warning:
-    'bg-[var(--color-warning)] text-white hover:opacity-90 hover:shadow-md',
-  danger: 'bg-[var(--color-error)] text-white hover:opacity-90 hover:shadow-md',
-  info: 'bg-[var(--color-info)] text-white hover:opacity-90 hover:shadow-md',
+    'bg-warning text-white hover:opacity-90 hover:shadow-md',
+  danger: 'bg-error text-white hover:opacity-90 hover:shadow-md',
+  info: 'bg-info text-white hover:opacity-90 hover:shadow-md',
 };
 
 const SIZE_STYLES: Record<ButtonSize, string> = {

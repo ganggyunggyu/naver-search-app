@@ -48,25 +48,25 @@ export const PopularItemCard: React.FC<Props> = ({
     <article
       className={`p-4 rounded-lg border transition-all hover:shadow-sm ${
         isMatched
-          ? 'border-[var(--color-success)] bg-[var(--color-success-soft)]/30'
-          : 'border-[var(--color-border)] bg-[var(--color-surface)]'
+          ? 'border-success bg-success-soft/30'
+          : 'border-border bg-surface'
       }`}
     >
       <header className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-center gap-2 flex-wrap">
           {position && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--color-primary-soft)] text-[var(--color-primary)] text-xs font-semibold">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary-soft text-primary text-xs font-semibold">
               {position}위
             </span>
           )}
           {blogId && (
-            <code className="px-1.5 py-0.5 rounded text-xs font-mono bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)]">
+            <code className="px-1.5 py-0.5 rounded text-xs font-mono bg-bg-tertiary text-text-secondary">
               #{blogId}
             </code>
           )}
         </div>
         {isMatched && (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--color-success)] text-white">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success text-white">
             ✓ MATCH
           </span>
         )}
@@ -78,7 +78,7 @@ export const PopularItemCard: React.FC<Props> = ({
             onClick={() =>
               window.open(displayLink, '_blank', 'noopener,noreferrer')
             }
-            className="flex-1 text-sm font-medium text-[var(--color-text-primary)] cursor-pointer hover:text-[var(--color-primary)] transition-colors line-clamp-2"
+            className="flex-1 text-sm font-medium text-text-primary cursor-pointer hover:text-primary transition-colors line-clamp-2"
           >
             {item.title}
           </h3>
@@ -104,12 +104,12 @@ export const PopularItemCard: React.FC<Props> = ({
 
         {item.blogName && item.blogLink && (
           <div className="flex items-center gap-1.5 mt-1">
-            <span className="w-1 h-1 rounded-full bg-[var(--color-text-tertiary)]" />
+            <span className="w-1 h-1 rounded-full bg-text-tertiary" />
             <span
               onClick={() =>
                 window.open(item.blogLink!, '_blank', 'noopener,noreferrer')
               }
-              className="text-xs text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-primary)] transition-colors"
+              className="text-xs text-text-secondary cursor-pointer hover:text-primary transition-colors"
             >
               {item.blogName}
             </span>
@@ -118,7 +118,7 @@ export const PopularItemCard: React.FC<Props> = ({
       </div>
 
       {item.description && (
-        <p className="text-xs text-[var(--color-text-tertiary)] mb-3 line-clamp-2">
+        <p className="text-xs text-text-tertiary mb-3 line-clamp-2">
           {item.description.replace(/<[^>]*>/g, '').slice(0, 100)}
           {item.description.length > 100 ? '...' : ''}
         </p>
@@ -200,8 +200,8 @@ export const PopularItemCard: React.FC<Props> = ({
         </div>
       </div>
 
-      <footer className="mt-3 pt-2 border-t border-[var(--color-border)]">
-        <p className="text-xs text-[var(--color-text-tertiary)] truncate">
+      <footer className="mt-3 pt-2 border-t border-border">
+        <p className="text-xs text-text-tertiary truncate">
           {item.link.replace('https://', '').slice(0, 60)}...
         </p>
       </footer>

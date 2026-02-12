@@ -47,7 +47,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
       <Meta />
       <Links />
     </head>
-    <body className="bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] antialiased sm:h-screen sm:overflow-hidden sm:flex sm:flex-col">
+    <body className="bg-bg-primary text-text-primary antialiased sm:h-screen sm:overflow-hidden sm:flex sm:flex-col">
       <ToastProvider>
         {/* Desktop Header - 고정 */}
         <div className="hidden sm:block shrink-0">
@@ -95,13 +95,13 @@ export const ErrorBoundary: React.FC<Route.ErrorBoundaryProps> = ({
   return (
     <main className="min-h-screen flex items-center justify-center p-4">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-[var(--color-text-primary)] mb-2">
+        <h1 className="text-4xl font-bold text-text-primary mb-2">
           {message}
         </h1>
-        <p className="text-[var(--color-text-secondary)] mb-4">{details}</p>
+        <p className="text-text-secondary mb-4">{details}</p>
         {stack && (
-          <pre className="text-left p-4 rounded-xl bg-[var(--color-bg-tertiary)] text-xs overflow-x-auto max-w-lg mx-auto">
-            <code className="text-[var(--color-text-tertiary)]">{stack}</code>
+          <pre className="text-left p-4 rounded-xl bg-bg-tertiary text-xs overflow-x-auto max-w-lg mx-auto">
+            <code className="text-text-tertiary">{stack}</code>
           </pre>
         )}
       </div>

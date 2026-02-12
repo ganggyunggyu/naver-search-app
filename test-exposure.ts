@@ -1,16 +1,30 @@
 import {
-  fetchHtml,
-  NAVER_DESKTOP_HEADERS,
   buildNaverSearchUrl,
   extractPopularItems,
+  fetchHtml,
   matchBlogs,
+  NAVER_DESKTOP_HEADERS,
+  printExposureResult,
 } from './app/shared';
-import { printExposureResult } from './app/shared/utils/_exposure';
 
-async function testExposure(query: string) {
-  console.log(`\n\n${'#'.repeat(70)}`);
+const KEYWORD_LIST: string[] = ['위고비', '김포공항주차대행', '알파CD'];
+const SEPARATOR_LENGTH = 70;
+const DELAY_MS = 1000;
+
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+const printTestStart = (query: string): void => {
+  const separator = '#'.repeat(SEPARATOR_LENGTH);
+  console.log(`\n\n${separator}`);
   console.log(`# 검색어: "${query}" 테스트 시작`);
-  console.log(`${'#'.repeat(70)}\n`);
+  console.log(`${separator}\n`);
+};
+
+const testExposure = async (query: string): Promise<void> => {
+  printTestStart(query);
 
   try {
     const url = buildNaverSearchUrl(query);
@@ -21,23 +35,23 @@ async function testExposure(query: string) {
 
     printExposureResult(result);
 
-    console.log('\n📊 요약:');
+    console.log('\n요약:');
     console.log(`  노출: ${result.exposed.length}개`);
     console.log(`  미노출: ${result.notExposed.length}개`);
   } catch (err) {
     console.error('에러 발생:', err);
   }
-}
+};
 
-async function main() {
-  const keywords = ['위고비', '김포공항주차대행', '알파CD'];
-
-  for (const keyword of keywords) {
+const main = async (): Promise<void> => {
+  for (const keyword of KEYWORD_LIST) {
     await testExposure(keyword);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await sleep(DELAY_MS);
   }
 
-  console.log('\n\n✅ 모든 테스트 완료\n');
-}
+  console.log('\n\n모든 테스트 완료\n');
+};
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+});

@@ -1,4 +1,4 @@
-import type { KeywordAnalysis, TrendData } from '../types';
+import type { KeywordAnalysis, TrendData } from '@/features/keyword-analysis/types';
 
 export const formatNumber = (num: number | '<10'): string => {
   if (num === '<10') return '<10';

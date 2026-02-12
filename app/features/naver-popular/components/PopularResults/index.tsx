@@ -59,22 +59,22 @@ export const PopularResults: React.FC = () => {
   if (!itemList?.length) return null;
 
   return (
-    <div className="p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+    <div className="p-4 sm:p-5 rounded-xl bg-surface shadow-card">
       <section>
         <header className="mb-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
+              <h2 className="text-base font-semibold text-text-primary">
                 인기글 추출 결과
               </h2>
               <div className="flex items-center gap-3 mt-1">
-                <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
+                <span className="inline-flex items-center gap-1.5 text-xs text-text-secondary">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                   {data?.count || itemList.length}개 발견
                 </span>
                 {totalMatchedCount > 0 && (
-                  <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-success)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-success)]" />
+                  <span className="inline-flex items-center gap-1.5 text-xs text-success">
+                    <span className="w-1.5 h-1.5 rounded-full bg-success" />
                     ✓ 매칭 {totalMatchedCount}개
                   </span>
                 )}
@@ -86,12 +86,12 @@ export const PopularResults: React.FC = () => {
                 onClick={() =>
                   downloadAllContentToFile(itemList, (m, o) => show(m, o))
                 }
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--color-border)] text-xs font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-text-secondary hover:bg-hover transition-all"
               >
                 <Download size={14} />
                 <span className="hidden sm:inline">전체 다운로드</span>
                 <span className="sm:hidden">전체</span>
-                <span className="text-[var(--color-text-tertiary)]">
+                <span className="text-text-tertiary">
                   ({itemList.length})
                 </span>
               </button>
@@ -102,22 +102,22 @@ export const PopularResults: React.FC = () => {
         <div className="flex flex-col gap-6">
           {grouped.map(([group, list]) => (
             <div key={group}>
-              <header className="flex items-center justify-between mb-3 pb-2 border-b border-[var(--color-border)]">
+              <header className="flex items-center justify-between mb-3 pb-2 border-b border-border">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+                    <h3 className="text-sm font-semibold text-text-primary">
                       {group}
                     </h3>
                     <button
                       type="button"
                       aria-label="그룹 제목 복사"
                       onClick={() => copyTitleToClipboard(group, (m, o) => show(m, o))}
-                      className="p-1 rounded hover:bg-[var(--color-hover)] text-[var(--color-text-tertiary)] transition-colors"
+                      className="p-1 rounded hover:bg-hover text-text-tertiary transition-colors"
                     >
                       <Copy size={12} />
                     </button>
                   </div>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)]">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-bg-tertiary text-text-secondary">
                     {list.length}개
                   </span>
                 </div>
@@ -126,7 +126,7 @@ export const PopularResults: React.FC = () => {
                   onClick={() =>
                     downloadAllContentToFile(list, (m, o) => show(m, o))
                   }
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs text-text-tertiary hover:text-text-secondary hover:bg-hover transition-all"
                 >
                   <Download size={12} />
                   <span>저장</span>

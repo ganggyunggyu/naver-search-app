@@ -1,6 +1,6 @@
 import React from 'react';
 import { TrendingUp, FileText, Target, Award } from 'lucide-react';
-import type { KeywordAnalysis } from '../types';
+import type { KeywordAnalysis } from '@/features/keyword-analysis/types';
 
 interface AnalysisSummaryProps {
   analyses: KeywordAnalysis[];
@@ -50,12 +50,12 @@ export const AnalysisSummary: React.FC<AnalysisSummaryProps> = ({ analyses }) =>
   ];
 
   return (
-    <div className="p-5 bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-hover)] border border-[var(--color-border)] rounded-2xl">
+    <div className="p-5 bg-gradient-to-br from-surface to-hover border border-border rounded-2xl">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-[var(--color-text-secondary)]">분석 요약</h2>
-        <div className="flex items-center gap-2 px-3 py-1 bg-[var(--color-primary)]/10 rounded-full">
-          <Award className="w-4 h-4 text-[var(--color-primary)]" />
-          <span className="text-xs font-medium text-[var(--color-primary)]">
+        <h2 className="text-sm font-semibold text-text-secondary">분석 요약</h2>
+        <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full">
+          <Award className="w-4 h-4 text-primary" />
+          <span className="text-xs font-medium text-primary">
             추천: {bestKeyword.stat.relKeyword}
           </span>
         </div>
@@ -66,7 +66,7 @@ export const AnalysisSummary: React.FC<AnalysisSummaryProps> = ({ analyses }) =>
           <div key={label} className={`p-4 ${bgColor} rounded-xl`}>
             <div className="flex items-center gap-2 mb-2">
               <Icon className={`w-4 h-4 ${color}`} />
-              <span className="text-xs text-[var(--color-text-tertiary)]">{label}</span>
+              <span className="text-xs text-text-tertiary">{label}</span>
             </div>
             <div className={`text-xl font-bold ${color}`}>{value}</div>
           </div>

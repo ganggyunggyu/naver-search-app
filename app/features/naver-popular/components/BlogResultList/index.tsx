@@ -85,17 +85,17 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
 
   if (isLoading) {
     return (
-      <div className="p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+      <div className="p-4 sm:p-5 rounded-xl bg-surface shadow-card">
         <div className="animate-pulse">
           <div className="flex items-center gap-3 mb-4">
-            <div className="h-5 w-32 rounded bg-[var(--color-bg-tertiary)]" />
-            <div className="h-4 w-20 rounded bg-[var(--color-bg-tertiary)]" />
+            <div className="h-5 w-32 rounded bg-bg-tertiary" />
+            <div className="h-4 w-20 rounded bg-bg-tertiary" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="h-24 rounded-lg bg-[var(--color-bg-tertiary)]"
+                className="h-24 rounded-lg bg-bg-tertiary"
               />
             ))}
           </div>
@@ -106,14 +106,14 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
 
   if (!blogData || !blogData.items?.length) {
     return (
-      <div className="p-8 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)] text-center">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-tertiary)] mb-3">
+      <div className="p-8 rounded-xl bg-surface shadow-card text-center">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-bg-tertiary text-text-tertiary mb-3">
           <Search size={24} />
         </div>
-        <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-1">
+        <h3 className="text-base font-semibold text-text-primary mb-1">
           블로그 검색 결과가 없습니다
         </h3>
-        <p className="text-sm text-[var(--color-text-secondary)]">
+        <p className="text-sm text-text-secondary">
           다른 키워드로 검색해보세요
         </p>
       </div>
@@ -121,23 +121,23 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
   }
 
   return (
-    <div className="p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+    <div className="p-4 sm:p-5 rounded-xl bg-surface shadow-card">
       {allBlogs.length > 0 && (
         <section>
           <header className="mb-4">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
-                <h3 className="text-base font-semibold text-[var(--color-text-primary)]">
+                <h3 className="text-base font-semibold text-text-primary">
                   블로그 검색 결과
                 </h3>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
+                  <span className="inline-flex items-center gap-1.5 text-xs text-text-secondary">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                     {blogData.total}개 발견
                   </span>
                   {matchedCount > 0 && (
-                    <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-success)]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-success)]" />
+                    <span className="inline-flex items-center gap-1.5 text-xs text-success">
+                      <span className="w-1.5 h-1.5 rounded-full bg-success" />
                       ✓ 매칭 {matchedCount}개
                     </span>
                   )}
@@ -147,12 +147,12 @@ export const BlogResultList: React.FC<BlogResultListProps> = ({
               {blogData.items.length > 0 && (
                 <button
                   onClick={handleDownloadAll}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--color-border)] text-xs font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-text-secondary hover:bg-hover transition-all"
                 >
                   <Download size={14} />
                   <span className="hidden sm:inline">다운로드</span>
                   <span className="sm:hidden">저장</span>
-                  <span className="text-[var(--color-text-tertiary)]">
+                  <span className="text-text-tertiary">
                     ({blogData.items.length})
                   </span>
                 </button>

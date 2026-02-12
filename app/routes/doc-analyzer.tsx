@@ -77,18 +77,18 @@ const DocAnalyzerPage: React.FC = () => {
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       <header className="text-center mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)] flex items-center justify-center gap-2">
-          <FileText size={28} className="text-[var(--color-primary)]" />
+        <h1 className="text-2xl sm:text-3xl font-bold text-text-primary flex items-center justify-center gap-2">
+          <FileText size={28} className="text-primary" />
           문서 분석
         </h1>
-        <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+        <p className="mt-2 text-sm text-text-secondary">
           원고 텍스트를 붙여넣고 통계를 확인하세요
         </p>
       </header>
 
       <section
         aria-labelledby="input-section"
-        className="p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)] mb-6"
+        className="p-4 sm:p-5 rounded-xl bg-surface shadow-card mb-6"
       >
         <h2 id="input-section" className="sr-only">
           입력 섹션
@@ -97,7 +97,7 @@ const DocAnalyzerPage: React.FC = () => {
           <div>
             <label
               htmlFor="text-input"
-              className="block text-sm font-medium text-[var(--color-text-primary)] mb-2"
+              className="block text-sm font-medium text-text-primary mb-2"
             >
               원고 텍스트
             </label>
@@ -107,13 +107,13 @@ const DocAnalyzerPage: React.FC = () => {
               onChange={(e) => setText(e.target.value)}
               rows={10}
               placeholder="여기에 텍스트를 붙여넣으세요"
-              className="w-full px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all resize-none"
+              className="w-full px-4 py-3 rounded-lg border border-border bg-bg-primary text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
             />
           </div>
           <div>
             <label
               htmlFor="keywords-input"
-              className="block text-sm font-medium text-[var(--color-text-primary)] mb-2"
+              className="block text-sm font-medium text-text-primary mb-2"
             >
               핵심 키워드 (쉼표로 구분)
             </label>
@@ -123,22 +123,22 @@ const DocAnalyzerPage: React.FC = () => {
               value={keywordsInput}
               onChange={(e) => setKeywordsInput(e.target.value)}
               placeholder="예: 라미네이트, 충치, 가격"
-              className="w-full px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-lg border border-border bg-bg-primary text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             />
           </div>
         </div>
       </section>
 
       {text && (
-        <article className="p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
-          <header className="flex items-center justify-between mb-4 pb-3 border-b border-[var(--color-border)]">
-            <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
+        <article className="p-4 sm:p-5 rounded-xl bg-surface shadow-card">
+          <header className="flex items-center justify-between mb-4 pb-3 border-b border-border">
+            <h2 className="text-lg font-semibold text-text-primary">
               분석 결과
             </h2>
             <div className="flex gap-2">
               <button
                 onClick={copyAnalysis}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--color-border)] text-xs font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-text-secondary hover:bg-hover transition-all"
               >
                 <Copy size={14} />
                 분석 복사

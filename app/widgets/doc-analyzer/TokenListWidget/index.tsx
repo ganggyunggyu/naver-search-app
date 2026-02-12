@@ -19,13 +19,13 @@ export const TokenListWidget: React.FC<TokenListWidgetProps> = ({
   variant = 'primary',
 }) => {
   const variantStyles = {
-    primary: 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]',
-    success: 'bg-[var(--color-success-soft)] text-[var(--color-success)]',
+    primary: 'bg-primary-soft text-primary',
+    success: 'bg-success-soft text-success',
   };
 
   return (
     <section aria-label={title}>
-      <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">
+      <h4 className="text-sm font-semibold text-text-primary mb-2">
         {title}
       </h4>
       {tokens.length > 0 ? (
@@ -41,7 +41,7 @@ export const TokenListWidget: React.FC<TokenListWidgetProps> = ({
           ))}
         </div>
       ) : (
-        <p className="text-xs text-[var(--color-text-tertiary)]">{emptyMessage}</p>
+        <p className="text-xs text-text-tertiary">{emptyMessage}</p>
       )}
     </section>
   );

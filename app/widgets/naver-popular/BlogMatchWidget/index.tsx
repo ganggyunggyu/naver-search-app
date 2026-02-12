@@ -54,16 +54,16 @@ export const BlogMatchWidget: React.FC<BlogMatchWidgetProps> = ({
   return (
     <section
       aria-labelledby="blog-match-heading"
-      className="p-4 sm:p-5 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]"
+      className="p-4 sm:p-5 rounded-xl bg-surface shadow-card"
     >
       <header className="flex items-center gap-2 flex-wrap">
         <h4
           id="blog-match-heading"
-          className="text-base font-semibold text-[var(--color-text-primary)]"
+          className="text-base font-semibold text-text-primary"
         >
           블로그 검색 매칭
         </h4>
-        <span className="px-2 py-0.5 rounded-md bg-[var(--color-primary-soft)] text-[var(--color-primary)] text-xs font-medium">
+        <span className="px-2 py-0.5 rounded-md bg-primary-soft text-primary text-xs font-medium">
           "{blogSearchData.keyword}"
         </span>
       </header>
@@ -73,15 +73,15 @@ export const BlogMatchWidget: React.FC<BlogMatchWidgetProps> = ({
           {matchedBlogArray.map(([blogId, info], idx) => (
             <li
               key={`blog-match-${blogId}-${idx}`}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-success-soft)] text-sm"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success-soft text-sm"
             >
-              <code className="font-mono font-semibold text-[var(--color-success)]">
+              <code className="font-mono font-semibold text-success">
                 #{blogId}
               </code>
-              <span className="text-[var(--color-text-secondary)]">
+              <span className="text-text-secondary">
                 {info.count}개
               </span>
-              <span className="text-[var(--color-text-tertiary)] text-xs">
+              <span className="text-text-tertiary text-xs">
                 {info.positions.slice(0, 2).join(',')}
                 {info.positions.length > 2 ? '...' : ''}위
               </span>
@@ -89,9 +89,9 @@ export const BlogMatchWidget: React.FC<BlogMatchWidgetProps> = ({
           ))}
         </ul>
       ) : (
-        <p className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-error-soft)] text-sm">
-          <span className="text-[var(--color-error)] font-medium">매칭 없음</span>
-          <span className="text-[var(--color-text-tertiary)]">
+        <p className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-error-soft text-sm">
+          <span className="text-error font-medium">매칭 없음</span>
+          <span className="text-text-tertiary">
             (총 {blogSearchData.items.length}개 중)
           </span>
         </p>

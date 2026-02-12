@@ -72,24 +72,24 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
   };
 
   return (
-    <div className="p-4 sm:p-6 rounded-xl bg-[var(--color-surface)] shadow-[var(--shadow-card)]">
+    <div className="p-4 sm:p-6 rounded-xl bg-surface shadow-card">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
+        <h2 className="text-lg font-semibold text-text-primary">
           검색 설정
         </h2>
-        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+        <p className="mt-1 text-sm text-text-secondary">
           검색어를 입력하거나 직접 네이버 URL을 붙여넣으세요
         </p>
       </div>
 
-      <div className="flex gap-2 p-1 rounded-lg bg-[var(--color-bg-tertiary)] mb-4">
+      <div className="flex gap-2 p-1 rounded-lg bg-bg-tertiary mb-4">
         <button
           type="button"
           onClick={() => setIsAutoUrl(true)}
           className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
             isAutoUrl
-              ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm'
-              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+              ? 'bg-surface text-text-primary shadow-sm'
+              : 'text-text-secondary hover:text-text-primary'
           }`}
         >
           <span className="hidden sm:inline">검색어 자동생성</span>
@@ -100,8 +100,8 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
           onClick={() => setIsAutoUrl(false)}
           className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
             !isAutoUrl
-              ? 'bg-[var(--color-surface)] text-[var(--color-text-primary)] shadow-sm'
-              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+              ? 'bg-surface text-text-primary shadow-sm'
+              : 'text-text-secondary hover:text-text-primary'
           }`}
         >
           <span className="hidden sm:inline">직접 URL 입력</span>
@@ -125,7 +125,7 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
       >
         {isAutoUrl ? (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1.5">
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
               검색어
             </label>
             <div className="flex flex-col sm:flex-row gap-2">
@@ -146,13 +146,13 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
                   onKeyDown={handleKeyDown}
                   placeholder="예: 라미네이트"
                   autoComplete="off"
-                  className="w-full px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-focus)] transition-all"
+                  className="w-full px-4 py-3 rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary focus:ring-2 focus:ring-focus transition-all"
                 />
 
                 {isClient &&
                   showAutocomplete &&
                   filteredSuggestions.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 py-1 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-lg">
+                    <div className="absolute z-10 w-full mt-1 py-1 rounded-lg bg-surface border border-border shadow-lg">
                       {filteredSuggestions.map((item, index) => (
                         <button
                           key={item.query}
@@ -164,8 +164,8 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
                           }}
                           className={`w-full px-4 py-2 text-left text-sm transition-colors ${
                             index === selectedSuggestionIndex
-                              ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]'
-                              : 'text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]'
+                              ? 'bg-primary-soft text-primary'
+                              : 'text-text-primary hover:bg-hover'
                           }`}
                         >
                           {item.query}
@@ -198,7 +198,7 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
           </div>
         ) : (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1.5">
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
               네이버 검색 URL
             </label>
             <div className="flex flex-col sm:flex-row gap-2">
@@ -207,7 +207,7 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://search.naver.com/search.naver?..."
-                className="flex-1 px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-focus)] transition-all"
+                className="flex-1 px-4 py-3 rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-primary focus:ring-2 focus:ring-focus transition-all"
               />
               <Button
                 type="submit"
@@ -268,9 +268,9 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
       {children}
 
       {isAutoUrl && (
-        <div className="mt-6 pt-5 border-t border-[var(--color-border)]">
+        <div className="mt-6 pt-5 border-t border-border">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+            <h3 className="text-sm font-semibold text-text-primary">
               최근 검색어
             </h3>
             {isClient && recentSearchList.length > 0 && (
@@ -316,7 +316,7 @@ export const PopularSearchForm: React.FC<PopularSearchFormProps> = ({
               />
             </div>
           ) : isClient ? (
-            <p className="text-sm text-[var(--color-text-tertiary)] text-center py-4">
+            <p className="text-sm text-text-tertiary text-center py-4">
               아직 검색 기록이 없습니다
             </p>
           ) : null}

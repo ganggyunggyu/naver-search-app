@@ -93,7 +93,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
         >
           <div className="flex flex-col items-center gap-2">
             <div
-              className={`text-[var(--color-primary)] transition-transform ${isRefreshing ? 'animate-spin' : ''}`}
+              className={`text-primary transition-transform ${isRefreshing ? 'animate-spin' : ''}`}
               style={{
                 transform: isRefreshing ? undefined : `rotate(${refreshProgress * 360}deg)`
               }}
@@ -101,7 +101,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
               <RefreshCw size={20} />
             </div>
 
-            <span className="text-xs text-[var(--color-text-secondary)]">
+            <span className="text-xs text-text-secondary">
               {isRefreshing
                 ? '새로고침 중...'
                 : shouldTrigger
@@ -110,9 +110,9 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
               }
             </span>
 
-            <div className="w-24 h-1 rounded-full bg-[var(--color-border)] overflow-hidden">
+            <div className="w-24 h-1 rounded-full bg-border overflow-hidden">
               <div
-                className="h-full bg-[var(--color-primary)] transition-all"
+                className="h-full bg-primary transition-all"
                 style={{
                   width: `${isRefreshing ? 100 : refreshProgress * 100}%`
                 }}

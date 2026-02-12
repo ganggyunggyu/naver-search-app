@@ -171,16 +171,16 @@ const KeywordTestPage: React.FC = () => {
   }, [analyses, sortBy, sortOrder]);
 
   return (
-    <div className="h-full overflow-y-auto bg-[var(--color-background)]">
+    <div className="h-full overflow-y-auto bg-bg-primary">
       <main className="max-w-4xl mx-auto px-4 py-8 min-h-full">
         {/* Hero Section */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full mb-4">
-            <BarChart3 className="w-5 h-5 text-[var(--color-primary)]" />
-            <span className="text-sm font-medium text-[var(--color-primary)]">키워드 분석 도구</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
+            <BarChart3 className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium text-primary">키워드 분석 도구</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text-primary)] mb-3">블로그 키워드 분석</h1>
-          <p className="text-[var(--color-text-tertiary)] max-w-lg mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-bold text-text-primary mb-3">블로그 키워드 분석</h1>
+          <p className="text-text-tertiary max-w-lg mx-auto">
             검색량, 발행량, 포화지수를 한눈에 파악하고
             <br />
             최적의 블로그 키워드를 찾아보세요
@@ -216,7 +216,7 @@ const KeywordTestPage: React.FC = () => {
           {primaryKeyword && (
             <div className={cn('space-y-2')}>
               {keywords.length > 1 && (
-                <p className={cn('text-xs text-[var(--color-text-tertiary)]')}>
+                <p className={cn('text-xs text-text-tertiary')}>
                   복수 키워드는 첫 번째 키워드 기준으로 표시됩니다.
                 </p>
               )}
@@ -278,25 +278,25 @@ const KeywordTestPage: React.FC = () => {
         {!loading && analyses.length === 0 && !error && <EmptyState onExampleClick={handleExampleClick} />}
 
         {/* Footer Tips */}
-        <div className="mt-12 p-6 bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-hover)] border border-[var(--color-border)] rounded-2xl">
+        <div className="mt-12 p-6 bg-gradient-to-br from-surface to-hover border border-border rounded-2xl">
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-[var(--color-primary)]" />
-            <h3 className="font-semibold text-[var(--color-text-primary)]">분석 지표 안내</h3>
+            <Sparkles className="w-5 h-5 text-primary" />
+            <h3 className="font-semibold text-text-primary">분석 지표 안내</h3>
           </div>
           <div className="grid sm:grid-cols-2 gap-4 text-sm">
             <div className="space-y-2">
-              <p className="text-[var(--color-text-secondary)]">
-                <span className="font-medium text-[var(--color-text-primary)]">포화지수</span>
+              <p className="text-text-secondary">
+                <span className="font-medium text-text-primary">포화지수</span>
                 {' = 발행량 ÷ 검색량 × 100'}
               </p>
-              <p className="text-[var(--color-text-tertiary)]">낮을수록 경쟁이 적은 블루오션 키워드</p>
+              <p className="text-text-tertiary">낮을수록 경쟁이 적은 블루오션 키워드</p>
             </div>
             <div className="space-y-2">
-              <p className="text-[var(--color-text-secondary)]">
-                <span className="font-medium text-[var(--color-text-primary)]">추천 점수</span>
+              <p className="text-text-secondary">
+                <span className="font-medium text-text-primary">추천 점수</span>
                 {' = 검색량 + 포화지수 + 경쟁도 종합'}
               </p>
-              <p className="text-[var(--color-text-tertiary)]">높을수록 진입하기 좋은 키워드</p>
+              <p className="text-text-tertiary">높을수록 진입하기 좋은 키워드</p>
             </div>
           </div>
         </div>

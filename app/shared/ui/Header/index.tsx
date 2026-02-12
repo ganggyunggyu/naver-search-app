@@ -20,14 +20,14 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--color-surface)]/80 backdrop-blur-lg border-b border-[var(--color-border)]">
+    <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
           <Link
             to="/"
-            className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)]"
+            className="flex items-center gap-2 font-semibold text-text-primary"
           >
-            <span className="w-7 h-7 rounded-lg bg-[var(--color-primary)] flex items-center justify-center text-white text-xs font-bold">
+            <span className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-white text-xs font-bold">
               NS
             </span>
             <span className="hidden sm:inline">Naver Search</span>
@@ -42,8 +42,8 @@ const Header: React.FC = () => {
                 className={({ isActive }) =>
                   `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]'
-                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]'
+                      ? 'bg-primary-soft text-primary'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-hover'
                   }`
                 }
               >
@@ -55,7 +55,7 @@ const Header: React.FC = () => {
           <button
             onClick={toggleTheme}
             aria-label={isClient && isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
-            className="p-2 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover)] transition-colors"
+            className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-hover transition-colors"
           >
             {isClient && isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>

@@ -11,15 +11,15 @@ interface RecentSearchItemProps {
 }
 
 const STATUS_BG: Record<ExposureStatus, string> = {
-  exposed: 'bg-[var(--color-success-soft)]',
-  notExposed: 'bg-[var(--color-error-soft)]',
-  unchecked: 'bg-[var(--color-bg-tertiary)]',
+  exposed: 'bg-success-soft',
+  notExposed: 'bg-error-soft',
+  unchecked: 'bg-bg-tertiary',
 };
 
 const STATUS_TEXT: Record<ExposureStatus, string> = {
-  exposed: 'text-[var(--color-success)]',
-  notExposed: 'text-[var(--color-error)]',
-  unchecked: 'text-[var(--color-text-secondary)]',
+  exposed: 'text-success',
+  notExposed: 'text-error',
+  unchecked: 'text-text-secondary',
 };
 
 export const RecentSearchItem: React.FC<RecentSearchItemProps> = ({

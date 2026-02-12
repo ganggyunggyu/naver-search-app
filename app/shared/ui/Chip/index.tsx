@@ -21,12 +21,12 @@ interface ChipProps {
 }
 
 const VARIANT_STYLES: Record<ChipVariant, string> = {
-  default: 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)]',
-  primary: 'bg-[var(--color-primary-soft)] text-[var(--color-primary)]',
-  secondary: 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)]',
-  success: 'bg-[var(--color-success-soft)] text-[var(--color-success)]',
-  warning: 'bg-[var(--color-warning-soft)] text-[var(--color-warning)]',
-  danger: 'bg-[var(--color-error-soft)] text-[var(--color-error)]',
+  default: 'bg-bg-tertiary text-text-primary',
+  primary: 'bg-primary-soft text-primary',
+  secondary: 'bg-bg-tertiary text-text-secondary',
+  success: 'bg-success-soft text-success',
+  warning: 'bg-warning-soft text-warning',
+  danger: 'bg-error-soft text-error',
 };
 
 const SIZE_STYLES: Record<ChipSize, string> = {

@@ -23,11 +23,11 @@ export const DocStatsWidget: React.FC<DocStatsWidgetProps> = ({ analysis }) => {
   return (
     <section
       aria-labelledby="stats-heading"
-      className="p-4 rounded-xl bg-[var(--color-bg-tertiary)]"
+      className="p-4 rounded-xl bg-bg-tertiary"
     >
       <h3
         id="stats-heading"
-        className="text-sm font-semibold text-[var(--color-text-primary)] mb-3"
+        className="text-sm font-semibold text-text-primary mb-3"
       >
         문서 통계
       </h3>
@@ -35,13 +35,13 @@ export const DocStatsWidget: React.FC<DocStatsWidgetProps> = ({ analysis }) => {
         {stats.map(({ label, value, icon: Icon }) => (
           <div
             key={label}
-            className="flex flex-col items-center p-3 rounded-lg bg-[var(--color-surface)]"
+            className="flex flex-col items-center p-3 rounded-lg bg-surface"
           >
-            <Icon size={16} className="text-[var(--color-text-tertiary)] mb-1" />
-            <span className="text-lg font-bold text-[var(--color-text-primary)]">
+            <Icon size={16} className="text-text-tertiary mb-1" />
+            <span className="text-lg font-bold text-text-primary">
               {value}
             </span>
-            <span className="text-xs text-[var(--color-text-secondary)]">
+            <span className="text-xs text-text-secondary">
               {label}
             </span>
           </div>

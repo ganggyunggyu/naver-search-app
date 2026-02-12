@@ -15,9 +15,9 @@ interface RecentSearchSectionProps {
 }
 
 const STATUS_STYLES: Record<ExposureStatus, string> = {
-  exposed: 'text-[var(--color-success)]',
-  notExposed: 'text-[var(--color-error)]',
-  unchecked: 'text-[var(--color-text-tertiary)]',
+  exposed: 'text-success',
+  notExposed: 'text-error',
+  unchecked: 'text-text-tertiary',
 };
 
 export const RecentSearchSection: React.FC<RecentSearchSectionProps> = ({

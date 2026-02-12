@@ -15,7 +15,7 @@ export const SubtitlesWidget: React.FC<SubtitlesWidgetProps> = ({
       <header className="flex items-center justify-between mb-2">
         <h4
           id="subtitles-heading"
-          className="text-sm font-semibold text-[var(--color-text-primary)] flex items-center gap-1.5"
+          className="text-sm font-semibold text-text-primary flex items-center gap-1.5"
         >
           <List size={14} />
           부제 정리
@@ -23,7 +23,7 @@ export const SubtitlesWidget: React.FC<SubtitlesWidgetProps> = ({
         {subtitles.length > 0 && (
           <button
             onClick={onCopy}
-            className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] transition-colors"
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs text-text-secondary hover:bg-hover transition-colors"
           >
             <Copy size={12} />
             복사
@@ -35,9 +35,9 @@ export const SubtitlesWidget: React.FC<SubtitlesWidgetProps> = ({
           {subtitles.map((subtitle, index) => (
             <li
               key={`${subtitle}-${index}`}
-              className="flex items-start gap-2 text-sm text-[var(--color-text-primary)]"
+              className="flex items-start gap-2 text-sm text-text-primary"
             >
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--color-primary-soft)] text-[var(--color-primary)] text-xs font-medium flex items-center justify-center">
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary-soft text-primary text-xs font-medium flex items-center justify-center">
                 {index + 1}
               </span>
               <span>{subtitle}</span>
@@ -45,7 +45,7 @@ export const SubtitlesWidget: React.FC<SubtitlesWidgetProps> = ({
           ))}
         </ul>
       ) : (
-        <p className="text-xs text-[var(--color-text-tertiary)]">
+        <p className="text-xs text-text-tertiary">
           부제 후보를 찾지 못했습니다.
         </p>
       )}

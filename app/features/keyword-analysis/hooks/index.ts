@@ -1,5 +1,5 @@
-export { useFavorites } from './useFavorites';
-export { useSuggestions } from './useSuggestions';
-export { useKeywordAnalysis } from './useKeywordAnalysis';
-export { useTopExposure } from './useTopExposure';
-export { useLogicCheck } from './useLogicCheck';
+export { useFavorites } from './use-favorites';
+export { useSuggestions } from './use-suggestions';
+export { useKeywordAnalysis } from './use-keyword-analysis';
+export { useTopExposure } from './use-top-exposure';
+export { useLogicCheck } from './use-logic-check';

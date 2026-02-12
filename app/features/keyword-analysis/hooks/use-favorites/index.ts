@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { SavedKeyword } from '../types';
+import type { SavedKeyword } from '@/features/keyword-analysis/types';
 
 const STORAGE_KEY = 'keyword-favorites';
 const MAX_FAVORITES = 30;
