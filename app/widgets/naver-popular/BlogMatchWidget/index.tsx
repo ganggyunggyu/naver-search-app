@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { BLOG_ID_SET } from '@/constants';
-import { extractBlogIdFromUrl } from '@/shared/utils/blog';
+import { extractBlogIdFromUrl } from '@/shared';
 
 interface BlogItem {
   link: string;

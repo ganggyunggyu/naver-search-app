@@ -10,7 +10,8 @@ import {
   Edit,
   Link2,
 } from 'lucide-react';
-import { useViewerActions, viewerItemAtom } from '@/features';
+import { useViewerActions } from '@/features/naver-popular/hooks';
+import { viewerItemAtom, popularQueryAtom } from '@/features/naver-popular/store';
 import {
   copyFullContentToClipboard,
   copyTitleToClipboard,
@@ -20,9 +21,7 @@ import {
   copyEditLinkToClipboard,
   copyKeywordWithMobileLink,
 } from '@/features/naver-popular/lib';
-import { popularQueryAtom } from '@/features/naver-popular/store';
-import { Button } from '@/shared/ui';
-import { useToast } from '@/shared/ui/Toast';
+import { Button, useToast } from '@/shared';
 import type { PopularItem } from '@/entities/naver/types';
 
 interface Props {

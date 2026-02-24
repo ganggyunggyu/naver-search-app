@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Route } from './+types/doc-compare';
 import { analyzeManuscript, normalizeForCopy, cn } from '@/shared';
-import DiffViewer from '@/features/doc/components/DiffViewer';
+import { DiffViewer } from '@/features/doc/components';
 import { FileText, Search, BarChart3, GitCompare } from 'lucide-react';
 
 export const meta = (_: Route.MetaArgs) => [

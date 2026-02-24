@@ -4,3 +4,5 @@ export * from './PopularItemCard';
 export * from './PopularViewerModal';
 export * from './MainHeader';
 export * from './BlogResultList';
+export * from './RecentSearchSection';
+export * from './RecentSearchItem';

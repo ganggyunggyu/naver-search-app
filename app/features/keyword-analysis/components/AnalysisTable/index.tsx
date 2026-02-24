@@ -2,7 +2,7 @@ import React from 'react';
 import { Star, ExternalLink } from 'lucide-react';
 import type { KeywordAnalysis } from '@/features/keyword-analysis/types';
 import { formatNumber, getCompColor, getSaturationInfo, getScoreGrade } from '@/features/keyword-analysis/utils';
-import { TrendChart } from '@/features/keyword-analysis/components/TrendChart';
+import { TrendChart } from '../TrendChart';
 
 interface AnalysisTableProps {
   analyses: KeywordAnalysis[];

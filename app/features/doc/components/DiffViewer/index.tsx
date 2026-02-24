@@ -127,4 +127,5 @@ const DiffViewer: React.FC<Props> = ({
   );
 };
 
+export { DiffViewer };
 export default DiffViewer;

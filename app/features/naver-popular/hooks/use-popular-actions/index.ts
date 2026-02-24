@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
-import { useRecentSearch } from '@/features/naver-popular/hooks/use-recent-search';
+import { useRecentSearch } from '../use-recent-search';
 import {
   popularQueryAtom,
   popularIsAutoUrlAtom,

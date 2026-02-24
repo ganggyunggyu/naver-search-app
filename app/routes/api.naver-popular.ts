@@ -10,7 +10,7 @@ import type {
   PopularItem,
   BlogCrawlResponse,
 } from '@/entities/naver/types';
-import type { ExposureCheckResult } from '@/shared/utils/exposure';
+import type { ExposureCheckResult } from '@/shared';
 
 interface PopularApiResult {
   url: string;

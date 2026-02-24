@@ -9,7 +9,7 @@ import {
   popularUrlAtom,
   popularIsLoadingAtom,
 } from '@/features/naver-popular/store';
-import { RecentSearchSection } from '@/features/naver-popular/components/RecentSearchSection';
+import { RecentSearchSection } from '../RecentSearchSection';
 import { Button } from '@/shared/ui';
 
 interface PopularSearchFormProps {

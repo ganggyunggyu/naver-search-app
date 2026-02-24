@@ -10,3 +10,4 @@ export * from './naver-search';
 export * from './manuscript';
 export * from './exposure';
 export * from './blog';
+// NOTE: './api' is server-only (uses process.env) — do NOT re-export here

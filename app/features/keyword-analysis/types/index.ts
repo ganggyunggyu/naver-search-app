@@ -30,14 +30,8 @@ export interface RelatedKeyword {
   compIdx: string;
 }
 
-export interface PopularItem {
-  title: string;
-  link: string;
-  blogName?: string;
-  blogLink?: string;
-  snippet?: string;
-  image?: string;
-}
+import type { PopularItem } from '@/entities/naver/types';
+export type { PopularItem } from '@/entities/naver/types';
 
 export interface TopExposureData {
   loading: boolean;

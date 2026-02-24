@@ -1,7 +1,7 @@
 import type { Route } from './+types/search';
 import { useEffect, useMemo, useState } from 'react';
-import { useToast } from '@/shared/ui/Toast';
-import Spinner from '@/features/search/components/Spinner';
+import { useToast } from '@/shared';
+import { Spinner } from '@/features/search/components';
 
 interface NaverSearchResult {
   title: string;

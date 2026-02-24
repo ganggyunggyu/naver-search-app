@@ -4,7 +4,7 @@ import type {
   PopularResponse,
   BlogCrawlResponse,
 } from '@/entities/naver/types';
-import type { PopularViewerItem } from '@/features/naver-popular/components/PopularViewerModal';
+import type { PopularViewerItem } from '@/features/naver-popular/types';
 import type { RecentSearch } from '@/features/naver-popular/types';
 
 export const popularQueryAtom = atom<string>('');

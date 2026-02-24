@@ -1,9 +1,8 @@
 import React from 'react';
 import { Search, Download } from 'lucide-react';
-import { PopularItemCard } from '@/features/naver-popular/components/PopularItemCard';
+import { PopularItemCard } from '../PopularItemCard';
 import { BLOG_ID_SET } from '@/constants';
-import { extractBlogIdFromUrl } from '@/shared/utils/blog';
-import { useToast } from '@/shared/ui/Toast';
+import { extractBlogIdFromUrl, useToast } from '@/shared';
 import type { PopularItem } from '@/entities/naver/types';
 
 interface BlogItem {

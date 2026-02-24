@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 import type { RecentSearch } from '@/features/naver-popular/types';
-import { RecentSearchItem } from '@/features/naver-popular/components/RecentSearchItem';
+import { RecentSearchItem } from '../RecentSearchItem';
 import { Button } from '@/shared/ui';
 
 type ExposureStatus = 'exposed' | 'notExposed' | 'unchecked';

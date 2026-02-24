@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React from 'react';
 import { BarChart3, Sparkles } from 'lucide-react';
 import {
   KeywordInput,
@@ -10,170 +10,57 @@ import {
   Favorites,
   EmptyState,
   LoadingSkeleton,
+  useKeywordAnalysisPage,
 } from '@/features/keyword-analysis';
-import {
-  useKeywordAnalysis,
-  useFavorites,
-  useSuggestions,
-  useLogicCheck,
-  useTopExposure,
-} from '@/features/keyword-analysis';
-import type { SortBy, ViewMode } from '@/features/keyword-analysis';
-import { generateShareUrl, parseUrlKeywords } from '@/features/keyword-analysis';
 import { LogicStatusWidget } from '@/widgets/naver-popular';
 import { cn } from '@/shared';
 
 export const meta = () => [{ title: '키워드 분석 | Naver Search Engine' }];
 
 const KeywordTestPage: React.FC = () => {
-  const [keywords, setKeywords] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<SortBy>('score');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [viewMode, setViewMode] = useState<ViewMode>('card');
-  const [showFavorites, setShowFavorites] = useState(false);
-  const { analyses, relatedKeywords, loading, error, analyze } = useKeywordAnalysis();
-  const { favorites, isFavorite, toggleFavorite, removeFavorite } = useFavorites();
   const {
+    keywords,
+    sortBy,
+    viewMode,
+    showFavorites,
+    loading,
+    error,
+    primaryKeyword,
+    sortedAnalyses,
+    analyses,
+    relatedKeywords,
+    logicData,
+    logicError,
+    isLogicLoading,
+    favorites,
+    isFavorite,
+    toggleFavorite,
+    removeFavorite,
     suggestions,
-    loading: suggestionsLoading,
-    visible: suggestionsVisible,
+    suggestionsLoading,
+    suggestionsVisible,
     debouncedFetch,
     clearSuggestions,
     showSuggestions,
     hideSuggestions,
-  } = useSuggestions();
-  const { toggleExpanded, isExpanded, getExposureData } = useTopExposure();
-  const {
-    data: logicData,
-    errorMessage: logicError,
-    isLoading: isLogicLoading,
-    run: runLogicCheck,
-    reset: resetLogicState,
-  } = useLogicCheck();
-
-  const primaryKeyword = keywords[0] ?? '';
-
-  useEffect(() => {
-    const urlKeywords = parseUrlKeywords();
-    if (urlKeywords.length > 0) {
-      setKeywords(urlKeywords);
-    }
-  }, []);
-
-  const handleAnalyze = useCallback(() => {
-    if (keywords.length === 0) return;
-    analyze(keywords);
-    runLogicCheck(primaryKeyword);
-  }, [keywords, analyze, runLogicCheck, primaryKeyword]);
-
-  const handleKeywordsChange = useCallback(
-    (newKeywords: string[]) => {
-      resetLogicState();
-      setKeywords(newKeywords);
-    },
-    [resetLogicState]
-  );
-
-  const handleSelectRelatedKeyword = useCallback(
-    (keyword: string) => {
-      resetLogicState();
-      setKeywords([keyword]);
-    },
-    [resetLogicState]
-  );
-
-  const handleSelectFavorite = useCallback(
-    (keyword: string) => {
-      resetLogicState();
-      setKeywords([keyword]);
-      setShowFavorites(false);
-    },
-    [resetLogicState]
-  );
-
-  const handleExampleClick = useCallback(
-    (keyword: string) => {
-      resetLogicState();
-      setKeywords([keyword]);
-    },
-    [resetLogicState]
-  );
-
-  const handleToggleFavorites = useCallback(() => {
-    setShowFavorites((prev) => !prev);
-  }, []);
-
-  const handleSortChange = useCallback(
-    (newSortBy: SortBy) => {
-      if (sortBy === newSortBy) {
-        setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-      } else {
-        setSortBy(newSortBy);
-        setSortOrder('desc');
-      }
-    },
-    [sortBy]
-  );
-
-  const handleDownloadCSV = useCallback(() => {
-    if (analyses.length === 0) return;
-
-    const headers = ['키워드', 'PC검색량', '모바일검색량', '총검색량', '블로그발행량', '포화지수', '경쟁도', '추천점수'];
-    const rows = analyses.map((a) => [
-      a.stat.relKeyword,
-      a.stat.monthlyPcQcCnt,
-      a.stat.monthlyMobileQcCnt,
-      a.totalSearch,
-      a.blogCount,
-      a.saturationIndex.toFixed(2),
-      a.stat.compIdx,
-      a.score,
-    ]);
-
-    const csvContent = [headers, ...rows].map((row) => row.join(',')).join('\n');
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `keyword_analysis_${new Date().toISOString().slice(0, 10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-  }, [analyses]);
-
-  const handleShare = useCallback(() => {
-    if (keywords.length === 0) return;
-
-    const url = generateShareUrl(keywords);
-    navigator.clipboard.writeText(url).then(() => {
-      alert('URL이 클립보드에 복사되었습니다!');
-    });
-  }, [keywords]);
-
-  const sortedAnalyses = useMemo(() => {
-    return [...analyses].sort((a, b) => {
-      let diff = 0;
-      switch (sortBy) {
-        case 'score':
-          diff = a.score - b.score;
-          break;
-        case 'search':
-          diff = a.totalSearch - b.totalSearch;
-          break;
-        case 'blog':
-          diff = a.blogCount - b.blogCount;
-          break;
-        case 'saturation':
-          diff = a.saturationIndex - b.saturationIndex;
-          break;
-      }
-      return sortOrder === 'asc' ? diff : -diff;
-    });
-  }, [analyses, sortBy, sortOrder]);
+    isExpanded,
+    toggleExpanded,
+    getExposureData,
+    handleKeywordsChange,
+    handleAnalyze,
+    handleSortChange,
+    handleToggleFavorites,
+    handleSelectRelatedKeyword,
+    handleSelectFavorite,
+    handleExampleClick,
+    handleDownloadCSV,
+    handleShare,
+    setViewMode,
+  } = useKeywordAnalysisPage();
 
   return (
     <div className="h-full overflow-y-auto bg-bg-primary">
       <main className="max-w-4xl mx-auto px-4 py-8 min-h-full">
-        {/* Hero Section */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
             <BarChart3 className="w-5 h-5 text-primary" />
@@ -187,7 +74,6 @@ const KeywordTestPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Favorites & Input Section */}
         <div className="space-y-4 mb-8">
           <div className="flex items-center justify-between">
             <Favorites
@@ -229,15 +115,12 @@ const KeywordTestPage: React.FC = () => {
           )}
         </div>
 
-        {/* Error State */}
         {error && (
           <div className="p-4 mb-6 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-sm">{error}</div>
         )}
 
-        {/* Loading State */}
         {loading && <LoadingSkeleton />}
 
-        {/* Results */}
         {!loading && analyses.length > 0 && (
           <div className="space-y-6">
             <AnalysisSummary analyses={analyses} />
@@ -274,10 +157,8 @@ const KeywordTestPage: React.FC = () => {
           </div>
         )}
 
-        {/* Empty State */}
         {!loading && analyses.length === 0 && !error && <EmptyState onExampleClick={handleExampleClick} />}
 
-        {/* Footer Tips */}
         <div className="mt-12 p-6 bg-gradient-to-br from-surface to-hover border border-border rounded-2xl">
           <div className="flex items-center gap-2 mb-4">
             <Sparkles className="w-5 h-5 text-primary" />

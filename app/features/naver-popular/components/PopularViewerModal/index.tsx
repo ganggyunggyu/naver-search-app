@@ -3,15 +3,10 @@ import { useAtom } from 'jotai';
 import { X, ExternalLink, FileText, BarChart3, Copy } from 'lucide-react';
 import { popularQueryAtom } from '@/features/naver-popular/store';
 import { copyFullContentToClipboard, removeExternalLinks } from '@/features/naver-popular/lib';
-import { analyzeManuscript, formatManuscriptAnalysis } from '@/shared';
-import { useToast } from '@/shared/ui/Toast';
-import type { PopularItem } from '@/entities/naver/types';
+import { analyzeManuscript, formatManuscriptAnalysis, useToast } from '@/shared';
+import type { PopularViewerItem } from '@/features/naver-popular/types';
 
-export interface PopularViewerItem extends PopularItem {
-  content?: string;
-  blogName?: string;
-  actualUrl?: string;
-}
+export type { PopularViewerItem };
 
 interface Props {
   open: boolean;

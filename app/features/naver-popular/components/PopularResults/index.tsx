@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { Download, Copy } from 'lucide-react';
-import { PopularItemCard } from '@/features/naver-popular/components/PopularItemCard';
+import { PopularItemCard } from '../PopularItemCard';
 import { popularDataAtom } from '@/features/naver-popular/store';
 import { copyTitleToClipboard, downloadAllContentToFile } from '@/features/naver-popular/lib';
-import { useToast } from '@/shared/ui/Toast';
+import { useToast, extractBlogIdFromUrl } from '@/shared';
 import { BLOG_ID_SET } from '@/constants';
-import { extractBlogIdFromUrl } from '@/shared/utils/blog';
 import type { PopularItem } from '@/entities/naver/types';
 
 interface PopularItemWithMatch extends PopularItem {

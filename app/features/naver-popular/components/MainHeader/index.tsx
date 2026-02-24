@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { Search } from 'lucide-react';
-import { DarkModeToggle } from '@/shared/ui/DarkModeToggle';
+import { DarkModeToggle } from '@/shared';
 
 export const MainHeader = () => {
   return (

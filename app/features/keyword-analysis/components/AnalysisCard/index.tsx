@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import type { KeywordAnalysis, TopExposureData } from '@/features/keyword-analysis/types';
 import { formatNumber, getCompColor, getSaturationInfo, getScoreGrade } from '@/features/keyword-analysis/utils';
-import { TrendChart } from '@/features/keyword-analysis/components/TrendChart';
+import { TrendChart } from '../TrendChart';
 
 interface AnalysisCardProps {
   analysis: KeywordAnalysis;
